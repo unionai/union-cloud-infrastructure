@@ -1,0 +1,8 @@
+title: Unionai Administrator Storage Object Admin Role
+stage: GA
+includedPermissions:
+- storage.objects.create
+- storage.objects.delete
+- storage.objects.get
+- storage.objects.list
+- storage.objects.update
