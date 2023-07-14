@@ -2,8 +2,8 @@
 requirements:
 	pip install -r requirements.txt
 
-.PHONY: lint requirements
-lint:
+.PHONY: lint
+lint: requirements
 	cfn-lint ./union-ai-admin/aws/*.yaml
 
 .PHONY: generate
