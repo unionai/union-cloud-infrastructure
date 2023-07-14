@@ -1,0 +1,202 @@
+{
+    "Statement": [
+        {
+            "Action": [
+                "logs:TagLogGroup",
+                "logs:DeleteLogGroup",
+                "logs:CreateLogGroup",
+                "logs:PutRetentionPolicy"
+            ],
+            "Effect": "Allow",
+            "Resource": [
+                "!Sub arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:opta-*",
+                "!Sub arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group::log-stream*",
+                "!Sub arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/eks/opta-*:*"
+            ],
+            "Sid": "AllowTagLogGroup"
+        },
+        {
+            "Action": [
+                "s3:CreateBucket",
+                "s3:DeleteBucketPolicy",
+                "s3:DeleteBucket",
+                "s3:*"
+            ],
+            "Effect": "Allow",
+            "Resource": [
+                "arn:aws:s3:::opta-*"
+            ],
+            "Sid": "AllowCreateDeleteBucket"
+        },
+        {
+            "Action": [
+                "ec2:AllocateAddress",
+                "ec2:AttachInternetGateway",
+                "ec2:DetachInternetGateway",
+                "ec2:CreateInternetGateway",
+                "ec2:DeleteInternetGateway",
+                "ec2:CreateNatGateway",
+                "ec2:DeleteNatGateway",
+                "ec2:CreateRoute",
+                "ec2:DeleteRoute",
+                "ec2:CreateRouteTable",
+                "ec2:DeleteRouteTable",
+                "ec2:DisassociateRouteTable",
+                "ec2:AssociateRouteTable",
+                "ec2:AuthorizeSecurityGroupEgress",
+                "ec2:AuthorizeSecurityGroupIngress",
+                "ec2:RevokeSecurityGroupIngress",
+                "ec2:AuthorizeSecurityGroupEgress",
+                "ec2:CreateSecurityGroup",
+                "ec2:RevokeSecurityGroupEgress",
+                "ec2:DeleteSecurityGroup",
+                "ec2:DeleteSubnet",
+                "ec2:CreateNatGateway",
+                "ec2:CreateSubnet",
+                "ec2:CreateNatGateway",
+                "ec2:DeleteFlowLogs",
+                "ec2:CreateFlowLogs",
+                "ec2:DeleteSubnet",
+                "ec2:CreateVpc",
+                "ec2:AttachInternetGateway",
+                "ec2:DetachInternetGateway",
+                "ec2:DeleteVpc",
+                "ec2:CreateSubnet",
+                "ec2:ReleaseAddress",
+                "ec2:CreateTags",
+                "ec2:EnableEbsEncryptionByDefault",
+                "ec2:DisableEbsEncryptionByDefault"
+            ],
+            "Effect": "Allow",
+            "Resource": [
+                "!Sub arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:internet-gateway/*",
+                "!Sub arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:elastic-ip/*",
+                "!Sub arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:natgateway/*",
+                "!Sub arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:route-table/*",
+                "!Sub arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:subnet/subnet-*",
+                "!Sub arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:security-group-rule/*",
+                "!Sub arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:security-group/*",
+                "!Sub arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:subnet/*",
+                "!Sub arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:vpc-flow-log/*",
+                "!Sub arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:vpc/*"
+            ],
+            "Sid": "AllowEC2Actions"
+        },
+        {
+            "Action": [
+                "ec2:RunInstances",
+                "ec2:DeleteTags",
+                "ec2:CreateLaunchTemplate",
+                "ec2:CreateLaunchTemplateVersion",
+                "ec2:DeleteLaunchTemplate",
+                "ec2:DeleteLaunchTemplateVersions"
+            ],
+            "Effect": "Allow",
+            "Resource": [
+                "*"
+            ],
+            "Sid": "AllowEC2CreateTags"
+        },
+        {
+            "Action": [
+                "eks:DeleteCluster",
+                "eks:CreateCluster"
+            ],
+            "Effect": "Allow",
+            "Resource": [
+                "!Sub arn:aws:eks:${AWS::Region}:${AWS::AccountId}:cluster/opta-*"
+            ]
+        },
+        {
+            "Action": [
+                "kms:CreateAlias",
+                "kms:DeleteAlias",
+                "kms:EnableKeyRotation",
+                "kms:PutKeyPolicy",
+                "kms:ScheduleKeyDeletion",
+                "kms:TagResource",
+                "kms:UntagResource",
+                "kms:CreateGrant"
+            ],
+            "Effect": "Allow",
+            "Resource": [
+                "!Sub arn:aws:kms:${AWS::Region}:${AWS::AccountId}:alias/*",
+                "!Sub arn:aws:kms:${AWS::Region}:${AWS::AccountId}:key/*"
+            ],
+            "Sid": "AllowKMSActions"
+        },
+        {
+            "Action": [
+                "kms:CreateKey"
+            ],
+            "Effect": "Allow",
+            "Resource": [
+                "*"
+            ],
+            "Sid": "AllowKMSCreateKey"
+        },
+        {
+            "Action": [
+                "iam:DeleteOpenIDConnectProvider",
+                "iam:CreateOpenIDConnectProvider",
+                "iam:TagOpenIDConnectProvider",
+                "iam:UntagOpenIDConnectProvider",
+                "iam:CreatePolicy",
+                "iam:DeletePolicy",
+                "iam:TagPolicy",
+                "iam:UntagPolicy",
+                "iam:TagRole",
+                "iam:UntagRole",
+                "iam:CreateRole",
+                "iam:DeleteRole",
+                "iam:AttachRolePolicy",
+                "iam:PutRolePolicy",
+                "iam:DetachRolePolicy",
+                "iam:DeleteRolePolicy",
+                "iam:CreateInstanceProfile",
+                "iam:RemoveRoleFromInstanceProfile",
+                "iam:DeleteInstanceProfile",
+                "iam:TagInstanceProfile",
+                "iam:UntagInstanceProfile"
+            ],
+            "Effect": "Allow",
+            "Resource": [
+                "!Sub arn:aws:iam::${AWS::AccountId}:oidc-provider/*",
+                "!Sub arn:aws:iam::${AWS::AccountId}:policy/*",
+                "!Sub arn:aws:iam::${AWS::AccountId}:role/*",
+                "!Sub arn:aws:iam::${AWS::AccountId}:instance-profile/*"
+            ],
+            "Sid": "AllowIAMActions"
+        },
+        {
+            "Action": [
+                "autoscaling:CreateAutoScalingGroup",
+                "autoscaling:DeleteAutoScalingGroup",
+                "autoscaling:CreateLaunchConfiguration",
+                "autoscaling:SetInstanceProtection",
+                "autoscaling:DeleteTags"
+            ],
+            "Effect": "Allow",
+            "Resource": [
+                "*"
+            ],
+            "Sid": "AllowAutoScalingActions"
+        },
+        {
+            "Action": [
+                "ec2:CreateVpcEndpoint",
+                "ec2:DeleteVpcEndpoints",
+                "ec2:CreateTags"
+            ],
+            "Effect": "Allow",
+            "Resource": [
+                "!Sub arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:vpc/vpc*",
+                "!Sub arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:vpc-endpoint/*",
+                "!Sub arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:route-table/*",
+                "!Sub arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:subnet/*"
+            ],
+            "Sid": "AllowVpcEndpointActions"
+        }
+    ],
+    "Version": "2012-10-17"
+}

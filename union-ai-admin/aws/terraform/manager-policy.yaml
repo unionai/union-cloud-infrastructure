@@ -1,0 +1,87 @@
+{
+    "Statement": [
+        {
+            "Action": [
+                "ec2:ModifyEbsDefaultKmsKeyId"
+            ],
+            "Effect": "Allow",
+            "Resource": [
+                "*"
+            ],
+            "Sid": "AllowModifyEbsDefaultKmsKeyId"
+        },
+        {
+            "Action": [
+                "ec2:ModifyVpcEndpoint",
+                "ec2:ModifyVpcAttribute",
+                "ec2:ModifySubnetAttribute"
+            ],
+            "Effect": "Allow",
+            "Resource": [
+                "!Sub arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:internet-gateway/*",
+                "!Sub arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:elastic-ip/*",
+                "!Sub arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:natgateway/*",
+                "!Sub arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:route-table/*",
+                "!Sub arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:subnet/subnet-*",
+                "!Sub arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:security-group-rule/*",
+                "!Sub arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:security-group/*!Sub arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:subnet/*",
+                "!Sub arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:vpc-flow-log/*",
+                "!Sub arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:vpc/*"
+            ],
+            "Sid": "AllowModifyVpcEndpoint"
+        },
+        {
+            "Action": [
+                "ec2:ModifyLaunchTemplate"
+            ],
+            "Effect": "Allow",
+            "Resource": [
+                "*"
+            ],
+            "Sid": "AllowModifyLaunchTemplate"
+        },
+        {
+            "Action": [
+                "eks:UpdateNodegroupConfig",
+                "eks:UpdateNodegroupVersion",
+                "eks:UpdateClusterConfig",
+                "eks:UpdateClusterVersion"
+            ],
+            "Effect": "Allow",
+            "Resource": [
+                "!Sub arn:aws:eks:${AWS::Region}:${AWS::AccountId}:cluster/opta-*",
+                "!Sub arn:aws:eks:${AWS::Region}:${AWS::AccountId}:nodegroup/opta-*/opta-*/*",
+                "!Sub arn:aws:eks:${AWS::Region}:${AWS::AccountId}:nodegroup/opta-*"
+            ],
+            "Sid": "AllowUpdateClusterConfig"
+        },
+        {
+            "Action": [
+                "eks:CreateAddon",
+                "eks:UpdateAddon",
+                "eks:DeleteAddon",
+                "eks:DescribeAddonVersions",
+                "eks:DescribeAddon",
+                "eks:ListAddons"
+            ],
+            "Effect": "Allow",
+            "Resource": [
+                "!Sub arn:aws:eks:${AWS::Region}:${AWS::AccountId}:cluster/opta-*",
+                "!Sub arn:aws:eks:${AWS::Region}:${AWS::AccountId}:addon/opta-*/*/*"
+            ],
+            "Sid": "AllowUpdateAddon"
+        },
+        {
+            "Action": [
+                "autoscaling:UpdateAutoScalingGroup",
+                "autoscaling:CreateOrUpdateTags"
+            ],
+            "Effect": "Allow",
+            "Resource": [
+                "*"
+            ],
+            "Sid": "AllowUpdateAutoScalingGroup"
+        }
+    ],
+    "Version": "2012-10-17"
+}
