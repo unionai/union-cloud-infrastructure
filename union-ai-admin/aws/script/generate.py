@@ -696,7 +696,7 @@ def create_role(name, policy_arn):
 
 
 def main():
-    for role in ["reader", "manager", "provisioner"]:
+    for role in ["reader", "manager", "provisioner", "admin"]:
         template = Template()
         description = READER_CF_DESCRIPTION
         ref = [Ref(template.add_resource(create_read_policy(role)))]
@@ -708,13 +708,21 @@ def main():
             ref.append(Ref(template.add_resource(create_provisioner_policy(role))))
             description = PROVISIONER_CF_DESCRIPTION
 
+        if role == "admin":
+            description = PROVISIONER_CF_DESCRIPTION
+            ref.append(Ref(template.add_resource(create_provisioner_policy(role))))
+
         # This permission is required by Terraform for update/upgrade
-        if role == "manager" or role == "provisioner":
+        if role == "manager" or role == "provisioner" or role == "admin":
             ref.append(Ref(template.add_resource(create_manager_policy(role))))
             ref.append(Ref(template.add_resource(create_admin_policy(role))))
 
         template.set_description(description)
-        template.add_resource(create_role(f"unionai-{role}-role", ref))
+        file = f"unionai-{role}-role"
+        if role == "admin":
+            file = "union-ai-admin"
+
+        template.add_resource(create_role(file, ref))
 
         parent_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
         path = os.path.join(parent_dir, f"unionai-{role}-role.template.yaml")

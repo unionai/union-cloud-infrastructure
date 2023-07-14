@@ -2,15 +2,21 @@
 
 The Union.ai role Stack for AWS gives you a iam role and few policies. Union ai will use these roles for provisioning, management and debugging purpose.
 
-## Getting started
+### unionai-provisioner-stack
+CloudFormation template allows customers to create an initial provisioner role for provisioning the UnionAI infrastructure. Once the infrastructure is set up, the user can safely delete this role.
 
-jump straight in:
+[![Launch Stack](https://s3.amazonaws.com/cloudformation-examples/cloudformation-launch-stack.png)](https://s3.amazonaws.com/unionai-aws-stack/latest/unionai-provisioner-stack.yml)
 
-TDOD: Button
+#### Resources
+- It will create 3 policies:
+   - `read-policy`: This policy only provides permissions to list, get, and describe permissions.
+   - `manager-policy`: This policy will only provide permissions to modify a few resources, such as node groups, EKS versions, and some EC2 permissions.
+   - `provisioner-policy`: This policy only provides full administration permissions, including creating, deleting, tagging, and untagging resources.
+- It will create an AWS IAM role `unionai-provisioner-role` and attach all 3 policies to it.
 
-or If you want to use the [AWS CLI](https://aws.amazon.com/cli/)  then run the below command:
+#### AWS CLI Command
+To create the stack, use the following AWS CLI command:
 
-- `unionai-provisioner-stack`: This template allows the customer to create an provisioner role initially for provisioning the UnionAI infrastructure. Once the infrastructure is set up, the user can safely delete this role.
 ```bash
 aws cloudformation create-stack \
   --output text \
@@ -19,7 +25,20 @@ aws cloudformation create-stack \
   --capabilities CAPABILITY_IAM CAPABILITY_NAMED_IAM CAPABILITY_AUTO_EXPAND
 ```
 
-- `unionai-manager-stack`: This template enables the customer to create a role for management purposes, without granting create/delete/tag/untag permissions.
+### unionai-manager-stack
+CloudFormation template allows customers to create a manager role for managing the UnionAI infrastructure. The manager role provides permissions to modify specific resources and perform management tasks within the infrastructure.
+
+[![Launch Stack](https://s3.amazonaws.com/cloudformation-examples/cloudformation-launch-stack.png)](https://s3.amazonaws.com/unionai-aws-stack/latest/unionai-manager-stack.yml)
+
+#### Resources
+- It will create 2 policies:
+   - `read-policy`: This policy provides permissions to list, get, and describe resources.
+   - `manager-policy`: This policy provides permissions to modify specific resources such as node groups, EKS versions, and certain EC2 permissions.
+- It will create an AWS IAM role `unionai-manager-role` and attach all policies to it.
+
+#### AWS CLI Command
+To create the stack, use the following AWS CLI command:
+
 ```bash
 aws cloudformation create-stack \
   --output text \
@@ -28,7 +47,17 @@ aws cloudformation create-stack \
   --capabilities CAPABILITY_IAM CAPABILITY_NAMED_IAM CAPABILITY_AUTO_EXPAND
 ```
 
-- `unionai-reader-stack`: This template enables the customer to create a role for debug purposes.
+### unionai-reader-stack:
+CloudFormation template allows customers to create a reader role for accessing and viewing resources within the UnionAI infrastructure. The reader role provides read-only permissions, allowing users to list, get, and describe resources without the ability to modify or make changes.
+
+[![Launch Stack](https://s3.amazonaws.com/cloudformation-examples/cloudformation-launch-stack.png)](https://s3.amazonaws.com/unionai-aws-stack/latest/unionai-reader-stack.yml)
+
+#### Resources
+- It will create a policy named `read-policy` that provides permissions to list, get, and describe resources.
+- It will create an AWS IAM role `unionai-reader-role` and attach the `read-policy` to it.
+
+#### AWS CLI Command
+To create the stack, use the following AWS CLI command:
 
 ```bash
 aws cloudformation create-stack \
