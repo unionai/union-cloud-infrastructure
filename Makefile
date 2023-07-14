@@ -10,6 +10,10 @@ lint:
 generate: requirements
 	python union-ai-admin/aws/script/generate.py
 
+.PHONY: black
+black: requirements
+	black --check union-ai-admin/aws/script/generate.py
+
 .PHONY: create-stack
 create-stack: requirements generate lint
 	aws cloudformation create-stack \
