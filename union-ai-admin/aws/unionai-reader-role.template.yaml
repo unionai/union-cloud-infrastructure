@@ -26,18 +26,16 @@ Resources:
               - logs:DescribeLogStreams
             Effect: Allow
             Resource:
-              - '!Sub arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:opta-*'
-              - '!Sub arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group::log-stream*'
-              - '!Sub arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/eks/opta-*:*'
-            Sid: AllowDescribeLogGroups
+              - !Sub 'arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:opta-*'
+              - !Sub 'arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group::log-stream*'
+              - !Sub 'arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/eks/opta-*:*'
           - Action:
               - logs:ListTagsLogGroup
             Effect: Allow
             Resource:
-              - '!Sub arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:opta-*'
-              - '!Sub arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group::log-stream*'
-              - '!Sub arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/eks/opta-*:*'
-            Sid: AllowListTagsLogGroup
+              - !Sub 'arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:opta-*'
+              - !Sub 'arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group::log-stream*'
+              - !Sub 'arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/eks/opta-*:*'
           - Action:
               - s3:GetBucketLogging
               - s3:GetAccelerateConfiguration
@@ -46,7 +44,6 @@ Resources:
             Effect: Allow
             Resource:
               - arn:aws:s3:::opta-*
-            Sid: AllowGetBucketLogging
           - Action:
               - autoscaling:DescribeAutoScalingGroups
               - autoscaling:DescribeScalingActivities
@@ -54,41 +51,38 @@ Resources:
             Effect: Allow
             Resource:
               - '*'
-            Sid: AllowDescribeAutoScalingGroups
           - Action:
               - eks:DescribeCluster
               - eks:DescribeNodegroup
               - eks:DescribeUpdate
             Effect: Allow
             Resource:
-              - '!Sub arn:aws:eks:${AWS::Region}:${AWS::AccountId}:cluster/opta-*!Sub arn:aws:eks:${AWS::Region}:${AWS::AccountId}:nodegroup/opta-*/opta-*/*'
-              - '!Sub arn:aws:eks:${AWS::Region}:${AWS::AccountId}:nodegroup/opta-*/opta-*/*'
-            Sid: AllowDescribeCluster
+              - !Sub 'arn:aws:eks:${AWS::Region}:${AWS::AccountId}:cluster/opta-*'
+              - !Sub 'arn:aws:eks:${AWS::Region}:${AWS::AccountId}:nodegroup/opta-*/opta-*/*'
+              - !Sub 'arn:aws:eks:${AWS::Region}:${AWS::AccountId}:nodegroup/opta-*'
           - Action:
               - eks:ListTagsForResource
               - eks:ListNodegroups
               - eks:ListTagsForResource
             Effect: Allow
             Resource:
-              - '!Sub arn:aws:eks:${AWS::Region}:${AWS::AccountId}:cluster/opta-*!Sub arn:aws:eks:${AWS::Region}:${AWS::AccountId}:nodegroup/opta-*/opta-*/*'
-              - '!Sub arn:aws:eks:${AWS::Region}:${AWS::AccountId}:nodegroup/opta-*/opta-*/*'
-            Sid: AllowListTagsForEKS
+              - !Sub 'arn:aws:eks:${AWS::Region}:${AWS::AccountId}:cluster/opta-*'
+              - !Sub 'arn:aws:eks:${AWS::Region}:${AWS::AccountId}:nodegroup/opta-*/opta-*/*'
+              - !Sub 'arn:aws:eks:${AWS::Region}:${AWS::AccountId}:nodegroup/opta-*'
           - Action:
               - kms:GetKeyPolicy
               - kms:GetKeyRotationStatus
               - kms:DescribeKey
             Effect: Allow
             Resource:
-              - '!Sub arn:aws:kms:${AWS::Region}:${AWS::AccountId}:alias/*'
-              - '!Sub arn:aws:kms:${AWS::Region}:${AWS::AccountId}:key/*'
-            Sid: AllowGetKeyPolicy
+              - !Sub 'arn:aws:kms:${AWS::Region}:${AWS::AccountId}:alias/*'
+              - !Sub 'arn:aws:kms:${AWS::Region}:${AWS::AccountId}:key/*'
           - Action:
               - kms:ListResourceTags
               - kms:ListAliases
             Effect: Allow
             Resource:
               - '*'
-            Sid: AllowListResourceTags
           - Action:
               - iam:GetOpenIDConnectProvider
               - iam:GetPolicyVersion
@@ -98,11 +92,10 @@ Resources:
               - iam:GetInstanceProfile
             Effect: Allow
             Resource:
-              - '!Sub arn:aws:iam::${AWS::AccountId}:oidc-provider/*'
-              - '!Sub arn:aws:iam::${AWS::AccountId}:policy/*'
-              - '!Sub arn:aws:iam::${AWS::AccountId}:role/*'
-              - '!Sub arn:aws:iam::${AWS::AccountId}:instance-profile/*'
-            Sid: AllowGetIAM
+              - !Sub 'arn:aws:iam::${AWS::AccountId}:oidc-provider/*'
+              - !Sub 'arn:aws:iam::${AWS::AccountId}:policy/*'
+              - !Sub 'arn:aws:iam::${AWS::AccountId}:role/*'
+              - !Sub 'arn:aws:iam::${AWS::AccountId}:instance-profile/*'
           - Action:
               - iam:ListOpenIDConnectProviderTags
               - iam:ListPolicyVersions
@@ -115,11 +108,10 @@ Resources:
               - iam:ListAttachedRolePolicies
             Effect: Allow
             Resource:
-              - '!Sub arn:aws:iam::${AWS::AccountId}:oidc-provider/*'
-              - '!Sub arn:aws:iam::${AWS::AccountId}:policy/*'
-              - '!Sub arn:aws:iam::${AWS::AccountId}:role/*'
-              - '!Sub arn:aws:iam::${AWS::AccountId}:instance-profile/*'
-            Sid: AllowListIAM
+              - !Sub 'arn:aws:iam::${AWS::AccountId}:oidc-provider/*'
+              - !Sub 'arn:aws:iam::${AWS::AccountId}:policy/*'
+              - !Sub 'arn:aws:iam::${AWS::AccountId}:role/*'
+              - !Sub 'arn:aws:iam::${AWS::AccountId}:instance-profile/*'
           - Action:
               - ec2:DescribeAccountAttributes
               - ec2:DescribeAddresses
@@ -149,6 +141,5 @@ Resources:
             Effect: Allow
             Resource:
               - '*'
-            Sid: AllowDescribeAccountAttributes
         Version: '2012-10-17'
     Type: AWS::IAM::ManagedPolicy

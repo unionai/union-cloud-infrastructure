@@ -31,9 +31,9 @@ Resources:
               - eks:DeleteNodegroup
             Effect: Allow
             Resource:
-              - '!Sub arn:aws:eks:${AWS::Region}:${AWS::AccountId}:cluster/opta-*'
-              - '!Sub arn:aws:eks:${AWS::Region}:${AWS::AccountId}:nodegroup/opta-*/opta-*/*'
-              - '!Sub arn:aws:eks:${AWS::Region}:${AWS::AccountId}:nodegroup/opta-*'
+              - !Sub 'arn:aws:eks:${AWS::Region}:${AWS::AccountId}:cluster/opta-*'
+              - !Sub 'arn:aws:eks:${AWS::Region}:${AWS::AccountId}:nodegroup/opta-*/opta-*/*'
+              - !Sub 'arn:aws:eks:${AWS::Region}:${AWS::AccountId}:nodegroup/opta-*'
           - Action:
               - s3:*
             Effect: Allow
@@ -44,8 +44,8 @@ Resources:
               - iam:PassRole
             Effect: Allow
             Resource:
-              - '!Sub arn:aws:iam::${AWS::AccountId}:policy/*'
-              - '!Sub arn:aws:iam::${AWS::AccountId}:role/*'
+              - !Sub 'arn:aws:iam::${AWS::AccountId}:policy/*'
+              - !Sub 'arn:aws:iam::${AWS::AccountId}:role/*'
           - Action:
               - autoscaling:CreateOrUpdateTags
               - autoscaling:DeleteTags
@@ -62,7 +62,7 @@ Resources:
               - dynamodb:*
             Effect: Allow
             Resource:
-              - '!Sub arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/opta-*'
+              - !Sub 'arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/opta-*'
         Version: '2012-10-17'
     Type: AWS::IAM::ManagedPolicy
   UnionaiManagerPermission:
@@ -71,33 +71,34 @@ Resources:
       PolicyDocument:
         Statement:
           - Action:
+              - ec2:ModifySubnetAttribute
+              - ec2:ModifyVpcAttribute
               - ec2:ModifyEbsDefaultKmsKeyId
             Effect: Allow
             Resource:
-              - '*'
-            Sid: AllowModifyEbsDefaultKmsKeyId
+              - !Sub 'arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:internet-gateway/*'
+              - !Sub 'arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:elastic-ip/*'
+              - !Sub 'arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:natgateway/*'
+              - !Sub 'arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:route-table/*'
+              - !Sub 'arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:subnet/subnet-*'
+              - !Sub 'arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:security-group-rule/*'
+              - !Sub 'arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:security-group/*'
+              - !Sub 'arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:subnet/*'
+              - !Sub 'arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:vpc-flow-log/*'
+              - !Sub 'arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:vpc/*'
           - Action:
               - ec2:ModifyVpcEndpoint
-              - ec2:ModifyVpcAttribute
-              - ec2:ModifySubnetAttribute
             Effect: Allow
             Resource:
-              - '!Sub arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:internet-gateway/*'
-              - '!Sub arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:elastic-ip/*'
-              - '!Sub arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:natgateway/*'
-              - '!Sub arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:route-table/*'
-              - '!Sub arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:subnet/subnet-*'
-              - '!Sub arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:security-group-rule/*'
-              - '!Sub arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:security-group/*!Sub arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:subnet/*'
-              - '!Sub arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:vpc-flow-log/*'
-              - '!Sub arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:vpc/*'
-            Sid: AllowModifyVpcEndpoint
+              - !Sub 'arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:vpc/vpc*'
+              - !Sub 'arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:vpc/vpc-endpoint/*'
+              - !Sub 'arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:route-table/*'
+              - !Sub 'arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:subnet/*'
           - Action:
               - ec2:ModifyLaunchTemplate
             Effect: Allow
             Resource:
               - '*'
-            Sid: AllowModifyLaunchTemplate
           - Action:
               - eks:UpdateNodegroupConfig
               - eks:UpdateNodegroupVersion
@@ -105,10 +106,15 @@ Resources:
               - eks:UpdateClusterVersion
             Effect: Allow
             Resource:
-              - '!Sub arn:aws:eks:${AWS::Region}:${AWS::AccountId}:cluster/opta-*'
-              - '!Sub arn:aws:eks:${AWS::Region}:${AWS::AccountId}:nodegroup/opta-*/opta-*/*'
-              - '!Sub arn:aws:eks:${AWS::Region}:${AWS::AccountId}:nodegroup/opta-*'
-            Sid: AllowUpdateClusterConfig
+              - !Sub 'arn:aws:eks:${AWS::Region}:${AWS::AccountId}:cluster/opta-*'
+              - !Sub 'arn:aws:eks:${AWS::Region}:${AWS::AccountId}:nodegroup/opta-*/opta-*/*'
+              - !Sub 'arn:aws:eks:${AWS::Region}:${AWS::AccountId}:nodegroup/opta-*'
+          - Action:
+              - autoscaling:UpdateAutoScalingGroup
+              - autoscaling:CreateOrUpdateTags
+            Effect: Allow
+            Resource:
+              - '*'
           - Action:
               - eks:CreateAddon
               - eks:UpdateAddon
@@ -118,16 +124,8 @@ Resources:
               - eks:ListAddons
             Effect: Allow
             Resource:
-              - '!Sub arn:aws:eks:${AWS::Region}:${AWS::AccountId}:cluster/opta-*'
-              - '!Sub arn:aws:eks:${AWS::Region}:${AWS::AccountId}:addon/opta-*/*/*'
-            Sid: AllowUpdateAddon
-          - Action:
-              - autoscaling:UpdateAutoScalingGroup
-              - autoscaling:CreateOrUpdateTags
-            Effect: Allow
-            Resource:
-              - '*'
-            Sid: AllowUpdateAutoScalingGroup
+              - !Sub 'arn:aws:eks:${AWS::Region}:${AWS::AccountId}:cluster/opta-*'
+              - !Sub 'arn:aws:eks:${AWS::Region}:${AWS::AccountId}:addon/opta-*/*/*'
         Version: '2012-10-17'
     Type: AWS::IAM::ManagedPolicy
   UnionaiProvisionerPermission:
@@ -142,10 +140,9 @@ Resources:
               - logs:PutRetentionPolicy
             Effect: Allow
             Resource:
-              - '!Sub arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:opta-*'
-              - '!Sub arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group::log-stream*'
-              - '!Sub arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/eks/opta-*:*'
-            Sid: AllowTagLogGroup
+              - !Sub 'arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:opta-*'
+              - !Sub 'arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group::log-stream*'
+              - !Sub 'arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/eks/opta-*:*'
           - Action:
               - s3:CreateBucket
               - s3:DeleteBucketPolicy
@@ -154,7 +151,6 @@ Resources:
             Effect: Allow
             Resource:
               - arn:aws:s3:::opta-*
-            Sid: AllowCreateDeleteBucket
           - Action:
               - ec2:AllocateAddress
               - ec2:AttachInternetGateway
@@ -194,17 +190,16 @@ Resources:
               - ec2:DisableEbsEncryptionByDefault
             Effect: Allow
             Resource:
-              - '!Sub arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:internet-gateway/*'
-              - '!Sub arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:elastic-ip/*'
-              - '!Sub arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:natgateway/*'
-              - '!Sub arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:route-table/*'
-              - '!Sub arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:subnet/subnet-*'
-              - '!Sub arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:security-group-rule/*'
-              - '!Sub arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:security-group/*'
-              - '!Sub arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:subnet/*'
-              - '!Sub arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:vpc-flow-log/*'
-              - '!Sub arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:vpc/*'
-            Sid: AllowEC2Actions
+              - !Sub 'arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:internet-gateway/*'
+              - !Sub 'arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:elastic-ip/*'
+              - !Sub 'arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:natgateway/*'
+              - !Sub 'arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:route-table/*'
+              - !Sub 'arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:subnet/subnet-*'
+              - !Sub 'arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:security-group-rule/*'
+              - !Sub 'arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:security-group/*'
+              - !Sub 'arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:subnet/*'
+              - !Sub 'arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:vpc-flow-log/*'
+              - !Sub 'arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:vpc/*'
           - Action:
               - ec2:RunInstances
               - ec2:DeleteTags
@@ -215,13 +210,12 @@ Resources:
             Effect: Allow
             Resource:
               - '*'
-            Sid: AllowEC2CreateTags
           - Action:
               - eks:DeleteCluster
               - eks:CreateCluster
             Effect: Allow
             Resource:
-              - '!Sub arn:aws:eks:${AWS::Region}:${AWS::AccountId}:cluster/opta-*'
+              - !Sub 'arn:aws:eks:${AWS::Region}:${AWS::AccountId}:cluster/opta-*'
           - Action:
               - kms:CreateAlias
               - kms:DeleteAlias
@@ -233,15 +227,13 @@ Resources:
               - kms:CreateGrant
             Effect: Allow
             Resource:
-              - '!Sub arn:aws:kms:${AWS::Region}:${AWS::AccountId}:alias/*'
-              - '!Sub arn:aws:kms:${AWS::Region}:${AWS::AccountId}:key/*'
-            Sid: AllowKMSActions
+              - !Sub 'arn:aws:kms:${AWS::Region}:${AWS::AccountId}:alias/*'
+              - !Sub 'arn:aws:kms:${AWS::Region}:${AWS::AccountId}:key/*'
           - Action:
               - kms:CreateKey
             Effect: Allow
             Resource:
               - '*'
-            Sid: AllowKMSCreateKey
           - Action:
               - iam:DeleteOpenIDConnectProvider
               - iam:CreateOpenIDConnectProvider
@@ -266,11 +258,10 @@ Resources:
               - iam:UntagInstanceProfile
             Effect: Allow
             Resource:
-              - '!Sub arn:aws:iam::${AWS::AccountId}:oidc-provider/*'
-              - '!Sub arn:aws:iam::${AWS::AccountId}:policy/*'
-              - '!Sub arn:aws:iam::${AWS::AccountId}:role/*'
-              - '!Sub arn:aws:iam::${AWS::AccountId}:instance-profile/*'
-            Sid: AllowIAMActions
+              - !Sub 'arn:aws:iam::${AWS::AccountId}:oidc-provider/*'
+              - !Sub 'arn:aws:iam::${AWS::AccountId}:policy/*'
+              - !Sub 'arn:aws:iam::${AWS::AccountId}:role/*'
+              - !Sub 'arn:aws:iam::${AWS::AccountId}:instance-profile/*'
           - Action:
               - autoscaling:CreateAutoScalingGroup
               - autoscaling:DeleteAutoScalingGroup
@@ -280,18 +271,16 @@ Resources:
             Effect: Allow
             Resource:
               - '*'
-            Sid: AllowAutoScalingActions
           - Action:
               - ec2:CreateVpcEndpoint
               - ec2:DeleteVpcEndpoints
               - ec2:CreateTags
             Effect: Allow
             Resource:
-              - '!Sub arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:vpc/vpc*'
-              - '!Sub arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:vpc-endpoint/*'
-              - '!Sub arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:route-table/*'
-              - '!Sub arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:subnet/*'
-            Sid: AllowVpcEndpointActions
+              - !Sub 'arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:vpc/vpc*'
+              - !Sub 'arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:vpc-endpoint/*'
+              - !Sub 'arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:route-table/*'
+              - !Sub 'arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:subnet/*'
         Version: '2012-10-17'
     Type: AWS::IAM::ManagedPolicy
   UnionaiReaderPermission:
@@ -305,18 +294,16 @@ Resources:
               - logs:DescribeLogStreams
             Effect: Allow
             Resource:
-              - '!Sub arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:opta-*'
-              - '!Sub arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group::log-stream*'
-              - '!Sub arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/eks/opta-*:*'
-            Sid: AllowDescribeLogGroups
+              - !Sub 'arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:opta-*'
+              - !Sub 'arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group::log-stream*'
+              - !Sub 'arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/eks/opta-*:*'
           - Action:
               - logs:ListTagsLogGroup
             Effect: Allow
             Resource:
-              - '!Sub arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:opta-*'
-              - '!Sub arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group::log-stream*'
-              - '!Sub arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/eks/opta-*:*'
-            Sid: AllowListTagsLogGroup
+              - !Sub 'arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:opta-*'
+              - !Sub 'arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group::log-stream*'
+              - !Sub 'arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/eks/opta-*:*'
           - Action:
               - s3:GetBucketLogging
               - s3:GetAccelerateConfiguration
@@ -325,7 +312,6 @@ Resources:
             Effect: Allow
             Resource:
               - arn:aws:s3:::opta-*
-            Sid: AllowGetBucketLogging
           - Action:
               - autoscaling:DescribeAutoScalingGroups
               - autoscaling:DescribeScalingActivities
@@ -333,41 +319,38 @@ Resources:
             Effect: Allow
             Resource:
               - '*'
-            Sid: AllowDescribeAutoScalingGroups
           - Action:
               - eks:DescribeCluster
               - eks:DescribeNodegroup
               - eks:DescribeUpdate
             Effect: Allow
             Resource:
-              - '!Sub arn:aws:eks:${AWS::Region}:${AWS::AccountId}:cluster/opta-*!Sub arn:aws:eks:${AWS::Region}:${AWS::AccountId}:nodegroup/opta-*/opta-*/*'
-              - '!Sub arn:aws:eks:${AWS::Region}:${AWS::AccountId}:nodegroup/opta-*/opta-*/*'
-            Sid: AllowDescribeCluster
+              - !Sub 'arn:aws:eks:${AWS::Region}:${AWS::AccountId}:cluster/opta-*'
+              - !Sub 'arn:aws:eks:${AWS::Region}:${AWS::AccountId}:nodegroup/opta-*/opta-*/*'
+              - !Sub 'arn:aws:eks:${AWS::Region}:${AWS::AccountId}:nodegroup/opta-*'
           - Action:
               - eks:ListTagsForResource
               - eks:ListNodegroups
               - eks:ListTagsForResource
             Effect: Allow
             Resource:
-              - '!Sub arn:aws:eks:${AWS::Region}:${AWS::AccountId}:cluster/opta-*!Sub arn:aws:eks:${AWS::Region}:${AWS::AccountId}:nodegroup/opta-*/opta-*/*'
-              - '!Sub arn:aws:eks:${AWS::Region}:${AWS::AccountId}:nodegroup/opta-*/opta-*/*'
-            Sid: AllowListTagsForEKS
+              - !Sub 'arn:aws:eks:${AWS::Region}:${AWS::AccountId}:cluster/opta-*'
+              - !Sub 'arn:aws:eks:${AWS::Region}:${AWS::AccountId}:nodegroup/opta-*/opta-*/*'
+              - !Sub 'arn:aws:eks:${AWS::Region}:${AWS::AccountId}:nodegroup/opta-*'
           - Action:
               - kms:GetKeyPolicy
               - kms:GetKeyRotationStatus
               - kms:DescribeKey
             Effect: Allow
             Resource:
-              - '!Sub arn:aws:kms:${AWS::Region}:${AWS::AccountId}:alias/*'
-              - '!Sub arn:aws:kms:${AWS::Region}:${AWS::AccountId}:key/*'
-            Sid: AllowGetKeyPolicy
+              - !Sub 'arn:aws:kms:${AWS::Region}:${AWS::AccountId}:alias/*'
+              - !Sub 'arn:aws:kms:${AWS::Region}:${AWS::AccountId}:key/*'
           - Action:
               - kms:ListResourceTags
               - kms:ListAliases
             Effect: Allow
             Resource:
               - '*'
-            Sid: AllowListResourceTags
           - Action:
               - iam:GetOpenIDConnectProvider
               - iam:GetPolicyVersion
@@ -377,11 +360,10 @@ Resources:
               - iam:GetInstanceProfile
             Effect: Allow
             Resource:
-              - '!Sub arn:aws:iam::${AWS::AccountId}:oidc-provider/*'
-              - '!Sub arn:aws:iam::${AWS::AccountId}:policy/*'
-              - '!Sub arn:aws:iam::${AWS::AccountId}:role/*'
-              - '!Sub arn:aws:iam::${AWS::AccountId}:instance-profile/*'
-            Sid: AllowGetIAM
+              - !Sub 'arn:aws:iam::${AWS::AccountId}:oidc-provider/*'
+              - !Sub 'arn:aws:iam::${AWS::AccountId}:policy/*'
+              - !Sub 'arn:aws:iam::${AWS::AccountId}:role/*'
+              - !Sub 'arn:aws:iam::${AWS::AccountId}:instance-profile/*'
           - Action:
               - iam:ListOpenIDConnectProviderTags
               - iam:ListPolicyVersions
@@ -394,11 +376,10 @@ Resources:
               - iam:ListAttachedRolePolicies
             Effect: Allow
             Resource:
-              - '!Sub arn:aws:iam::${AWS::AccountId}:oidc-provider/*'
-              - '!Sub arn:aws:iam::${AWS::AccountId}:policy/*'
-              - '!Sub arn:aws:iam::${AWS::AccountId}:role/*'
-              - '!Sub arn:aws:iam::${AWS::AccountId}:instance-profile/*'
-            Sid: AllowListIAM
+              - !Sub 'arn:aws:iam::${AWS::AccountId}:oidc-provider/*'
+              - !Sub 'arn:aws:iam::${AWS::AccountId}:policy/*'
+              - !Sub 'arn:aws:iam::${AWS::AccountId}:role/*'
+              - !Sub 'arn:aws:iam::${AWS::AccountId}:instance-profile/*'
           - Action:
               - ec2:DescribeAccountAttributes
               - ec2:DescribeAddresses
@@ -428,6 +409,5 @@ Resources:
             Effect: Allow
             Resource:
               - '*'
-            Sid: AllowDescribeAccountAttributes
         Version: '2012-10-17'
     Type: AWS::IAM::ManagedPolicy
