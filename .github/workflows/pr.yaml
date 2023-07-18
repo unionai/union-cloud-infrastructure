@@ -20,7 +20,7 @@ jobs:
           python-version: '3.10'
       - name: Lint
         run: |
-          make black
+          make lint
         env:
           PYTHONPATH: $(pwd)
 
@@ -34,6 +34,6 @@ jobs:
           python-version: '3.10'
       - name: Lint
         run: |
-          make lint
+          make cf-lint
         env:
           PYTHONPATH: $(pwd)

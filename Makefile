@@ -2,20 +2,20 @@
 requirements:
 	pip install -r requirements.txt
 
-.PHONY: lint
-lint: requirements
+.PHONY: cf-lint
+cf-lint: requirements
 	cfn-lint ./union-ai-admin/aws/*.yaml
 
 .PHONY: generate
-generate: requirements
+generate:
 	python union-ai-admin/aws/script/generate.py
 
-.PHONY: black
-black: requirements
+.PHONY: lint
+lint: requirements
 	black --check union-ai-admin/aws/script/generate.py
 
 .PHONY: create-stack
-create-stack: requirements generate lint
+create-stack: requirements lint generate cf-lint
 	aws cloudformation create-stack \
 	  --output text \
 	  --stack-name unionai-provisioner-stack \
