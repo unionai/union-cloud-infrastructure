@@ -10,10 +10,7 @@ from awacs.sts import AssumeRole
 from troposphere import Ref, Sub, Template
 from troposphere.iam import Role, ManagedPolicy, PolicyType
 
-import yaml
 import os
-import string
-import random
 
 # Description for the reader IAM role CloudFormation template
 READER_CF_DESCRIPTION = (
@@ -109,7 +106,11 @@ def create_read_policy(role_type):
                     Action=[
                         Action("cloudfront", "GetCloudFrontOriginAccessIdentity"),
                     ],
-                    Resource=[Sub("arn:aws:cloudfront::${AWS::AccountId}:origin-access-identity/*")],
+                    Resource=[
+                        Sub(
+                            "arn:aws:cloudfront::${AWS::AccountId}:origin-access-identity/*"
+                        )
+                    ],
                 ),
                 Statement(
                     Effect=Allow,
@@ -418,9 +419,13 @@ def create_provisioner_policy(role_type):
                     Effect=Allow,
                     Action=[
                         Action("cloudfront", "CreateCloudFrontOriginAccessIdentity"),
-	                    Action("cloudfront", "DeleteCloudFrontOriginAccessIdentity"),
+                        Action("cloudfront", "DeleteCloudFrontOriginAccessIdentity"),
                     ],
-                    Resource=[Sub("arn:aws:cloudfront::${AWS::AccountId}:origin-access-identity/*")],
+                    Resource=[
+                        Sub(
+                            "arn:aws:cloudfront::${AWS::AccountId}:origin-access-identity/*"
+                        )
+                    ],
                 ),
                 Statement(
                     Effect=Allow,
