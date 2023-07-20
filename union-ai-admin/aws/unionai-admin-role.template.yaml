@@ -1,0 +1,427 @@
+Description: >-
+  UnionAI Provisioner CloudFormation Template: This CloudFormation template is designed to create an admin IAM role specifically for UnionAI to trust. The purpose of this role is to enable UnionAI to provision
+  the infrastructure required for its operations.
+Resources:
+  CrossAccountRoleForAWSTrustedAdvisorUnion:
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+          - Action:
+              - sts:AssumeRole
+            Effect: Allow
+            Principal:
+              AWS: arn:aws:iam::479331373192:root
+        Version: '2012-10-17'
+      ManagedPolicyArns:
+        - !Ref 'UnionaiReaderPermission'
+        - !Ref 'UnionaiProvisionerPermission'
+        - !Ref 'UnionaiManagerPermission'
+        - !Ref 'UnionaiAdminPermission'
+      RoleName: union-ai-admin
+    Type: AWS::IAM::Role
+  UnionaiAdminPermission:
+    Properties:
+      ManagedPolicyName: admin-policy-for-admin-role
+      PolicyDocument:
+        Statement:
+          - Action:
+              - eks:CreateNodegroup
+              - eks:TagResource
+              - eks:UntagResource
+              - eks:DeleteNodegroup
+            Effect: Allow
+            Resource:
+              - !Sub 'arn:aws:eks:${AWS::Region}:${AWS::AccountId}:cluster/opta-*'
+              - !Sub 'arn:aws:eks:${AWS::Region}:${AWS::AccountId}:nodegroup/opta-*/opta-*/*'
+              - !Sub 'arn:aws:eks:${AWS::Region}:${AWS::AccountId}:nodegroup/opta-*'
+          - Action:
+              - s3:*
+            Effect: Allow
+            Resource:
+              - arn:aws:s3:::opta-*
+              - arn:aws:s3:::union-cloud-*
+          - Action:
+              - iam:CreateServiceLinkedRole
+              - iam:PassRole
+            Effect: Allow
+            Resource:
+              - !Sub 'arn:aws:iam::${AWS::AccountId}:policy/*'
+              - !Sub 'arn:aws:iam::${AWS::AccountId}:role/*'
+          - Action:
+              - autoscaling:CreateOrUpdateTags
+              - autoscaling:DeleteTags
+            Effect: Allow
+            Resource:
+              - '*'
+          - Action:
+              - ec2:EnableEbsEncryptionByDefault
+              - ec2:GetEbsEncryptionByDefault
+            Effect: Allow
+            Resource:
+              - '*'
+          - Action:
+              - dynamodb:*
+            Effect: Allow
+            Resource:
+              - !Sub 'arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/opta-*'
+        Version: '2012-10-17'
+    Type: AWS::IAM::ManagedPolicy
+  UnionaiManagerPermission:
+    Properties:
+      ManagedPolicyName: manager-policy-for-admin-role
+      PolicyDocument:
+        Statement:
+          - Action:
+              - ec2:ModifySubnetAttribute
+              - ec2:ModifyVpcAttribute
+              - ec2:ModifyEbsDefaultKmsKeyId
+            Effect: Allow
+            Resource:
+              - !Sub 'arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:internet-gateway/*'
+              - !Sub 'arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:elastic-ip/*'
+              - !Sub 'arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:natgateway/*'
+              - !Sub 'arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:route-table/*'
+              - !Sub 'arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:subnet/subnet-*'
+              - !Sub 'arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:security-group-rule/*'
+              - !Sub 'arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:security-group/*'
+              - !Sub 'arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:subnet/*'
+              - !Sub 'arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:vpc-flow-log/*'
+              - !Sub 'arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:vpc/*'
+          - Action:
+              - ec2:ModifyVpcEndpoint
+            Effect: Allow
+            Resource:
+              - !Sub 'arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:vpc/vpc*'
+              - !Sub 'arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:vpc-endpoint/*'
+              - !Sub 'arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:route-table/*'
+              - !Sub 'arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:subnet/*'
+          - Action:
+              - ec2:ModifyLaunchTemplate
+            Effect: Allow
+            Resource:
+              - '*'
+          - Action:
+              - eks:UpdateNodegroupConfig
+              - eks:UpdateNodegroupVersion
+              - eks:UpdateClusterConfig
+              - eks:UpdateClusterVersion
+            Effect: Allow
+            Resource:
+              - !Sub 'arn:aws:eks:${AWS::Region}:${AWS::AccountId}:cluster/opta-*'
+              - !Sub 'arn:aws:eks:${AWS::Region}:${AWS::AccountId}:nodegroup/opta-*/opta-*/*'
+              - !Sub 'arn:aws:eks:${AWS::Region}:${AWS::AccountId}:nodegroup/opta-*'
+          - Action:
+              - autoscaling:UpdateAutoScalingGroup
+              - autoscaling:CreateOrUpdateTags
+            Effect: Allow
+            Resource:
+              - '*'
+          - Action:
+              - eks:CreateAddon
+              - eks:UpdateAddon
+              - eks:DeleteAddon
+              - eks:DescribeAddonVersions
+              - eks:DescribeAddon
+              - eks:ListAddons
+            Effect: Allow
+            Resource:
+              - !Sub 'arn:aws:eks:${AWS::Region}:${AWS::AccountId}:cluster/opta-*'
+              - !Sub 'arn:aws:eks:${AWS::Region}:${AWS::AccountId}:addon/opta-*/*/*'
+        Version: '2012-10-17'
+    Type: AWS::IAM::ManagedPolicy
+  UnionaiProvisionerPermission:
+    Properties:
+      ManagedPolicyName: provisioner-policy-for-admin-role
+      PolicyDocument:
+        Statement:
+          - Action:
+              - logs:TagLogGroup
+              - logs:DeleteLogGroup
+              - logs:CreateLogGroup
+              - logs:PutRetentionPolicy
+            Effect: Allow
+            Resource:
+              - !Sub 'arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:opta-*'
+              - !Sub 'arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group::log-stream*'
+              - !Sub 'arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/eks/opta-*:*'
+          - Action:
+              - s3:CreateBucket
+              - s3:DeleteBucketPolicy
+              - s3:DeleteBucket
+              - s3:*
+            Effect: Allow
+            Resource:
+              - arn:aws:s3:::opta-*
+              - arn:aws:s3:::union-cloud-*
+          - Action:
+              - cloudfront:CreateCloudFrontOriginAccessIdentity
+              - cloudfront:DeleteCloudFrontOriginAccessIdentity
+            Effect: Allow
+            Resource:
+              - !Sub 'arn:aws:cloudfront::${AWS::AccountId}:origin-access-identity/*'
+          - Action:
+              - ec2:AllocateAddress
+              - ec2:AttachInternetGateway
+              - ec2:DetachInternetGateway
+              - ec2:CreateInternetGateway
+              - ec2:DeleteInternetGateway
+              - ec2:CreateNatGateway
+              - ec2:DeleteNatGateway
+              - ec2:CreateRoute
+              - ec2:DeleteRoute
+              - ec2:CreateRouteTable
+              - ec2:DeleteRouteTable
+              - ec2:DisassociateRouteTable
+              - ec2:AssociateRouteTable
+              - ec2:AuthorizeSecurityGroupEgress
+              - ec2:AuthorizeSecurityGroupIngress
+              - ec2:RevokeSecurityGroupIngress
+              - ec2:AuthorizeSecurityGroupEgress
+              - ec2:CreateSecurityGroup
+              - ec2:RevokeSecurityGroupEgress
+              - ec2:DeleteSecurityGroup
+              - ec2:DeleteSubnet
+              - ec2:CreateNatGateway
+              - ec2:CreateSubnet
+              - ec2:CreateNatGateway
+              - ec2:DeleteFlowLogs
+              - ec2:CreateFlowLogs
+              - ec2:DeleteSubnet
+              - ec2:CreateVpc
+              - ec2:AttachInternetGateway
+              - ec2:DetachInternetGateway
+              - ec2:DeleteVpc
+              - ec2:CreateSubnet
+              - ec2:ReleaseAddress
+              - ec2:CreateTags
+              - ec2:EnableEbsEncryptionByDefault
+              - ec2:DisableEbsEncryptionByDefault
+            Effect: Allow
+            Resource:
+              - !Sub 'arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:internet-gateway/*'
+              - !Sub 'arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:elastic-ip/*'
+              - !Sub 'arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:natgateway/*'
+              - !Sub 'arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:route-table/*'
+              - !Sub 'arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:subnet/subnet-*'
+              - !Sub 'arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:security-group-rule/*'
+              - !Sub 'arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:security-group/*'
+              - !Sub 'arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:subnet/*'
+              - !Sub 'arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:vpc-flow-log/*'
+              - !Sub 'arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:vpc/*'
+          - Action:
+              - ec2:RunInstances
+              - ec2:DeleteTags
+              - ec2:CreateLaunchTemplate
+              - ec2:CreateLaunchTemplateVersion
+              - ec2:DeleteLaunchTemplate
+              - ec2:DeleteLaunchTemplateVersions
+            Effect: Allow
+            Resource:
+              - '*'
+          - Action:
+              - eks:DeleteCluster
+              - eks:CreateCluster
+            Effect: Allow
+            Resource:
+              - !Sub 'arn:aws:eks:${AWS::Region}:${AWS::AccountId}:cluster/opta-*'
+          - Action:
+              - kms:CreateAlias
+              - kms:DeleteAlias
+              - kms:EnableKeyRotation
+              - kms:PutKeyPolicy
+              - kms:ScheduleKeyDeletion
+              - kms:TagResource
+              - kms:UntagResource
+              - kms:CreateGrant
+            Effect: Allow
+            Resource:
+              - !Sub 'arn:aws:kms:${AWS::Region}:${AWS::AccountId}:alias/*'
+              - !Sub 'arn:aws:kms:${AWS::Region}:${AWS::AccountId}:key/*'
+          - Action:
+              - kms:CreateKey
+            Effect: Allow
+            Resource:
+              - '*'
+          - Action:
+              - iam:DeleteOpenIDConnectProvider
+              - iam:CreateOpenIDConnectProvider
+              - iam:TagOpenIDConnectProvider
+              - iam:UntagOpenIDConnectProvider
+              - iam:CreatePolicy
+              - iam:DeletePolicy
+              - iam:TagPolicy
+              - iam:UntagPolicy
+              - iam:TagRole
+              - iam:UntagRole
+              - iam:CreateRole
+              - iam:DeleteRole
+              - iam:AttachRolePolicy
+              - iam:PutRolePolicy
+              - iam:DetachRolePolicy
+              - iam:DeleteRolePolicy
+              - iam:CreateInstanceProfile
+              - iam:RemoveRoleFromInstanceProfile
+              - iam:DeleteInstanceProfile
+              - iam:TagInstanceProfile
+              - iam:UntagInstanceProfile
+            Effect: Allow
+            Resource:
+              - !Sub 'arn:aws:iam::${AWS::AccountId}:oidc-provider/*'
+              - !Sub 'arn:aws:iam::${AWS::AccountId}:policy/*'
+              - !Sub 'arn:aws:iam::${AWS::AccountId}:role/*'
+              - !Sub 'arn:aws:iam::${AWS::AccountId}:instance-profile/*'
+          - Action:
+              - autoscaling:CreateAutoScalingGroup
+              - autoscaling:DeleteAutoScalingGroup
+              - autoscaling:CreateLaunchConfiguration
+              - autoscaling:SetInstanceProtection
+              - autoscaling:DeleteTags
+            Effect: Allow
+            Resource:
+              - '*'
+          - Action:
+              - ec2:CreateVpcEndpoint
+              - ec2:DeleteVpcEndpoints
+              - ec2:CreateTags
+            Effect: Allow
+            Resource:
+              - !Sub 'arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:vpc/vpc*'
+              - !Sub 'arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:vpc-endpoint/*'
+              - !Sub 'arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:route-table/*'
+              - !Sub 'arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:subnet/*'
+        Version: '2012-10-17'
+    Type: AWS::IAM::ManagedPolicy
+  UnionaiReaderPermission:
+    Properties:
+      ManagedPolicyName: reader-policy-for-admin-role
+      PolicyDocument:
+        Statement:
+          - Action:
+              - logs:DescribeLogGroups
+              - logs:DescribeDBSubnetGroups
+              - logs:DescribeLogStreams
+            Effect: Allow
+            Resource:
+              - !Sub 'arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:opta-*'
+              - !Sub 'arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group::log-stream*'
+              - !Sub 'arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/eks/opta-*:*'
+          - Action:
+              - logs:ListTagsLogGroup
+            Effect: Allow
+            Resource:
+              - !Sub 'arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:opta-*'
+              - !Sub 'arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group::log-stream*'
+              - !Sub 'arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/eks/opta-*:*'
+          - Action:
+              - s3:GetBucketLogging
+              - s3:GetAccelerateConfiguration
+              - s3:GetBucketAcl
+              - s3:GetBucketCORS
+            Effect: Allow
+            Resource:
+              - arn:aws:s3:::opta-*
+              - arn:aws:s3:::union-cloud-*
+          - Action:
+              - cloudfront:GetCloudFrontOriginAccessIdentity
+            Effect: Allow
+            Resource:
+              - !Sub 'arn:aws:cloudfront::${AWS::AccountId}:origin-access-identity/*'
+          - Action:
+              - autoscaling:DescribeAutoScalingGroups
+              - autoscaling:DescribeScalingActivities
+              - autoscaling:DescribeTags
+            Effect: Allow
+            Resource:
+              - '*'
+          - Action:
+              - eks:DescribeCluster
+              - eks:DescribeNodegroup
+              - eks:DescribeUpdate
+            Effect: Allow
+            Resource:
+              - !Sub 'arn:aws:eks:${AWS::Region}:${AWS::AccountId}:cluster/opta-*'
+              - !Sub 'arn:aws:eks:${AWS::Region}:${AWS::AccountId}:nodegroup/opta-*/opta-*/*'
+              - !Sub 'arn:aws:eks:${AWS::Region}:${AWS::AccountId}:nodegroup/opta-*'
+          - Action:
+              - eks:ListTagsForResource
+              - eks:ListNodegroups
+              - eks:ListTagsForResource
+            Effect: Allow
+            Resource:
+              - !Sub 'arn:aws:eks:${AWS::Region}:${AWS::AccountId}:cluster/opta-*'
+              - !Sub 'arn:aws:eks:${AWS::Region}:${AWS::AccountId}:nodegroup/opta-*/opta-*/*'
+              - !Sub 'arn:aws:eks:${AWS::Region}:${AWS::AccountId}:nodegroup/opta-*'
+          - Action:
+              - kms:GetKeyPolicy
+              - kms:GetKeyRotationStatus
+              - kms:DescribeKey
+            Effect: Allow
+            Resource:
+              - !Sub 'arn:aws:kms:${AWS::Region}:${AWS::AccountId}:alias/*'
+              - !Sub 'arn:aws:kms:${AWS::Region}:${AWS::AccountId}:key/*'
+          - Action:
+              - kms:ListResourceTags
+              - kms:ListAliases
+            Effect: Allow
+            Resource:
+              - '*'
+          - Action:
+              - iam:GetOpenIDConnectProvider
+              - iam:GetPolicyVersion
+              - iam:GetPolicy
+              - iam:GetRole
+              - iam:GetRolePolicy
+              - iam:GetInstanceProfile
+            Effect: Allow
+            Resource:
+              - !Sub 'arn:aws:iam::${AWS::AccountId}:oidc-provider/*'
+              - !Sub 'arn:aws:iam::${AWS::AccountId}:policy/*'
+              - !Sub 'arn:aws:iam::${AWS::AccountId}:role/*'
+              - !Sub 'arn:aws:iam::${AWS::AccountId}:instance-profile/*'
+          - Action:
+              - iam:ListOpenIDConnectProviderTags
+              - iam:ListPolicyVersions
+              - iam:ListPolicyTags
+              - iam:ListRoleTags
+              - iam:ListInstanceProfilesForRole
+              - iam:ListInstanceProfileTags
+              - iam:ListRoles
+              - iam:ListRolePolicies
+              - iam:ListAttachedRolePolicies
+            Effect: Allow
+            Resource:
+              - !Sub 'arn:aws:iam::${AWS::AccountId}:oidc-provider/*'
+              - !Sub 'arn:aws:iam::${AWS::AccountId}:policy/*'
+              - !Sub 'arn:aws:iam::${AWS::AccountId}:role/*'
+              - !Sub 'arn:aws:iam::${AWS::AccountId}:instance-profile/*'
+          - Action:
+              - ec2:DescribeAccountAttributes
+              - ec2:DescribeAddresses
+              - ec2:DescribeAvailabilityZones
+              - ec2:DescribeFlowLogs
+              - ec2:DescribeInstanceTypeOfferings
+              - ec2:DescribeInternetGateways
+              - ec2:DescribeNatGateways
+              - ec2:DescribeNetworkAcls
+              - ec2:AssociateAddress
+              - ec2:DisassociateAddress
+              - ec2:DescribeNetworkInterfaces
+              - ec2:DescribePrefixLists
+              - ec2:DescribeRouteTables
+              - ec2:DescribeSecurityGroupRules
+              - ec2:DescribeSecurityGroups
+              - ec2:DescribeSubnets
+              - ec2:DescribeVpcAttribute
+              - ec2:DescribeVpcClassicLink
+              - ec2:DescribeVpcClassicLinkDnsSupport
+              - ec2:DescribeVpcEndpoints
+              - ec2:DescribeVpcs
+              - ec2:DescribeImages
+              - ec2:DescribeLaunchTemplates
+              - ec2:DescribeLaunchTemplateVersions
+              - ec2:GetEbsEncryptionByDefault
+            Effect: Allow
+            Resource:
+              - '*'
+        Version: '2012-10-17'
+    Type: AWS::IAM::ManagedPolicy
