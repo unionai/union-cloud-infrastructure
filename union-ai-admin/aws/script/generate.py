@@ -115,6 +115,29 @@ def create_read_policy(role_type):
                 Statement(
                     Effect=Allow,
                     Action=[
+                        Action("events", "DescribeRule"),
+                    ],
+                    Resource=[
+                        Sub(
+                            "arn:aws:events:${AWS::Region}:${AWS::AccountId}:Karpenter-*"
+                        )
+                    ],
+                ),
+                Statement(
+                    Effect=Allow,
+                    Action=[
+                        Action("sqs", "getqueueattributes"),
+                        Action("sqs", "listqueuetags"),
+                    ],
+                    Resource=[
+                        Sub(
+                            "arn:aws:sqs:${AWS::Region}:${AWS::AccountId}:rule/Karpenter*"
+                        )
+                    ],
+                ),
+                Statement(
+                    Effect=Allow,
+                    Action=[
                         Action("autoscaling", "DescribeAutoScalingGroups"),
                         Action("autoscaling", "DescribeScalingActivities"),
                         Action("autoscaling", "DescribeTags"),
@@ -424,6 +447,33 @@ def create_provisioner_policy(role_type):
                     Resource=[
                         Sub(
                             "arn:aws:cloudfront::${AWS::AccountId}:origin-access-identity/*"
+                        )
+                    ],
+                ),
+                Statement(
+                    Effect=Allow,
+                    Action=[
+                        Action("sqs", "createqueue"),
+                        Action("sqs", "deletequeue"),
+                        Action("sqs", "setqueueattributes"),
+                    ],
+                    Resource=[
+                        Sub(
+                            "arn:aws:sqs:${AWS::Region}:${AWS::AccountId}:rule/Karpenter*"
+                        )
+                    ],
+                ),
+                Statement(
+                    Effect=Allow,
+                    Action=[
+                        Action("events", "TagResource"),
+                        Action("events", "PutRule"),
+                        Action("events", "Delete"),
+                        Action("events", "RemoveTargets"),
+                    ],
+                    Resource=[
+                        Sub(
+                            "arn:aws:events:${AWS::Region}:${AWS::AccountId}:Karpenter-*"
                         )
                     ],
                 ),
