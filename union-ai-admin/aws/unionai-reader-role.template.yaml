@@ -51,6 +51,19 @@ Resources:
             Resource:
               - !Sub 'arn:aws:cloudfront::${AWS::AccountId}:origin-access-identity/*'
           - Action:
+              - events:DescribeRule
+              - events:ListTargetsByRule
+              - events:ListTargetsByRule
+            Effect: Allow
+            Resource:
+              - !Sub 'arn:aws:events:${AWS::Region}:${AWS::AccountId}:rule/Karpenter*'
+          - Action:
+              - sqs:getqueueattributes
+              - sqs:listqueuetags
+            Effect: Allow
+            Resource:
+              - !Sub 'arn:aws:sqs:${AWS::Region}:${AWS::AccountId}:Karpenter*'
+          - Action:
               - autoscaling:DescribeAutoScalingGroups
               - autoscaling:DescribeScalingActivities
               - autoscaling:DescribeTags
@@ -69,7 +82,6 @@ Resources:
           - Action:
               - eks:ListTagsForResource
               - eks:ListNodegroups
-              - eks:ListTagsForResource
             Effect: Allow
             Resource:
               - !Sub 'arn:aws:eks:${AWS::Region}:${AWS::AccountId}:cluster/opta-*'

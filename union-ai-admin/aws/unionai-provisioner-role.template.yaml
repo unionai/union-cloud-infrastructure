@@ -160,6 +160,22 @@ Resources:
             Resource:
               - !Sub 'arn:aws:cloudfront::${AWS::AccountId}:origin-access-identity/*'
           - Action:
+              - sqs:createqueue
+              - sqs:deletequeue
+              - sqs:setqueueattributes
+            Effect: Allow
+            Resource:
+              - !Sub 'arn:aws:sqs:${AWS::Region}:${AWS::AccountId}:Karpenter*'
+          - Action:
+              - events:TagResource
+              - events:PutTargets
+              - events:PutRule
+              - events:DeleteRule
+              - events:RemoveTargets
+            Effect: Allow
+            Resource:
+              - !Sub 'arn:aws:events:${AWS::Region}:${AWS::AccountId}:rule/Karpenter*'
+          - Action:
               - ec2:AllocateAddress
               - ec2:AttachInternetGateway
               - ec2:DetachInternetGateway
@@ -247,6 +263,7 @@ Resources:
               - iam:CreateOpenIDConnectProvider
               - iam:TagOpenIDConnectProvider
               - iam:UntagOpenIDConnectProvider
+              - iam:AddRoleToInstanceProfile
               - iam:CreatePolicy
               - iam:DeletePolicy
               - iam:TagPolicy
@@ -327,6 +344,19 @@ Resources:
             Resource:
               - !Sub 'arn:aws:cloudfront::${AWS::AccountId}:origin-access-identity/*'
           - Action:
+              - events:DescribeRule
+              - events:ListTargetsByRule
+              - events:ListTargetsByRule
+            Effect: Allow
+            Resource:
+              - !Sub 'arn:aws:events:${AWS::Region}:${AWS::AccountId}:rule/Karpenter*'
+          - Action:
+              - sqs:getqueueattributes
+              - sqs:listqueuetags
+            Effect: Allow
+            Resource:
+              - !Sub 'arn:aws:sqs:${AWS::Region}:${AWS::AccountId}:Karpenter*'
+          - Action:
               - autoscaling:DescribeAutoScalingGroups
               - autoscaling:DescribeScalingActivities
               - autoscaling:DescribeTags
@@ -345,7 +375,6 @@ Resources:
           - Action:
               - eks:ListTagsForResource
               - eks:ListNodegroups
-              - eks:ListTagsForResource
             Effect: Allow
             Resource:
               - !Sub 'arn:aws:eks:${AWS::Region}:${AWS::AccountId}:cluster/opta-*'

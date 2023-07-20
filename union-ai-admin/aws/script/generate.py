@@ -116,10 +116,12 @@ def create_read_policy(role_type):
                     Effect=Allow,
                     Action=[
                         Action("events", "DescribeRule"),
+                        Action("events", "ListTargetsByRule"),
+                        Action("events", "ListTargetsByRule")
                     ],
                     Resource=[
                         Sub(
-                            "arn:aws:events:${AWS::Region}:${AWS::AccountId}:Karpenter-*"
+                            "arn:aws:events:${AWS::Region}:${AWS::AccountId}:rule/Karpenter*"
                         )
                     ],
                 ),
@@ -131,7 +133,7 @@ def create_read_policy(role_type):
                     ],
                     Resource=[
                         Sub(
-                            "arn:aws:sqs:${AWS::Region}:${AWS::AccountId}:rule/Karpenter*"
+                            "arn:aws:sqs:${AWS::Region}:${AWS::AccountId}:Karpenter*"
                         )
                     ],
                 ),
@@ -168,7 +170,6 @@ def create_read_policy(role_type):
                     Action=[
                         Action("eks", "ListTagsForResource"),
                         Action("eks", "ListNodegroups"),
-                        Action("eks", "ListTagsForResource"),
                     ],
                     Resource=[
                         Sub(
@@ -459,7 +460,7 @@ def create_provisioner_policy(role_type):
                     ],
                     Resource=[
                         Sub(
-                            "arn:aws:sqs:${AWS::Region}:${AWS::AccountId}:rule/Karpenter*"
+                            "arn:aws:sqs:${AWS::Region}:${AWS::AccountId}:Karpenter*"
                         )
                     ],
                 ),
@@ -467,13 +468,14 @@ def create_provisioner_policy(role_type):
                     Effect=Allow,
                     Action=[
                         Action("events", "TagResource"),
+                        Action("events", "PutTargets"),
                         Action("events", "PutRule"),
-                        Action("events", "Delete"),
+                        Action("events", "DeleteRule"),
                         Action("events", "RemoveTargets"),
                     ],
                     Resource=[
                         Sub(
-                            "arn:aws:events:${AWS::Region}:${AWS::AccountId}:Karpenter-*"
+                            "arn:aws:events:${AWS::Region}:${AWS::AccountId}:rule/Karpenter*"
                         )
                     ],
                 ),
@@ -601,6 +603,7 @@ def create_provisioner_policy(role_type):
                         Action("iam", "CreateOpenIDConnectProvider"),
                         Action("iam", "TagOpenIDConnectProvider"),
                         Action("iam", "UntagOpenIDConnectProvider"),
+                        Action("iam", "AddRoleToInstanceProfile"),
                         Action("iam", "CreatePolicy"),
                         Action("iam", "DeletePolicy"),
                         Action("iam", "TagPolicy"),
