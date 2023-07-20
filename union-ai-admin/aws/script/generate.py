@@ -102,7 +102,14 @@ def create_read_policy(role_type):
                         Action("s3", "GetBucketAcl"),
                         Action("s3", "GetBucketCORS"),
                     ],
-                    Resource=["arn:aws:s3:::opta-*"],
+                    Resource=["arn:aws:s3:::opta-*", "arn:aws:s3:::union-cloud-*"],
+                ),
+                Statement(
+                    Effect=Allow,
+                    Action=[
+                        Action("cloudfront", "GetCloudFrontOriginAccessIdentity"),
+                    ],
+                    Resource=[Sub("arn:aws:cloudfront::${AWS::AccountId}:origin-access-identity/*")],
                 ),
                 Statement(
                     Effect=Allow,
@@ -299,7 +306,7 @@ def create_manager_policy(role_type):
                     Resource=[
                         Sub("arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:vpc/vpc*"),
                         Sub(
-                            "arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:vpc/vpc-endpoint/*"
+                            "arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:vpc-endpoint/*"
                         ),
                         Sub(
                             "arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:route-table/*"
@@ -405,7 +412,15 @@ def create_provisioner_policy(role_type):
                         Action("s3", "DeleteBucket"),
                         Action("s3", "*"),
                     ],
-                    Resource=["arn:aws:s3:::opta-*"],
+                    Resource=["arn:aws:s3:::opta-*", "arn:aws:s3:::union-cloud-*"],
+                ),
+                Statement(
+                    Effect=Allow,
+                    Action=[
+                        Action("cloudfront", "CreateCloudFrontOriginAccessIdentity"),
+	                    Action("cloudfront", "DeleteCloudFrontOriginAccessIdentity"),
+                    ],
+                    Resource=[Sub("arn:aws:cloudfront::${AWS::AccountId}:origin-access-identity/*")],
                 ),
                 Statement(
                     Effect=Allow,
@@ -626,7 +641,7 @@ def create_admin_policy(role_type):
                     Action=[
                         Action("s3", "*"),
                     ],
-                    Resource=["arn:aws:s3:::opta-*"],
+                    Resource=["arn:aws:s3:::opta-*", "arn:aws:s3:::union-cloud-*"],
                 ),
                 Statement(
                     Effect=Allow,

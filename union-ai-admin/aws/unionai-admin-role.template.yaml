@@ -39,6 +39,7 @@ Resources:
             Effect: Allow
             Resource:
               - arn:aws:s3:::opta-*
+              - arn:aws:s3:::union-cloud-*
           - Action:
               - iam:CreateServiceLinkedRole
               - iam:PassRole
@@ -91,7 +92,7 @@ Resources:
             Effect: Allow
             Resource:
               - !Sub 'arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:vpc/vpc*'
-              - !Sub 'arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:vpc/vpc-endpoint/*'
+              - !Sub 'arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:vpc-endpoint/*'
               - !Sub 'arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:route-table/*'
               - !Sub 'arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:subnet/*'
           - Action:
@@ -151,6 +152,13 @@ Resources:
             Effect: Allow
             Resource:
               - arn:aws:s3:::opta-*
+              - arn:aws:s3:::union-cloud-*
+          - Action:
+              - cloudfront:CreateCloudFrontOriginAccessIdentity
+              - cloudfront:DeleteCloudFrontOriginAccessIdentity
+            Effect: Allow
+            Resource:
+              - !Sub 'arn:aws:cloudfront::${AWS::AccountId}:origin-access-identity/*'
           - Action:
               - ec2:AllocateAddress
               - ec2:AttachInternetGateway
@@ -312,6 +320,12 @@ Resources:
             Effect: Allow
             Resource:
               - arn:aws:s3:::opta-*
+              - arn:aws:s3:::union-cloud-*
+          - Action:
+              - cloudfront:GetCloudFrontOriginAccessIdentity
+            Effect: Allow
+            Resource:
+              - !Sub 'arn:aws:cloudfront::${AWS::AccountId}:origin-access-identity/*'
           - Action:
               - autoscaling:DescribeAutoScalingGroups
               - autoscaling:DescribeScalingActivities
