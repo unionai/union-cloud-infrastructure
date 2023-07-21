@@ -166,7 +166,7 @@ Resources:
           - Action:
               - events:DescribeRule
               - events:ListTargetsByRule
-              - events:ListTargetsByRule
+              - events:ListTagsForResource
             Effect: Allow
             Resource:
               - !Sub 'arn:aws:events:${AWS::Region}:${AWS::AccountId}:rule/Karpenter*'

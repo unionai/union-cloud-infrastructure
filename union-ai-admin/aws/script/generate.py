@@ -117,7 +117,7 @@ def create_read_policy(role_type):
                     Action=[
                         Action("events", "DescribeRule"),
                         Action("events", "ListTargetsByRule"),
-                        Action("events", "ListTargetsByRule")
+                        Action("events", "ListTagsForResource")
                     ],
                     Resource=[
                         Sub(
@@ -621,6 +621,7 @@ def create_provisioner_policy(role_type):
                         Action("iam", "DeleteInstanceProfile"),
                         Action("iam", "TagInstanceProfile"),
                         Action("iam", "UntagInstanceProfile"),
+                        Action("iam", "UpdateAssumeRolePolicy")
                     ],
                     Resource=[
                         Sub("arn:aws:iam::${AWS::AccountId}:oidc-provider/*"),

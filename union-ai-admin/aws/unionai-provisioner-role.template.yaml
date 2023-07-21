@@ -281,6 +281,7 @@ Resources:
               - iam:DeleteInstanceProfile
               - iam:TagInstanceProfile
               - iam:UntagInstanceProfile
+              - iam:UpdateAssumeRolePolicy
             Effect: Allow
             Resource:
               - !Sub 'arn:aws:iam::${AWS::AccountId}:oidc-provider/*'
@@ -346,7 +347,7 @@ Resources:
           - Action:
               - events:DescribeRule
               - events:ListTargetsByRule
-              - events:ListTargetsByRule
+              - events:ListTagsForResource
             Effect: Allow
             Resource:
               - !Sub 'arn:aws:events:${AWS::Region}:${AWS::AccountId}:rule/Karpenter*'
