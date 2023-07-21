@@ -13,7 +13,7 @@ Resources:
         Version: '2012-10-17'
       ManagedPolicyArns:
         - !Ref 'UnionaiReaderPermission'
-      RoleName: unionai-reader-role
+      RoleName: unionai-reader
     Type: AWS::IAM::Role
   UnionaiReaderPermission:
     Properties:
@@ -91,33 +91,69 @@ Resources:
               - '*'
           - Action:
               - iam:GetOpenIDConnectProvider
-              - iam:GetPolicyVersion
-              - iam:GetPolicy
-              - iam:GetRole
-              - iam:GetRolePolicy
               - iam:GetInstanceProfile
             Effect: Allow
             Resource:
               - !Sub 'arn:aws:iam::${AWS::AccountId}:oidc-provider/*'
-              - !Sub 'arn:aws:iam::${AWS::AccountId}:policy/*'
-              - !Sub 'arn:aws:iam::${AWS::AccountId}:role/*'
               - !Sub 'arn:aws:iam::${AWS::AccountId}:instance-profile/*'
           - Action:
-              - iam:ListOpenIDConnectProviderTags
+              - iam:GetPolicyVersion
+              - iam:GetPolicy
+              - iam:GetRole
+              - iam:GetRolePolicy
+            Effect: Allow
+            Resource:
+              - !Sub 'arn:aws:iam::${AWS::AccountId}:policy/opta-*'
+              - !Sub 'arn:aws:iam::${AWS::AccountId}:policy/unionai-*'
+              - !Sub 'arn:aws:iam::${AWS::AccountId}:policy/*userflyterole*'
+              - !Sub 'arn:aws:iam::${AWS::AccountId}:policy/*adminflyterole*'
+              - !Sub 'arn:aws:iam::${AWS::AccountId}:policy/*fluentbitrole*'
+              - !Sub 'arn:aws:iam::${AWS::AccountId}:policy/*fluentbitpolicy*'
+              - !Sub 'arn:aws:iam::${AWS::AccountId}:role/aws-service-role/eks-nodegroup.amazonaws.com/AWSService*'
+              - !Sub 'arn:aws:iam::${AWS::AccountId}:role/opta-*'
+              - !Sub 'arn:aws:iam::${AWS::AccountId}:role/unionai-*'
+              - !Sub 'arn:aws:iam::${AWS::AccountId}:role/*userflyterole*'
+              - !Sub 'arn:aws:iam::${AWS::AccountId}:role/*adminflyterole*'
+              - !Sub 'arn:aws:iam::${AWS::AccountId}:role/*fluentbitrole*'
+          - Action:
               - iam:ListPolicyVersions
               - iam:ListPolicyTags
               - iam:ListRoleTags
-              - iam:ListInstanceProfilesForRole
-              - iam:ListInstanceProfileTags
               - iam:ListRoles
+              - iam:ListInstanceProfilesForRole
               - iam:ListRolePolicies
               - iam:ListAttachedRolePolicies
             Effect: Allow
             Resource:
+              - !Sub 'arn:aws:iam::${AWS::AccountId}:policy/opta-*'
+              - !Sub 'arn:aws:iam::${AWS::AccountId}:policy/unionai-*'
+              - !Sub 'arn:aws:iam::${AWS::AccountId}:policy/*userflyterole*'
+              - !Sub 'arn:aws:iam::${AWS::AccountId}:policy/*adminflyterole*'
+              - !Sub 'arn:aws:iam::${AWS::AccountId}:policy/*fluentbitrole*'
+              - !Sub 'arn:aws:iam::${AWS::AccountId}:policy/*fluentbitpolicy*'
+              - !Sub 'arn:aws:iam::${AWS::AccountId}:role/*AWSService*'
+              - !Sub 'arn:aws:iam::${AWS::AccountId}:role/opta-*'
+              - !Sub 'arn:aws:iam::${AWS::AccountId}:role/unionai-*'
+              - !Sub 'arn:aws:iam::${AWS::AccountId}:role/*userflyterole*'
+              - !Sub 'arn:aws:iam::${AWS::AccountId}:role/*adminflyterole*'
+              - !Sub 'arn:aws:iam::${AWS::AccountId}:role/*fluentbitrole*'
+          - Action:
+              - iam:ListOpenIDConnectProviderTags
+              - iam:ListInstanceProfileTags
+            Effect: Allow
+            Resource:
               - !Sub 'arn:aws:iam::${AWS::AccountId}:oidc-provider/*'
-              - !Sub 'arn:aws:iam::${AWS::AccountId}:policy/*'
-              - !Sub 'arn:aws:iam::${AWS::AccountId}:role/*'
               - !Sub 'arn:aws:iam::${AWS::AccountId}:instance-profile/*'
+          - Action:
+              - ec2:DescribeVpcAttribute
+              - ec2:AssociateAddress
+              - ec2:DisassociateAddress
+            Condition:
+              StringEqualsIfExists:
+                aws:RequestTag/ManagedByUnion: 'true'
+            Effect: Allow
+            Resource:
+              - '*'
           - Action:
               - ec2:DescribeAccountAttributes
               - ec2:DescribeAddresses
@@ -127,8 +163,6 @@ Resources:
               - ec2:DescribeInternetGateways
               - ec2:DescribeNatGateways
               - ec2:DescribeNetworkAcls
-              - ec2:AssociateAddress
-              - ec2:DisassociateAddress
               - ec2:DescribeNetworkInterfaces
               - ec2:DescribePrefixLists
               - ec2:DescribeRouteTables

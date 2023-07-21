@@ -1,9 +1,11 @@
 from awacs.aws import (
     Allow,
     PolicyDocument,
+    Condition,
     Principal,
     Statement,
     Action,
+    StringEqualsIfExists,
 )
 from awacs.sts import AssumeRole
 
@@ -183,38 +185,89 @@ def create_read_policy(role_type):
                     Effect=Allow,
                     Action=[
                         Action("iam", "GetOpenIDConnectProvider"),
-                        Action("iam", "GetPolicyVersion"),
-                        Action("iam", "GetPolicy"),
-                        Action("iam", "GetRole"),
-                        Action("iam", "GetRolePolicy"),
                         Action("iam", "GetInstanceProfile"),
                     ],
                     Resource=[
                         Sub("arn:aws:iam::${AWS::AccountId}:oidc-provider/*"),
-                        Sub("arn:aws:iam::${AWS::AccountId}:policy/*"),
-                        Sub("arn:aws:iam::${AWS::AccountId}:role/*"),
                         Sub("arn:aws:iam::${AWS::AccountId}:instance-profile/*"),
                     ],
                 ),
                 Statement(
                     Effect=Allow,
                     Action=[
-                        Action("iam", "ListOpenIDConnectProviderTags"),
+                        Action("iam", "GetPolicyVersion"),
+                        Action("iam", "GetPolicy"),
+                        Action("iam", "GetRole"),
+                        Action("iam", "GetRolePolicy"),
+                    ],
+                    Resource=[
+                        Sub("arn:aws:iam::${AWS::AccountId}:policy/opta-*"),
+                        Sub("arn:aws:iam::${AWS::AccountId}:policy/unionai-*"),
+                        Sub("arn:aws:iam::${AWS::AccountId}:policy/*userflyterole*"),
+                        Sub("arn:aws:iam::${AWS::AccountId}:policy/*adminflyterole*"),
+                        Sub("arn:aws:iam::${AWS::AccountId}:policy/*fluentbitrole*"),
+                        Sub("arn:aws:iam::${AWS::AccountId}:policy/*fluentbitpolicy*"),
+                        Sub(
+                            "arn:aws:iam::${AWS::AccountId}:role/aws-service-role/eks-nodegroup.amazonaws.com/AWSService*"
+                        ),
+                        Sub("arn:aws:iam::${AWS::AccountId}:role/opta-*"),
+                        Sub("arn:aws:iam::${AWS::AccountId}:role/unionai-*"),
+                        Sub("arn:aws:iam::${AWS::AccountId}:role/*userflyterole*"),
+                        Sub("arn:aws:iam::${AWS::AccountId}:role/*adminflyterole*"),
+                        Sub("arn:aws:iam::${AWS::AccountId}:role/*fluentbitrole*"),
+                    ],
+                ),
+                Statement(
+                    Effect=Allow,
+                    Action=[
                         Action("iam", "ListPolicyVersions"),
                         Action("iam", "ListPolicyTags"),
                         Action("iam", "ListRoleTags"),
-                        Action("iam", "ListInstanceProfilesForRole"),
-                        Action("iam", "ListInstanceProfileTags"),
                         Action("iam", "ListRoles"),
+                        Action("iam", "ListInstanceProfilesForRole"),
                         Action("iam", "ListRolePolicies"),
                         Action("iam", "ListAttachedRolePolicies"),
                     ],
                     Resource=[
+                        Sub("arn:aws:iam::${AWS::AccountId}:policy/opta-*"),
+                        Sub("arn:aws:iam::${AWS::AccountId}:policy/unionai-*"),
+                        Sub("arn:aws:iam::${AWS::AccountId}:policy/*userflyterole*"),
+                        Sub("arn:aws:iam::${AWS::AccountId}:policy/*adminflyterole*"),
+                        Sub("arn:aws:iam::${AWS::AccountId}:policy/*fluentbitrole*"),
+                        Sub("arn:aws:iam::${AWS::AccountId}:policy/*fluentbitpolicy*"),
+                        Sub("arn:aws:iam::${AWS::AccountId}:role/*AWSService*"),
+                        Sub("arn:aws:iam::${AWS::AccountId}:role/opta-*"),
+                        Sub("arn:aws:iam::${AWS::AccountId}:role/unionai-*"),
+                        Sub("arn:aws:iam::${AWS::AccountId}:role/*userflyterole*"),
+                        Sub("arn:aws:iam::${AWS::AccountId}:role/*adminflyterole*"),
+                        Sub("arn:aws:iam::${AWS::AccountId}:role/*fluentbitrole*"),
+                    ],
+                ),
+                Statement(
+                    Effect=Allow,
+                    Action=[
+                        Action("iam", "ListOpenIDConnectProviderTags"),
+                        Action("iam", "ListInstanceProfileTags"),
+                    ],
+                    Resource=[
                         Sub("arn:aws:iam::${AWS::AccountId}:oidc-provider/*"),
-                        Sub("arn:aws:iam::${AWS::AccountId}:policy/*"),
-                        Sub("arn:aws:iam::${AWS::AccountId}:role/*"),
                         Sub("arn:aws:iam::${AWS::AccountId}:instance-profile/*"),
                     ],
+                ),
+                Statement(
+                    Effect=Allow,
+                    Action=[
+                        Action("ec2", "DescribeVpcAttribute"),
+                        Action("ec2", "AssociateAddress"),
+                        Action("ec2", "DisassociateAddress"),
+                    ],
+                    Resource=["*"],
+                    Condition=Condition(
+                        StringEqualsIfExists(
+                            "aws:RequestTag/ManagedByUnion",
+                            "true",
+                        )
+                    ),
                 ),
                 Statement(
                     Effect=Allow,
@@ -227,8 +280,6 @@ def create_read_policy(role_type):
                         Action("ec2", "DescribeInternetGateways"),
                         Action("ec2", "DescribeNatGateways"),
                         Action("ec2", "DescribeNetworkAcls"),
-                        Action("ec2", "AssociateAddress"),
-                        Action("ec2", "DisassociateAddress"),
                         Action("ec2", "DescribeNetworkInterfaces"),
                         Action("ec2", "DescribePrefixLists"),
                         Action("ec2", "DescribeRouteTables"),
@@ -266,9 +317,10 @@ def create_manager_policy(role_type):
                 Statement(
                     Effect=Allow,
                     Action=[
-                        Action("ec2", "ModifySubnetAttribute"),
                         Action("ec2", "ModifyVpcAttribute"),
-                        Action("ec2", "ModifyEbsDefaultKmsKeyId"),
+                        Action("ec2", "ModifyVpcEndpoint"),
+                        Action("ec2", "ModifySubnetAttribute"),
+                        Action("ec2", "ModifyLaunchTemplate"),
                     ],
                     Resource=[
                         Sub(
@@ -298,29 +350,12 @@ def create_manager_policy(role_type):
                         ),
                         Sub("arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:vpc/*"),
                     ],
-                ),
-                Statement(
-                    Effect=Allow,
-                    Action=[
-                        Action("ec2", "ModifyVpcEndpoint"),
-                    ],
-                    Resource=[
-                        Sub("arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:vpc/vpc*"),
-                        Sub(
-                            "arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:vpc-endpoint/*"
-                        ),
-                        Sub(
-                            "arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:route-table/*"
-                        ),
-                        Sub("arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:subnet/*"),
-                    ],
-                ),
-                Statement(
-                    Effect=Allow,
-                    Action=[
-                        Action("ec2", "ModifyLaunchTemplate"),
-                    ],
-                    Resource=["*"],
+                    Condition=Condition(
+                        StringEqualsIfExists(
+                            "aws:RequestTag/ManagedByUnion",
+                            "true",
+                        )
+                    ),
                 ),
                 Statement(
                     Effect=Allow,
@@ -349,6 +384,32 @@ def create_manager_policy(role_type):
                         Action("autoscaling", "CreateOrUpdateTags"),
                     ],
                     Resource=["*"],
+                    Condition=Condition(
+                        StringEqualsIfExists(
+                            "aws:RequestTag/ManagedByUnion",
+                            "true",
+                        )
+                    ),
+                ),
+                Statement(
+                    Effect=Allow,
+                    Action=[
+                        Action("eks", "CreateNodegroup"),
+                        Action("eks", "TagResource"),
+                        Action("eks", "UntagResource"),
+                        Action("eks", "DeleteNodegroup"),
+                    ],
+                    Resource=[
+                        Sub(
+                            "arn:aws:eks:${AWS::Region}:${AWS::AccountId}:cluster/opta-*"
+                        ),
+                        Sub(
+                            "arn:aws:eks:${AWS::Region}:${AWS::AccountId}:nodegroup/opta-*/opta-*/*"
+                        ),
+                        Sub(
+                            "arn:aws:eks:${AWS::Region}:${AWS::AccountId}:nodegroup/opta-*"
+                        ),
+                    ],
                 ),
                 Statement(
                     Effect=Allow,
@@ -442,32 +503,31 @@ def create_provisioner_policy(role_type):
                         Action("ec2", "CreateRouteTable"),
                         Action("ec2", "DeleteRouteTable"),
                         Action("ec2", "DisassociateRouteTable"),
-                        Action("ec2", "AssociateRouteTable"),
                         Action("ec2", "AuthorizeSecurityGroupEgress"),
                         Action("ec2", "AuthorizeSecurityGroupIngress"),
                         Action("ec2", "RevokeSecurityGroupIngress"),
                         Action("ec2", "AuthorizeSecurityGroupEgress"),
                         Action("ec2", "CreateSecurityGroup"),
                         Action("ec2", "RevokeSecurityGroupEgress"),
-                        Action("ec2", "DeleteSecurityGroup"),
                         Action("ec2", "DeleteSubnet"),
                         Action("ec2", "CreateNatGateway"),
                         Action("ec2", "CreateSubnet"),
-                        Action("ec2", "CreateNatGateway"),
                         Action("ec2", "DeleteFlowLogs"),
                         Action("ec2", "CreateFlowLogs"),
-                        Action("ec2", "DeleteSubnet"),
                         Action("ec2", "CreateVpc"),
-                        Action("ec2", "AttachInternetGateway"),
-                        Action("ec2", "DetachInternetGateway"),
-                        Action("ec2", "DeleteVpc"),
-                        Action("ec2", "CreateSubnet"),
                         Action("ec2", "ReleaseAddress"),
                         Action("ec2", "CreateTags"),
-                        Action("ec2", "EnableEbsEncryptionByDefault"),
-                        Action("ec2", "DisableEbsEncryptionByDefault"),
+                        Action("ec2", "RunInstances"),
+                        Action("ec2", "DeleteTags"),
+                        Action("ec2", "CreateLaunchTemplate"),
+                        Action("ec2", "CreateLaunchTemplateVersion"),
+                        Action("ec2", "CreateVpcEndpoint"),
+                        Action("ec2", "CreateTags"),
                     ],
                     Resource=[
+                        Sub(
+                            "arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:vpc-endpoint/*"
+                        ),
                         Sub(
                             "arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:internet-gateway/*"
                         ),
@@ -495,18 +555,51 @@ def create_provisioner_policy(role_type):
                         ),
                         Sub("arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:vpc/*"),
                     ],
+                    Condition=Condition(
+                        StringEqualsIfExists(
+                            "aws:RequestTag/ManagedByUnion",
+                            "true",
+                        )
+                    ),
                 ),
                 Statement(
                     Effect=Allow,
                     Action=[
-                        Action("ec2", "RunInstances"),
-                        Action("ec2", "DeleteTags"),
-                        Action("ec2", "CreateLaunchTemplate"),
-                        Action("ec2", "CreateLaunchTemplateVersion"),
-                        Action("ec2", "DeleteLaunchTemplate"),
-                        Action("ec2", "DeleteLaunchTemplateVersions"),
+                        Action("ec2", "AssociateRouteTable"),
+                        Action("ec2", "DeleteSecurityGroup"),
+                        Action("ec2", "DeleteVpcEndpoints"),
                     ],
-                    Resource=["*"],
+                    Resource=[
+                        Sub(
+                            "arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:vpc-endpoint/*"
+                        ),
+                        Sub(
+                            "arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:internet-gateway/*"
+                        ),
+                        Sub(
+                            "arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:elastic-ip/*"
+                        ),
+                        Sub(
+                            "arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:natgateway/*"
+                        ),
+                        Sub(
+                            "arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:route-table/*"
+                        ),
+                        Sub(
+                            "arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:subnet/subnet-*"
+                        ),
+                        Sub(
+                            "arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:security-group-rule/*"
+                        ),
+                        Sub(
+                            "arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:security-group/*"
+                        ),
+                        Sub("arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:subnet/*"),
+                        Sub(
+                            "arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:vpc-flow-log/*"
+                        ),
+                        Sub("arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:vpc/*"),
+                    ],
                 ),
                 Statement(
                     Effect=Allow,
@@ -551,6 +644,22 @@ def create_provisioner_policy(role_type):
                         Action("iam", "CreateOpenIDConnectProvider"),
                         Action("iam", "TagOpenIDConnectProvider"),
                         Action("iam", "UntagOpenIDConnectProvider"),
+                        Action("iam", "CreateInstanceProfile"),
+                        Action("iam", "RemoveRoleFromInstanceProfile"),
+                        Action("iam", "DeleteInstanceProfile"),
+                        Action("iam", "TagInstanceProfile"),
+                        Action("iam", "UntagInstanceProfile"),
+                        Action("iam", "AddRoleToInstanceProfile"),
+                        Action("iam", "UpdateAssumeRolePolicy"),
+                    ],
+                    Resource=[
+                        Sub("arn:aws:iam::${AWS::AccountId}:oidc-provider/*"),
+                        Sub("arn:aws:iam::${AWS::AccountId}:instance-profile/*"),
+                    ],
+                ),
+                Statement(
+                    Effect=Allow,
+                    Action=[
                         Action("iam", "CreatePolicy"),
                         Action("iam", "DeletePolicy"),
                         Action("iam", "TagPolicy"),
@@ -563,54 +672,51 @@ def create_provisioner_policy(role_type):
                         Action("iam", "PutRolePolicy"),
                         Action("iam", "DetachRolePolicy"),
                         Action("iam", "DeleteRolePolicy"),
-                        Action("iam", "CreateInstanceProfile"),
-                        Action("iam", "RemoveRoleFromInstanceProfile"),
-                        Action("iam", "DeleteInstanceProfile"),
-                        Action("iam", "TagInstanceProfile"),
-                        Action("iam", "UntagInstanceProfile"),
                     ],
                     Resource=[
-                        Sub("arn:aws:iam::${AWS::AccountId}:oidc-provider/*"),
-                        Sub("arn:aws:iam::${AWS::AccountId}:policy/*"),
-                        Sub("arn:aws:iam::${AWS::AccountId}:role/*"),
-                        Sub("arn:aws:iam::${AWS::AccountId}:instance-profile/*"),
+                        Sub("arn:aws:iam::${AWS::AccountId}:policy/opta-*"),
+                        Sub("arn:aws:iam::${AWS::AccountId}:policy/unionai-*"),
+                        Sub("arn:aws:iam::${AWS::AccountId}:policy/*userflyterole*"),
+                        Sub("arn:aws:iam::${AWS::AccountId}:policy/*adminflyterole*"),
+                        Sub("arn:aws:iam::${AWS::AccountId}:policy/*fluentbitrole*"),
+                        Sub("arn:aws:iam::${AWS::AccountId}:policy/*fluentbitpolicy*"),
+                        Sub("arn:aws:iam::${AWS::AccountId}:role/*AWSService*"),
+                        Sub("arn:aws:iam::${AWS::AccountId}:role/opta-*"),
+                        Sub("arn:aws:iam::${AWS::AccountId}:role/unionai-*"),
+                        Sub("arn:aws:iam::${AWS::AccountId}:role/*userflyterole*"),
+                        Sub("arn:aws:iam::${AWS::AccountId}:role/*adminflyterole*"),
+                        Sub("arn:aws:iam::${AWS::AccountId}:role/*fluentbitrole*"),
                     ],
                 ),
                 Statement(
                     Effect=Allow,
                     Action=[
-                        Action("autoscaling", "CreateAutoScalingGroup"),
-                        Action("autoscaling", "DeleteAutoScalingGroup"),
                         Action("autoscaling", "CreateLaunchConfiguration"),
-                        Action("autoscaling", "SetInstanceProtection"),
-                        Action("autoscaling", "DeleteTags"),
                     ],
                     Resource=["*"],
                 ),
                 Statement(
                     Effect=Allow,
                     Action=[
-                        Action("ec2", "CreateVpcEndpoint"),
-                        Action("ec2", "DeleteVpcEndpoints"),
-                        Action("ec2", "CreateTags"),
+                        Action("autoscaling", "CreateAutoScalingGroup"),
+                        Action("autoscaling", "DeleteAutoScalingGroup"),
+                        Action("autoscaling", "SetInstanceProtection"),
+                        Action("autoscaling", "DeleteTags"),
                     ],
-                    Resource=[
-                        Sub("arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:vpc/vpc*"),
-                        Sub(
-                            "arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:vpc-endpoint/*"
-                        ),
-                        Sub(
-                            "arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:route-table/*"
-                        ),
-                        Sub("arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:subnet/*"),
-                    ],
+                    Resource=["*"],
+                    Condition=Condition(
+                        StringEqualsIfExists(
+                            "aws:RequestTag/ManagedByUnion",
+                            "true",
+                        )
+                    ),
                 ),
             ],
         ),
     )
 
 
-def create_admin_policy(role_type):
+def create_terraform_policy(role_type):
     """
     Create a managed policy for the admin IAM role used by Terraform.
     :return: The ManagedPolicy object.
@@ -621,26 +727,6 @@ def create_admin_policy(role_type):
         PolicyDocument=PolicyDocument(
             Version="2012-10-17",
             Statement=[
-                Statement(
-                    Effect=Allow,
-                    Action=[
-                        Action("eks", "CreateNodegroup"),
-                        Action("eks", "TagResource"),
-                        Action("eks", "UntagResource"),
-                        Action("eks", "DeleteNodegroup"),
-                    ],
-                    Resource=[
-                        Sub(
-                            "arn:aws:eks:${AWS::Region}:${AWS::AccountId}:cluster/opta-*"
-                        ),
-                        Sub(
-                            "arn:aws:eks:${AWS::Region}:${AWS::AccountId}:nodegroup/opta-*/opta-*/*"
-                        ),
-                        Sub(
-                            "arn:aws:eks:${AWS::Region}:${AWS::AccountId}:nodegroup/opta-*"
-                        ),
-                    ],
-                ),
                 Statement(
                     Effect=Allow,
                     Action=[
@@ -655,22 +741,19 @@ def create_admin_policy(role_type):
                         Action("iam", "PassRole"),
                     ],
                     Resource=[
-                        Sub("arn:aws:iam::${AWS::AccountId}:policy/*"),
-                        Sub("arn:aws:iam::${AWS::AccountId}:role/*"),
+                        Sub(
+                            "arn:aws:iam::${AWS::AccountId}:role/aws-service-role/*.amazonaws.com/*"
+                        ),
+                        Sub("arn:aws:iam::${AWS::AccountId}:role/opta-*"),
+                        Sub("arn:aws:iam::${AWS::AccountId}:role/unionai-*"),
                     ],
-                ),
-                Statement(
-                    Effect=Allow,
-                    Action=[
-                        Action("autoscaling", "CreateOrUpdateTags"),
-                        Action("autoscaling", "DeleteTags"),
-                    ],
-                    Resource=["*"],
                 ),
                 Statement(
                     Effect=Allow,
                     Action=[
                         Action("ec2", "EnableEbsEncryptionByDefault"),
+                        Action("ec2", "ModifyEbsDefaultKmsKeyId"),
+                        Action("ec2", "DisableEbsEncryptionByDefault"),
                         Action("ec2", "GetEbsEncryptionByDefault"),
                     ],
                     Resource=["*"],
@@ -716,7 +799,7 @@ def create_role(name, policy_arn):
 
 
 def main():
-    for role in ["reader", "manager", "provisioner", "admin"]:
+    for role in ["reader", "updater", "provisioner", "admin"]:
         template = Template()
         description = READER_CF_DESCRIPTION
         ref = [Ref(template.add_resource(create_read_policy(role)))]
@@ -724,21 +807,17 @@ def main():
         if role == "manager":
             description = MANAGER_CF_DESCRIPTION
 
-        if role == "provisioner":
-            ref.append(Ref(template.add_resource(create_provisioner_policy(role))))
-            description = PROVISIONER_CF_DESCRIPTION
-
-        if role == "admin":
+        if role == "admin" and role == "provisioner":
             description = PROVISIONER_CF_DESCRIPTION
             ref.append(Ref(template.add_resource(create_provisioner_policy(role))))
 
         # This permission is required by Terraform for update/upgrade
-        if role == "manager" or role == "provisioner" or role == "admin":
+        if role == "updater" or role == "provisioner" or role == "admin":
             ref.append(Ref(template.add_resource(create_manager_policy(role))))
-            ref.append(Ref(template.add_resource(create_admin_policy(role))))
+            ref.append(Ref(template.add_resource(create_terraform_policy(role))))
 
         template.set_description(description)
-        file = f"unionai-{role}-role"
+        file = f"unionai-{role}"
         if role == "admin":
             file = "union-ai-admin"
 

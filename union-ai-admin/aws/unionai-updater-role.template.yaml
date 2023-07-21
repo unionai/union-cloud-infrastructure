@@ -15,11 +15,11 @@ Resources:
         - !Ref 'UnionaiReaderPermission'
         - !Ref 'UnionaiManagerPermission'
         - !Ref 'UnionaiAdminPermission'
-      RoleName: union-ai-admin
+      RoleName: unionai-updater
     Type: AWS::IAM::Role
   UnionaiAdminPermission:
     Properties:
-      ManagedPolicyName: admin-policy-for-admin-role
+      ManagedPolicyName: admin-policy-for-updater-role
       PolicyDocument:
         Statement:
           - Action:
@@ -53,7 +53,7 @@ Resources:
     Type: AWS::IAM::ManagedPolicy
   UnionaiManagerPermission:
     Properties:
-      ManagedPolicyName: manager-policy-for-admin-role
+      ManagedPolicyName: manager-policy-for-updater-role
       PolicyDocument:
         Statement:
           - Action:
@@ -120,7 +120,7 @@ Resources:
     Type: AWS::IAM::ManagedPolicy
   UnionaiReaderPermission:
     Properties:
-      ManagedPolicyName: reader-policy-for-admin-role
+      ManagedPolicyName: reader-policy-for-updater-role
       PolicyDocument:
         Statement:
           - Action:

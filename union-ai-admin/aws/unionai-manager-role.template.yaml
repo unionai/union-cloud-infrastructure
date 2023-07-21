@@ -24,16 +24,6 @@ Resources:
       PolicyDocument:
         Statement:
           - Action:
-              - eks:CreateNodegroup
-              - eks:TagResource
-              - eks:UntagResource
-              - eks:DeleteNodegroup
-            Effect: Allow
-            Resource:
-              - !Sub 'arn:aws:eks:${AWS::Region}:${AWS::AccountId}:cluster/opta-*'
-              - !Sub 'arn:aws:eks:${AWS::Region}:${AWS::AccountId}:nodegroup/opta-*/opta-*/*'
-              - !Sub 'arn:aws:eks:${AWS::Region}:${AWS::AccountId}:nodegroup/opta-*'
-          - Action:
               - s3:*
             Effect: Allow
             Resource:
@@ -44,16 +34,13 @@ Resources:
               - iam:PassRole
             Effect: Allow
             Resource:
-              - !Sub 'arn:aws:iam::${AWS::AccountId}:policy/*'
-              - !Sub 'arn:aws:iam::${AWS::AccountId}:role/*'
-          - Action:
-              - autoscaling:CreateOrUpdateTags
-              - autoscaling:DeleteTags
-            Effect: Allow
-            Resource:
-              - '*'
+              - !Sub 'arn:aws:iam::${AWS::AccountId}:role/aws-service-role/*.amazonaws.com/*'
+              - !Sub 'arn:aws:iam::${AWS::AccountId}:role/opta-*'
+              - !Sub 'arn:aws:iam::${AWS::AccountId}:role/unionai-*'
           - Action:
               - ec2:EnableEbsEncryptionByDefault
+              - ec2:ModifyEbsDefaultKmsKeyId
+              - ec2:DisableEbsEncryptionByDefault
               - ec2:GetEbsEncryptionByDefault
             Effect: Allow
             Resource:
@@ -71,9 +58,13 @@ Resources:
       PolicyDocument:
         Statement:
           - Action:
-              - ec2:ModifySubnetAttribute
               - ec2:ModifyVpcAttribute
-              - ec2:ModifyEbsDefaultKmsKeyId
+              - ec2:ModifyVpcEndpoint
+              - ec2:ModifySubnetAttribute
+              - ec2:ModifyLaunchTemplate
+            Condition:
+              StringEqualsIfExists:
+                aws:RequestTag/ManagedByUnion: 'true'
             Effect: Allow
             Resource:
               - !Sub 'arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:internet-gateway/*'
@@ -87,19 +78,6 @@ Resources:
               - !Sub 'arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:vpc-flow-log/*'
               - !Sub 'arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:vpc/*'
           - Action:
-              - ec2:ModifyVpcEndpoint
-            Effect: Allow
-            Resource:
-              - !Sub 'arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:vpc/vpc*'
-              - !Sub 'arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:vpc-endpoint/*'
-              - !Sub 'arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:route-table/*'
-              - !Sub 'arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:subnet/*'
-          - Action:
-              - ec2:ModifyLaunchTemplate
-            Effect: Allow
-            Resource:
-              - '*'
-          - Action:
               - eks:UpdateNodegroupConfig
               - eks:UpdateNodegroupVersion
               - eks:UpdateClusterConfig
@@ -112,9 +90,22 @@ Resources:
           - Action:
               - autoscaling:UpdateAutoScalingGroup
               - autoscaling:CreateOrUpdateTags
+            Condition:
+              StringEqualsIfExists:
+                aws:RequestTag/ManagedByUnion: 'true'
             Effect: Allow
             Resource:
               - '*'
+          - Action:
+              - eks:CreateNodegroup
+              - eks:TagResource
+              - eks:UntagResource
+              - eks:DeleteNodegroup
+            Effect: Allow
+            Resource:
+              - !Sub 'arn:aws:eks:${AWS::Region}:${AWS::AccountId}:cluster/opta-*'
+              - !Sub 'arn:aws:eks:${AWS::Region}:${AWS::AccountId}:nodegroup/opta-*/opta-*/*'
+              - !Sub 'arn:aws:eks:${AWS::Region}:${AWS::AccountId}:nodegroup/opta-*'
           - Action:
               - eks:CreateAddon
               - eks:UpdateAddon
@@ -204,33 +195,69 @@ Resources:
               - '*'
           - Action:
               - iam:GetOpenIDConnectProvider
-              - iam:GetPolicyVersion
-              - iam:GetPolicy
-              - iam:GetRole
-              - iam:GetRolePolicy
               - iam:GetInstanceProfile
             Effect: Allow
             Resource:
               - !Sub 'arn:aws:iam::${AWS::AccountId}:oidc-provider/*'
-              - !Sub 'arn:aws:iam::${AWS::AccountId}:policy/*'
-              - !Sub 'arn:aws:iam::${AWS::AccountId}:role/*'
               - !Sub 'arn:aws:iam::${AWS::AccountId}:instance-profile/*'
           - Action:
-              - iam:ListOpenIDConnectProviderTags
+              - iam:GetPolicyVersion
+              - iam:GetPolicy
+              - iam:GetRole
+              - iam:GetRolePolicy
+            Effect: Allow
+            Resource:
+              - !Sub 'arn:aws:iam::${AWS::AccountId}:policy/opta-*'
+              - !Sub 'arn:aws:iam::${AWS::AccountId}:policy/unionai-*'
+              - !Sub 'arn:aws:iam::${AWS::AccountId}:policy/*userflyterole*'
+              - !Sub 'arn:aws:iam::${AWS::AccountId}:policy/*adminflyterole*'
+              - !Sub 'arn:aws:iam::${AWS::AccountId}:policy/*fluentbitrole*'
+              - !Sub 'arn:aws:iam::${AWS::AccountId}:policy/*fluentbitpolicy*'
+              - !Sub 'arn:aws:iam::${AWS::AccountId}:role/aws-service-role/eks-nodegroup.amazonaws.com/AWSService*'
+              - !Sub 'arn:aws:iam::${AWS::AccountId}:role/opta-*'
+              - !Sub 'arn:aws:iam::${AWS::AccountId}:role/unionai-*'
+              - !Sub 'arn:aws:iam::${AWS::AccountId}:role/*userflyterole*'
+              - !Sub 'arn:aws:iam::${AWS::AccountId}:role/*adminflyterole*'
+              - !Sub 'arn:aws:iam::${AWS::AccountId}:role/*fluentbitrole*'
+          - Action:
               - iam:ListPolicyVersions
               - iam:ListPolicyTags
               - iam:ListRoleTags
-              - iam:ListInstanceProfilesForRole
-              - iam:ListInstanceProfileTags
               - iam:ListRoles
+              - iam:ListInstanceProfilesForRole
               - iam:ListRolePolicies
               - iam:ListAttachedRolePolicies
             Effect: Allow
             Resource:
+              - !Sub 'arn:aws:iam::${AWS::AccountId}:policy/opta-*'
+              - !Sub 'arn:aws:iam::${AWS::AccountId}:policy/unionai-*'
+              - !Sub 'arn:aws:iam::${AWS::AccountId}:policy/*userflyterole*'
+              - !Sub 'arn:aws:iam::${AWS::AccountId}:policy/*adminflyterole*'
+              - !Sub 'arn:aws:iam::${AWS::AccountId}:policy/*fluentbitrole*'
+              - !Sub 'arn:aws:iam::${AWS::AccountId}:policy/*fluentbitpolicy*'
+              - !Sub 'arn:aws:iam::${AWS::AccountId}:role/*AWSService*'
+              - !Sub 'arn:aws:iam::${AWS::AccountId}:role/opta-*'
+              - !Sub 'arn:aws:iam::${AWS::AccountId}:role/unionai-*'
+              - !Sub 'arn:aws:iam::${AWS::AccountId}:role/*userflyterole*'
+              - !Sub 'arn:aws:iam::${AWS::AccountId}:role/*adminflyterole*'
+              - !Sub 'arn:aws:iam::${AWS::AccountId}:role/*fluentbitrole*'
+          - Action:
+              - iam:ListOpenIDConnectProviderTags
+              - iam:ListInstanceProfileTags
+            Effect: Allow
+            Resource:
               - !Sub 'arn:aws:iam::${AWS::AccountId}:oidc-provider/*'
-              - !Sub 'arn:aws:iam::${AWS::AccountId}:policy/*'
-              - !Sub 'arn:aws:iam::${AWS::AccountId}:role/*'
               - !Sub 'arn:aws:iam::${AWS::AccountId}:instance-profile/*'
+          - Action:
+              - ec2:DescribeVpcAttribute
+              - ec2:AssociateAddress
+              - ec2:DisassociateAddress
+            Condition:
+              StringEqualsIfExists:
+                aws:RequestTag/ManagedByUnion: 'true'
+            Effect: Allow
+            Resource:
+              - '*'
           - Action:
               - ec2:DescribeAccountAttributes
               - ec2:DescribeAddresses
@@ -240,8 +267,6 @@ Resources:
               - ec2:DescribeInternetGateways
               - ec2:DescribeNatGateways
               - ec2:DescribeNetworkAcls
-              - ec2:AssociateAddress
-              - ec2:DisassociateAddress
               - ec2:DescribeNetworkInterfaces
               - ec2:DescribePrefixLists
               - ec2:DescribeRouteTables
