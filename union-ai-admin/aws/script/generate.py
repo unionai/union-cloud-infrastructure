@@ -25,8 +25,8 @@ READER_CF_DESCRIPTION = (
     "modifying or altering them. "
 )
 
-# Description for the manager IAM role CloudFormation template
-MANAGER_CF_DESCRIPTION = (
+# Description for the updater IAM role CloudFormation template
+UPDATER_CF_DESCRIPTION = (
     "UnionAI Management CloudFormation Template: "
     "This CloudFormation template is responsible for creating a management IAM role that UnionAI "
     "will utilize. "
@@ -303,14 +303,14 @@ def create_read_policy(role_type):
     )
 
 
-def create_manager_policy(role_type):
+def create_updater_policy(role_type):
     """
-    Create a managed policy for the manager IAM role.
+    Create a managed policy for the updater IAM role.
     :return: The ManagedPolicy object.
     """
     return ManagedPolicy(
-        "UnionaiManagerPermission",
-        ManagedPolicyName=f"manager-policy-for-{role_type}-role",
+        "UnionaiUpdaterPermission",
+        ManagedPolicyName=f"updater-policy-for-{role_type}-role",
         PolicyDocument=PolicyDocument(
             Version="2012-10-17",
             Statement=[
@@ -722,8 +722,8 @@ def create_terraform_policy(role_type):
     :return: The ManagedPolicy object.
     """
     return ManagedPolicy(
-        "UnionaiAdminPermission",
-        ManagedPolicyName=f"admin-policy-for-{role_type}-role",
+        "UnionaiTerraformPermission",
+        ManagedPolicyName=f"terraform-policy-for-{role_type}-role",
         PolicyDocument=PolicyDocument(
             Version="2012-10-17",
             Statement=[
@@ -799,27 +799,25 @@ def create_role(name, policy_arn):
 
 
 def main():
-    for role in ["reader", "updater", "provisioner", "admin"]:
+    for role in ["reader", "updater", "provisioner"]:
         template = Template()
         description = READER_CF_DESCRIPTION
         ref = [Ref(template.add_resource(create_read_policy(role)))]
 
-        if role == "manager":
-            description = MANAGER_CF_DESCRIPTION
+        if role == "updater":
+            description = UPDATER_CF_DESCRIPTION
 
-        if role == "admin" and role == "provisioner":
+        if role == "provisioner":
             description = PROVISIONER_CF_DESCRIPTION
             ref.append(Ref(template.add_resource(create_provisioner_policy(role))))
 
         # This permission is required by Terraform for update/upgrade
-        if role == "updater" or role == "provisioner" or role == "admin":
-            ref.append(Ref(template.add_resource(create_manager_policy(role))))
+        if role == "updater" or role == "provisioner":
+            ref.append(Ref(template.add_resource(create_updater_policy(role))))
             ref.append(Ref(template.add_resource(create_terraform_policy(role))))
 
         template.set_description(description)
         file = f"unionai-{role}"
-        if role == "admin":
-            file = "union-ai-admin"
 
         template.add_resource(create_role(file, ref))
 
