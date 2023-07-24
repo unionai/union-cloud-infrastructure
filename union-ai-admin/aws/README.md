@@ -5,7 +5,7 @@ The Union.ai role Stack for AWS gives you a iam role and few policies. Union ai 
 ### unionai-provisioner-stack
 CloudFormation template allows customers to create an initial provisioner role for provisioning the UnionAI infrastructure. Once the infrastructure is set up, the user can safely delete this role.
 
-[![Launch Stack](https://s3.amazonaws.com/cloudformation-examples/cloudformation-launch-stack.png)](https://console.aws.amazon.com/cloudformation/home?region=region#/stacks/new?stackName=unionai-provisioner-role&templateURL=https://union-public.s3.amazonaws.com/templates/beta/unionai-provisioner-role.template.yaml)
+[![Launch Stack](https://s3.amazonaws.com/cloudformation-examples/cloudformation-launch-stack.png)](https://console.aws.amazon.com/cloudformation/home?region=region#/stacks/new?stackName=unionai-provisioner-stack&templateURL=https://union-public.s3.amazonaws.com/templates/beta/unionai-provisioner-role.template.yaml)
 
 #### Resources
 - It will create 3 policies:
@@ -28,7 +28,7 @@ aws cloudformation create-stack \
 ### unionai-updater-stack
 CloudFormation template allows customers to create a updater role for managing the UnionAI infrastructure. The updater role provides permissions to modify specific resources and perform management tasks within the infrastructure.
 
-[![Launch Stack](https://s3.amazonaws.com/cloudformation-examples/cloudformation-launch-stack.png)](https://console.aws.amazon.com/cloudformation/home?region=region#/stacks/new?stackName=unionai-provisioner-role&templateURL=https://union-public.s3.amazonaws.com/templates/beta/unionai-updater-role.template.yaml)
+[![Launch Stack](https://s3.amazonaws.com/cloudformation-examples/cloudformation-launch-stack.png)](https://console.aws.amazon.com/cloudformation/home?region=region#/stacks/new?stackName=unionai-provisioner-stack&templateURL=https://union-public.s3.amazonaws.com/templates/beta/unionai-updater-role.template.yaml)
 
 #### Resources
 - It will create 2 policies:
@@ -50,7 +50,7 @@ aws cloudformation create-stack \
 ### unionai-reader-stack:
 CloudFormation template allows customers to create a reader role for accessing and viewing resources within the UnionAI infrastructure. The reader role provides read-only permissions, allowing users to list, get, and describe resources without the ability to modify or make changes.
 
-[![Launch Stack](https://s3.amazonaws.com/cloudformation-examples/cloudformation-launch-stack.png)](https://console.aws.amazon.com/cloudformation/home?region=region#/stacks/new?stackName=unionai-provisioner-role&templateURL=https://union-public.s3.amazonaws.com/templates/beta/unionai-reader-role.template.yaml)
+[![Launch Stack](https://s3.amazonaws.com/cloudformation-examples/cloudformation-launch-stack.png)](https://console.aws.amazon.com/cloudformation/home?region=region#/stacks/new?stackName=unionai-provisioner-stack&templateURL=https://union-public.s3.amazonaws.com/templates/beta/unionai-reader-role.template.yaml)
 
 #### Resources
 - It will create a policy named `read-policy` that provides permissions to list, get, and describe resources.
