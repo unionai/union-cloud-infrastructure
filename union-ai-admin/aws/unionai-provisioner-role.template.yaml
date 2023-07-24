@@ -191,7 +191,6 @@ Resources:
               - autoscaling:CreateAutoScalingGroup
               - autoscaling:DeleteAutoScalingGroup
               - autoscaling:SetInstanceProtection
-              - autoscaling:DeleteTags
             Condition:
               StringEqualsIfExists:
                 aws:RequestTag/ManagedByUnion: 'true'
@@ -440,6 +439,7 @@ Resources:
           - Action:
               - autoscaling:UpdateAutoScalingGroup
               - autoscaling:CreateOrUpdateTags
+              - autoscaling:DeleteTags
             Condition:
               StringEqualsIfExists:
                 aws:RequestTag/ManagedByUnion: 'true'

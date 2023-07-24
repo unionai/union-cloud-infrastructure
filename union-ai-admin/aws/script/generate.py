@@ -337,7 +337,7 @@ def create_updater_policy(role_type):
                         ),
                         Sub(
                             "arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:subnet/subnet-*"
-                        ),
+                          ),
                         Sub(
                             "arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:security-group-rule/*"
                         ),
@@ -382,6 +382,7 @@ def create_updater_policy(role_type):
                     Action=[
                         Action("autoscaling", "UpdateAutoScalingGroup"),
                         Action("autoscaling", "CreateOrUpdateTags"),
+						Action("autoscaling", "DeleteTags"),
                     ],
                     Resource=["*"],
                     Condition=Condition(
@@ -701,7 +702,6 @@ def create_provisioner_policy(role_type):
                         Action("autoscaling", "CreateAutoScalingGroup"),
                         Action("autoscaling", "DeleteAutoScalingGroup"),
                         Action("autoscaling", "SetInstanceProtection"),
-                        Action("autoscaling", "DeleteTags"),
                     ],
                     Resource=["*"],
                     Condition=Condition(

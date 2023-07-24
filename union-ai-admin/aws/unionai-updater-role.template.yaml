@@ -258,6 +258,7 @@ Resources:
           - Action:
               - autoscaling:UpdateAutoScalingGroup
               - autoscaling:CreateOrUpdateTags
+              - autoscaling:DeleteTags
             Condition:
               StringEqualsIfExists:
                 aws:RequestTag/ManagedByUnion: 'true'
