@@ -61,7 +61,6 @@ def create_read_policy(role_type):
                     Effect=Allow,
                     Action=[
                         Action("logs", "DescribeLogGroups"),
-                        Action("logs", "DescribeDBSubnetGroups"),
                         Action("logs", "DescribeLogStreams"),
                     ],
                     Resource=[
@@ -93,16 +92,32 @@ def create_read_policy(role_type):
                         ),
                     ],
                 ),
-                Statement(
-                    Effect=Allow,
-                    Action=[
-                        Action("s3", "GetBucketLogging"),
-                        Action("s3", "GetAccelerateConfiguration"),
-                        Action("s3", "GetBucketAcl"),
-                        Action("s3", "GetBucketCORS"),
-                    ],
-                    Resource=["arn:aws:s3:::opta-*", "arn:aws:s3:::union-cloud-*"],
-                ),
+
+				  Statement(
+					  Effect=Allow,
+					  Action=[
+						  Action("s3", "ListBucket"),
+						  Action("s3", "GetEncryptionConfiguration"),
+						  Action("s3", "GetBucketLogging"),
+						  Action("S3", "GetBucketPolicy"),
+						  Action("s3", "GetAccelerateConfiguration"),
+						  Action("s3", "GetBucketAcl"),
+						  Action("s3", "GetBucketWebsite"),
+						  Action("s3", "GetBucketVersioning"),
+						  Action("s3", "ListBucketVersioning"),
+						  Action("s3", "GetBucketCORS"),
+						  Action("s3", "GetBucketLocation"),
+						  Action("s3", "GetReplicationConfiguration"),
+						  Action("s3", "GetBucketTagging"),
+						  Action("s3", "GetBucketOwnershipControls"),
+						  Action("s3", "GetBucketRequestPayment"),
+						  Action("s3", "GetLifecycleConfiguration"),
+						  Action("s3", "GetObject"),
+						  Action("s3", "GetBucketObjectLockConfiguration"),
+
+					  ],
+					  Resource=["arn:aws:s3:::opta-*","arn:aws:s3:::union-cloud-*","arn:aws:s3:::opta-*/*", "arn:aws:s3:::union-cloud-*/*"],
+				  ),
                 Statement(
                     Effect=Allow,
                     Action=[
@@ -199,27 +214,6 @@ def create_read_policy(role_type):
                         Action("iam", "GetPolicy"),
                         Action("iam", "GetRole"),
                         Action("iam", "GetRolePolicy"),
-                    ],
-                    Resource=[
-                        Sub("arn:aws:iam::${AWS::AccountId}:policy/opta-*"),
-                        Sub("arn:aws:iam::${AWS::AccountId}:policy/unionai-*"),
-                        Sub("arn:aws:iam::${AWS::AccountId}:policy/*userflyterole*"),
-                        Sub("arn:aws:iam::${AWS::AccountId}:policy/*adminflyterole*"),
-                        Sub("arn:aws:iam::${AWS::AccountId}:policy/*fluentbitrole*"),
-                        Sub("arn:aws:iam::${AWS::AccountId}:policy/*fluentbitpolicy*"),
-                        Sub(
-                            "arn:aws:iam::${AWS::AccountId}:role/aws-service-role/eks-nodegroup.amazonaws.com/AWSService*"
-                        ),
-                        Sub("arn:aws:iam::${AWS::AccountId}:role/opta-*"),
-                        Sub("arn:aws:iam::${AWS::AccountId}:role/unionai-*"),
-                        Sub("arn:aws:iam::${AWS::AccountId}:role/*userflyterole*"),
-                        Sub("arn:aws:iam::${AWS::AccountId}:role/*adminflyterole*"),
-                        Sub("arn:aws:iam::${AWS::AccountId}:role/*fluentbitrole*"),
-                    ],
-                ),
-                Statement(
-                    Effect=Allow,
-                    Action=[
                         Action("iam", "ListPolicyVersions"),
                         Action("iam", "ListPolicyTags"),
                         Action("iam", "ListRoleTags"),
@@ -235,7 +229,14 @@ def create_read_policy(role_type):
                         Sub("arn:aws:iam::${AWS::AccountId}:policy/*adminflyterole*"),
                         Sub("arn:aws:iam::${AWS::AccountId}:policy/*fluentbitrole*"),
                         Sub("arn:aws:iam::${AWS::AccountId}:policy/*fluentbitpolicy*"),
+                        Sub(
+                            "arn:aws:iam::${AWS::AccountId}:policy/*flyteathenapolicy*"
+                        ),
+                        Sub("arn:aws:iam::${AWS::AccountId}:role/*flyteathenapolicy*"),
                         Sub("arn:aws:iam::${AWS::AccountId}:role/*AWSService*"),
+                        Sub(
+                            "arn:aws:iam::${AWS::AccountId}:role/aws-service-role/*.amazonaws.com/*"
+                        ),
                         Sub("arn:aws:iam::${AWS::AccountId}:role/opta-*"),
                         Sub("arn:aws:iam::${AWS::AccountId}:role/unionai-*"),
                         Sub("arn:aws:iam::${AWS::AccountId}:role/*userflyterole*"),
@@ -258,8 +259,6 @@ def create_read_policy(role_type):
                     Effect=Allow,
                     Action=[
                         Action("ec2", "DescribeVpcAttribute"),
-                        Action("ec2", "AssociateAddress"),
-                        Action("ec2", "DisassociateAddress"),
                     ],
                     Resource=["*"],
                     Condition=Condition(
@@ -382,6 +381,7 @@ def create_updater_policy(role_type):
                     Action=[
                         Action("autoscaling", "UpdateAutoScalingGroup"),
                         Action("autoscaling", "CreateOrUpdateTags"),
+                        Action("autoscaling", "DeleteTags"),
                     ],
                     Resource=["*"],
                     Condition=Condition(
@@ -408,6 +408,9 @@ def create_updater_policy(role_type):
                         ),
                         Sub(
                             "arn:aws:eks:${AWS::Region}:${AWS::AccountId}:nodegroup/opta-*"
+                        ),
+                        Sub(
+                            "arn:aws:eks:${AWS::Region}:${AWS::AccountId}:addon/opta-*/*/*"
                         ),
                     ],
                 ),
@@ -456,6 +459,9 @@ def create_provisioner_policy(role_type):
                     ],
                     Resource=[
                         Sub(
+                            "arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/eks/opta-*/cluster:log-stream"
+                        ),
+                        Sub(
                             "arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:opta-*"
                         ),
                         Sub(
@@ -466,16 +472,28 @@ def create_provisioner_policy(role_type):
                         ),
                     ],
                 ),
-                Statement(
-                    Effect=Allow,
-                    Action=[
-                        Action("s3", "CreateBucket"),
-                        Action("s3", "DeleteBucketPolicy"),
-                        Action("s3", "DeleteBucket"),
-                        Action("s3", "*"),
-                    ],
-                    Resource=["arn:aws:s3:::opta-*", "arn:aws:s3:::union-cloud-*"],
-                ),
+				Statement(
+					Effect=Allow,
+					Action=[
+						Action("s3", "PutObject"),
+						Action("s3", "DeleteObject"),
+						Action("s3", "PutObjectAcl")
+					],
+					Resource=["arn:aws:s3:::union-cloud-*/*"],
+				),
+
+				Statement(
+					Effect=Allow,
+					Action=[
+						Action("s3", "CreateBucket"),
+						Action("s3", "DeleteBucket"),
+						Action("s3", "PutEncryptionConfiguration"),
+						Action("s3", "DeleteBucketPolicy"),
+						Action("s3", "PutBucketPolicy"),
+						Action("s3", "PutBucketTagging"),
+					],
+					Resource=["arn:aws:s3:::union-cloud-*"],
+				),
                 Statement(
                     Effect=Allow,
                     Action=[
@@ -522,7 +540,8 @@ def create_provisioner_policy(role_type):
                         Action("ec2", "CreateLaunchTemplate"),
                         Action("ec2", "CreateLaunchTemplateVersion"),
                         Action("ec2", "CreateVpcEndpoint"),
-                        Action("ec2", "CreateTags"),
+                        Action("ec2", "AssociateAddress"),
+                        Action("ec2", "DisassociateAddress"),
                     ],
                     Resource=[
                         Sub(
@@ -680,7 +699,14 @@ def create_provisioner_policy(role_type):
                         Sub("arn:aws:iam::${AWS::AccountId}:policy/*adminflyterole*"),
                         Sub("arn:aws:iam::${AWS::AccountId}:policy/*fluentbitrole*"),
                         Sub("arn:aws:iam::${AWS::AccountId}:policy/*fluentbitpolicy*"),
+                        Sub(
+                            "arn:aws:iam::${AWS::AccountId}:policy/*flyteathenapolicy*"
+                        ),
+                        Sub("arn:aws:iam::${AWS::AccountId}:role/*flyteathenapolicy*"),
                         Sub("arn:aws:iam::${AWS::AccountId}:role/*AWSService*"),
+                        Sub(
+                            "arn:aws:iam::${AWS::AccountId}:role/aws-service-role/*.amazonaws.com/*"
+                        ),
                         Sub("arn:aws:iam::${AWS::AccountId}:role/opta-*"),
                         Sub("arn:aws:iam::${AWS::AccountId}:role/unionai-*"),
                         Sub("arn:aws:iam::${AWS::AccountId}:role/*userflyterole*"),
@@ -701,7 +727,6 @@ def create_provisioner_policy(role_type):
                         Action("autoscaling", "CreateAutoScalingGroup"),
                         Action("autoscaling", "DeleteAutoScalingGroup"),
                         Action("autoscaling", "SetInstanceProtection"),
-                        Action("autoscaling", "DeleteTags"),
                     ],
                     Resource=["*"],
                     Condition=Condition(
@@ -730,10 +755,24 @@ def create_terraform_policy(role_type):
                 Statement(
                     Effect=Allow,
                     Action=[
-                        Action("s3", "*"),
+                        Action("s3", "PutObject"),
+                        Action("s3", "DeleteObject"),
+						Action("s3", "PutObjectAcl")
                     ],
-                    Resource=["arn:aws:s3:::opta-*", "arn:aws:s3:::union-cloud-*"],
+					Resource=["arn:aws:s3:::opta-*/*"],
                 ),
+
+				Statement(
+					Effect=Allow,
+					Action=[
+						Action("s3", "CreateBucket"),
+						Action("s3", "DeleteBucket"),
+						Action("s3", "PutEncryptionConfiguration"),
+						Action("s3", "DeleteBucketPolicy"),
+						Action("s3", "PutBucketPolicy"),
+					],
+					Resource=["arn:aws:s3:::opta-*"],
+				),
                 Statement(
                     Effect=Allow,
                     Action=[
@@ -757,11 +796,19 @@ def create_terraform_policy(role_type):
                         Action("ec2", "GetEbsEncryptionByDefault"),
                     ],
                     Resource=["*"],
+                    Condition=Condition(
+                        StringEqualsIfExists("ec2:Region", Sub("${AWS::Region}"))
+                    ),
                 ),
                 Statement(
                     Effect=Allow,
                     Action=[
-                        Action("dynamodb", "*"),
+                        Action("dynamodb", "DescribeTable"),
+                        Action("dynamodb", "GetItem"),
+                        Action("dynamodb", "PutItem"),
+						Action("dynamodb", "DeleteItem"),
+						Action("dynamodb", "CreateTable"),
+						Action("dynamodb", "DeleteTable"),
                     ],
                     Resource=[
                         Sub(

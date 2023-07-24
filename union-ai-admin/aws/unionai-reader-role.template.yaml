@@ -22,7 +22,6 @@ Resources:
         Statement:
           - Action:
               - logs:DescribeLogGroups
-              - logs:DescribeDBSubnetGroups
               - logs:DescribeLogStreams
             Effect: Allow
             Resource:
@@ -37,14 +36,30 @@ Resources:
               - !Sub 'arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group::log-stream*'
               - !Sub 'arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/eks/opta-*:*'
           - Action:
+              - s3:ListBucket
+              - s3:GetEncryptionConfiguration
               - s3:GetBucketLogging
+              - S3:GetBucketPolicy
               - s3:GetAccelerateConfiguration
               - s3:GetBucketAcl
+              - s3:GetBucketWebsite
+              - s3:GetBucketVersioning
+              - s3:ListBucketVersioning
               - s3:GetBucketCORS
+              - s3:GetBucketLocation
+              - s3:GetReplicationConfiguration
+              - s3:GetBucketTagging
+              - s3:GetBucketOwnershipControls
+              - s3:GetBucketRequestPayment
+              - s3:GetLifecycleConfiguration
+              - s3:GetObject
+              - s3:GetBucketObjectLockConfiguration
             Effect: Allow
             Resource:
               - arn:aws:s3:::opta-*
               - arn:aws:s3:::union-cloud-*
+              - arn:aws:s3:::opta-*/*
+              - arn:aws:s3:::union-cloud-*/*
           - Action:
               - cloudfront:GetCloudFrontOriginAccessIdentity
             Effect: Allow
@@ -101,21 +116,6 @@ Resources:
               - iam:GetPolicy
               - iam:GetRole
               - iam:GetRolePolicy
-            Effect: Allow
-            Resource:
-              - !Sub 'arn:aws:iam::${AWS::AccountId}:policy/opta-*'
-              - !Sub 'arn:aws:iam::${AWS::AccountId}:policy/unionai-*'
-              - !Sub 'arn:aws:iam::${AWS::AccountId}:policy/*userflyterole*'
-              - !Sub 'arn:aws:iam::${AWS::AccountId}:policy/*adminflyterole*'
-              - !Sub 'arn:aws:iam::${AWS::AccountId}:policy/*fluentbitrole*'
-              - !Sub 'arn:aws:iam::${AWS::AccountId}:policy/*fluentbitpolicy*'
-              - !Sub 'arn:aws:iam::${AWS::AccountId}:role/aws-service-role/eks-nodegroup.amazonaws.com/AWSService*'
-              - !Sub 'arn:aws:iam::${AWS::AccountId}:role/opta-*'
-              - !Sub 'arn:aws:iam::${AWS::AccountId}:role/unionai-*'
-              - !Sub 'arn:aws:iam::${AWS::AccountId}:role/*userflyterole*'
-              - !Sub 'arn:aws:iam::${AWS::AccountId}:role/*adminflyterole*'
-              - !Sub 'arn:aws:iam::${AWS::AccountId}:role/*fluentbitrole*'
-          - Action:
               - iam:ListPolicyVersions
               - iam:ListPolicyTags
               - iam:ListRoleTags
@@ -131,7 +131,10 @@ Resources:
               - !Sub 'arn:aws:iam::${AWS::AccountId}:policy/*adminflyterole*'
               - !Sub 'arn:aws:iam::${AWS::AccountId}:policy/*fluentbitrole*'
               - !Sub 'arn:aws:iam::${AWS::AccountId}:policy/*fluentbitpolicy*'
+              - !Sub 'arn:aws:iam::${AWS::AccountId}:policy/*flyteathenapolicy*'
+              - !Sub 'arn:aws:iam::${AWS::AccountId}:role/*flyteathenapolicy*'
               - !Sub 'arn:aws:iam::${AWS::AccountId}:role/*AWSService*'
+              - !Sub 'arn:aws:iam::${AWS::AccountId}:role/aws-service-role/*.amazonaws.com/*'
               - !Sub 'arn:aws:iam::${AWS::AccountId}:role/opta-*'
               - !Sub 'arn:aws:iam::${AWS::AccountId}:role/unionai-*'
               - !Sub 'arn:aws:iam::${AWS::AccountId}:role/*userflyterole*'
@@ -146,8 +149,6 @@ Resources:
               - !Sub 'arn:aws:iam::${AWS::AccountId}:instance-profile/*'
           - Action:
               - ec2:DescribeVpcAttribute
-              - ec2:AssociateAddress
-              - ec2:DisassociateAddress
             Condition:
               StringEqualsIfExists:
                 aws:RequestTag/ManagedByUnion: 'true'
