@@ -61,7 +61,6 @@ def create_read_policy(role_type):
                     Effect=Allow,
                     Action=[
                         Action("logs", "DescribeLogGroups"),
-                        Action("logs", "DescribeDBSubnetGroups"),
                         Action("logs", "DescribeLogStreams"),
                     ],
                     Resource=[
@@ -169,8 +168,8 @@ def create_read_policy(role_type):
                         Action("kms", "DescribeKey"),
                     ],
                     Resource=[
-                        Sub("arn:aws:kms::${AWS::AccountId}:alias/*"),
-                        Sub("arn:aws:kms::${AWS::AccountId}:key/*"),
+                        Sub("arn:aws:kms:${AWS::Region}:${AWS::AccountId}:alias/*"),
+                        Sub("arn:aws:kms:${AWS::Region}:${AWS::AccountId}:key/*"),
                     ],
                 ),
                 Statement(
@@ -207,7 +206,23 @@ def create_read_policy(role_type):
                         Action("iam", "ListRolePolicies"),
                         Action("iam", "ListAttachedRolePolicies"),
                     ],
-
+					Resource=[
+						Sub("arn:aws:iam::${AWS::AccountId}:policy/opta-*"),
+						Sub("arn:aws:iam::${AWS::AccountId}:policy/unionai-*"),
+						Sub("arn:aws:iam::${AWS::AccountId}:policy/*userflyterole*"),
+						Sub("arn:aws:iam::${AWS::AccountId}:policy/*adminflyterole*"),
+						Sub("arn:aws:iam::${AWS::AccountId}:policy/*fluentbitrole*"),
+						Sub("arn:aws:iam::${AWS::AccountId}:policy/*fluentbitpolicy*"),
+						Sub("arn:aws:iam::${AWS::AccountId}:role/*AWSService*"),
+						Sub(
+							"arn:aws:iam::${AWS::AccountId}:role/aws-service-role/*.amazonaws.com/*"
+						),
+						Sub("arn:aws:iam::${AWS::AccountId}:role/opta-*"),
+						Sub("arn:aws:iam::${AWS::AccountId}:role/unionai-*"),
+						Sub("arn:aws:iam::${AWS::AccountId}:role/*userflyterole*"),
+						Sub("arn:aws:iam::${AWS::AccountId}:role/*adminflyterole*"),
+						Sub("arn:aws:iam::${AWS::AccountId}:role/*fluentbitrole*"),
+					],
                 ),
                 Statement(
                     Effect=Allow,
@@ -374,6 +389,9 @@ def create_updater_policy(role_type):
                         Sub(
                             "arn:aws:eks:${AWS::Region}:${AWS::AccountId}:nodegroup/opta-*"
                         ),
+						Sub(
+							"arn:aws:eks:${AWS::Region}:${AWS::AccountId}:addon/opta-*/*/*"
+						),
                     ],
                 ),
                 Statement(
@@ -595,8 +613,8 @@ def create_provisioner_policy(role_type):
                         Action("kms", "CreateGrant"),
                     ],
                     Resource=[
-                        Sub("arn:aws:kms::${AWS::AccountId}:alias/*"),
-                        Sub("arn:aws:kms::${AWS::AccountId}:key/*"),
+                        Sub("arn:aws:kms:${AWS::Region}:${AWS::AccountId}:alias/*"),
+                        Sub("arn:aws:kms:${AWS::Region}:${AWS::AccountId}:key/*"),
                     ],
                 ),
                 Statement(
@@ -650,6 +668,9 @@ def create_provisioner_policy(role_type):
                         Sub("arn:aws:iam::${AWS::AccountId}:policy/*fluentbitrole*"),
                         Sub("arn:aws:iam::${AWS::AccountId}:policy/*fluentbitpolicy*"),
                         Sub("arn:aws:iam::${AWS::AccountId}:role/*AWSService*"),
+						Sub(
+							"arn:aws:iam::${AWS::AccountId}:role/aws-service-role/*.amazonaws.com/*"
+						),
                         Sub("arn:aws:iam::${AWS::AccountId}:role/opta-*"),
                         Sub("arn:aws:iam::${AWS::AccountId}:role/unionai-*"),
                         Sub("arn:aws:iam::${AWS::AccountId}:role/*userflyterole*"),
