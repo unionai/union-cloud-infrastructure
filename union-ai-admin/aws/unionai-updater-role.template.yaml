@@ -84,8 +84,8 @@ Resources:
               - kms:DescribeKey
             Effect: Allow
             Resource:
-              - !Sub 'arn:aws:kms:${AWS::Region}:${AWS::AccountId}:alias/*'
-              - !Sub 'arn:aws:kms:${AWS::Region}:${AWS::AccountId}:key/*'
+              - !Sub 'arn:aws:kms::${AWS::AccountId}:alias/*'
+              - !Sub 'arn:aws:kms::${AWS::AccountId}:key/*'
           - Action:
               - kms:ListResourceTags
               - kms:ListAliases
@@ -104,21 +104,6 @@ Resources:
               - iam:GetPolicy
               - iam:GetRole
               - iam:GetRolePolicy
-            Effect: Allow
-            Resource:
-              - !Sub 'arn:aws:iam::${AWS::AccountId}:policy/opta-*'
-              - !Sub 'arn:aws:iam::${AWS::AccountId}:policy/unionai-*'
-              - !Sub 'arn:aws:iam::${AWS::AccountId}:policy/*userflyterole*'
-              - !Sub 'arn:aws:iam::${AWS::AccountId}:policy/*adminflyterole*'
-              - !Sub 'arn:aws:iam::${AWS::AccountId}:policy/*fluentbitrole*'
-              - !Sub 'arn:aws:iam::${AWS::AccountId}:policy/*fluentbitpolicy*'
-              - !Sub 'arn:aws:iam::${AWS::AccountId}:role/aws-service-role/eks-nodegroup.amazonaws.com/AWSService*'
-              - !Sub 'arn:aws:iam::${AWS::AccountId}:role/opta-*'
-              - !Sub 'arn:aws:iam::${AWS::AccountId}:role/unionai-*'
-              - !Sub 'arn:aws:iam::${AWS::AccountId}:role/*userflyterole*'
-              - !Sub 'arn:aws:iam::${AWS::AccountId}:role/*adminflyterole*'
-              - !Sub 'arn:aws:iam::${AWS::AccountId}:role/*fluentbitrole*'
-          - Action:
               - iam:ListPolicyVersions
               - iam:ListPolicyTags
               - iam:ListRoleTags
@@ -127,19 +112,6 @@ Resources:
               - iam:ListRolePolicies
               - iam:ListAttachedRolePolicies
             Effect: Allow
-            Resource:
-              - !Sub 'arn:aws:iam::${AWS::AccountId}:policy/opta-*'
-              - !Sub 'arn:aws:iam::${AWS::AccountId}:policy/unionai-*'
-              - !Sub 'arn:aws:iam::${AWS::AccountId}:policy/*userflyterole*'
-              - !Sub 'arn:aws:iam::${AWS::AccountId}:policy/*adminflyterole*'
-              - !Sub 'arn:aws:iam::${AWS::AccountId}:policy/*fluentbitrole*'
-              - !Sub 'arn:aws:iam::${AWS::AccountId}:policy/*fluentbitpolicy*'
-              - !Sub 'arn:aws:iam::${AWS::AccountId}:role/*AWSService*'
-              - !Sub 'arn:aws:iam::${AWS::AccountId}:role/opta-*'
-              - !Sub 'arn:aws:iam::${AWS::AccountId}:role/unionai-*'
-              - !Sub 'arn:aws:iam::${AWS::AccountId}:role/*userflyterole*'
-              - !Sub 'arn:aws:iam::${AWS::AccountId}:role/*adminflyterole*'
-              - !Sub 'arn:aws:iam::${AWS::AccountId}:role/*fluentbitrole*'
           - Action:
               - iam:ListOpenIDConnectProviderTags
               - iam:ListInstanceProfileTags
@@ -149,8 +121,6 @@ Resources:
               - !Sub 'arn:aws:iam::${AWS::AccountId}:instance-profile/*'
           - Action:
               - ec2:DescribeVpcAttribute
-              - ec2:AssociateAddress
-              - ec2:DisassociateAddress
             Condition:
               StringEqualsIfExists:
                 aws:RequestTag/ManagedByUnion: 'true'
@@ -192,7 +162,10 @@ Resources:
       PolicyDocument:
         Statement:
           - Action:
-              - s3:*
+              - s3:ListBucket
+              - s3:GetObject
+              - s3:PutObject
+              - s3:DeleteObject
             Effect: Allow
             Resource:
               - arn:aws:s3:::opta-*
@@ -210,11 +183,17 @@ Resources:
               - ec2:ModifyEbsDefaultKmsKeyId
               - ec2:DisableEbsEncryptionByDefault
               - ec2:GetEbsEncryptionByDefault
+            Condition:
+              StringEqualsIfExists:
+                ec2:Region: !Sub '${AWS::Region}'
             Effect: Allow
             Resource:
               - '*'
           - Action:
-              - dynamodb:*
+              - dynamodb:DescribeTable
+              - dynamodb:GetItem
+              - dynamodb:PutItem
+              - dynamodb:DeleteItem
             Effect: Allow
             Resource:
               - !Sub 'arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/opta-*'

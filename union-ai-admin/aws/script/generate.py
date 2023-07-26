@@ -169,8 +169,8 @@ def create_read_policy(role_type):
                         Action("kms", "DescribeKey"),
                     ],
                     Resource=[
-                        Sub("arn:aws:kms:${AWS::Region}:${AWS::AccountId}:alias/*"),
-                        Sub("arn:aws:kms:${AWS::Region}:${AWS::AccountId}:key/*"),
+                        Sub("arn:aws:kms::${AWS::AccountId}:alias/*"),
+                        Sub("arn:aws:kms::${AWS::AccountId}:key/*"),
                     ],
                 ),
                 Statement(
@@ -199,27 +199,6 @@ def create_read_policy(role_type):
                         Action("iam", "GetPolicy"),
                         Action("iam", "GetRole"),
                         Action("iam", "GetRolePolicy"),
-                    ],
-                    Resource=[
-                        Sub("arn:aws:iam::${AWS::AccountId}:policy/opta-*"),
-                        Sub("arn:aws:iam::${AWS::AccountId}:policy/unionai-*"),
-                        Sub("arn:aws:iam::${AWS::AccountId}:policy/*userflyterole*"),
-                        Sub("arn:aws:iam::${AWS::AccountId}:policy/*adminflyterole*"),
-                        Sub("arn:aws:iam::${AWS::AccountId}:policy/*fluentbitrole*"),
-                        Sub("arn:aws:iam::${AWS::AccountId}:policy/*fluentbitpolicy*"),
-                        Sub(
-                            "arn:aws:iam::${AWS::AccountId}:role/aws-service-role/eks-nodegroup.amazonaws.com/AWSService*"
-                        ),
-                        Sub("arn:aws:iam::${AWS::AccountId}:role/opta-*"),
-                        Sub("arn:aws:iam::${AWS::AccountId}:role/unionai-*"),
-                        Sub("arn:aws:iam::${AWS::AccountId}:role/*userflyterole*"),
-                        Sub("arn:aws:iam::${AWS::AccountId}:role/*adminflyterole*"),
-                        Sub("arn:aws:iam::${AWS::AccountId}:role/*fluentbitrole*"),
-                    ],
-                ),
-                Statement(
-                    Effect=Allow,
-                    Action=[
                         Action("iam", "ListPolicyVersions"),
                         Action("iam", "ListPolicyTags"),
                         Action("iam", "ListRoleTags"),
@@ -228,20 +207,7 @@ def create_read_policy(role_type):
                         Action("iam", "ListRolePolicies"),
                         Action("iam", "ListAttachedRolePolicies"),
                     ],
-                    Resource=[
-                        Sub("arn:aws:iam::${AWS::AccountId}:policy/opta-*"),
-                        Sub("arn:aws:iam::${AWS::AccountId}:policy/unionai-*"),
-                        Sub("arn:aws:iam::${AWS::AccountId}:policy/*userflyterole*"),
-                        Sub("arn:aws:iam::${AWS::AccountId}:policy/*adminflyterole*"),
-                        Sub("arn:aws:iam::${AWS::AccountId}:policy/*fluentbitrole*"),
-                        Sub("arn:aws:iam::${AWS::AccountId}:policy/*fluentbitpolicy*"),
-                        Sub("arn:aws:iam::${AWS::AccountId}:role/*AWSService*"),
-                        Sub("arn:aws:iam::${AWS::AccountId}:role/opta-*"),
-                        Sub("arn:aws:iam::${AWS::AccountId}:role/unionai-*"),
-                        Sub("arn:aws:iam::${AWS::AccountId}:role/*userflyterole*"),
-                        Sub("arn:aws:iam::${AWS::AccountId}:role/*adminflyterole*"),
-                        Sub("arn:aws:iam::${AWS::AccountId}:role/*fluentbitrole*"),
-                    ],
+
                 ),
                 Statement(
                     Effect=Allow,
@@ -258,8 +224,6 @@ def create_read_policy(role_type):
                     Effect=Allow,
                     Action=[
                         Action("ec2", "DescribeVpcAttribute"),
-                        Action("ec2", "AssociateAddress"),
-                        Action("ec2", "DisassociateAddress"),
                     ],
                     Resource=["*"],
                     Condition=Condition(
@@ -457,8 +421,11 @@ def create_provisioner_policy(role_type):
                     ],
                     Resource=[
                         Sub(
-                            "arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:opta-*"
+                            "arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/eks/opta-*/cluster:log-stream"
                         ),
+						Sub(
+							"arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:opta-*"
+						),
                         Sub(
                             "arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group::log-stream*"
                         ),
@@ -523,7 +490,8 @@ def create_provisioner_policy(role_type):
                         Action("ec2", "CreateLaunchTemplate"),
                         Action("ec2", "CreateLaunchTemplateVersion"),
                         Action("ec2", "CreateVpcEndpoint"),
-                        Action("ec2", "CreateTags"),
+						Action("ec2", "AssociateAddress"),
+						Action("ec2", "DisassociateAddress"),
                     ],
                     Resource=[
                         Sub(
@@ -627,8 +595,8 @@ def create_provisioner_policy(role_type):
                         Action("kms", "CreateGrant"),
                     ],
                     Resource=[
-                        Sub("arn:aws:kms:${AWS::Region}:${AWS::AccountId}:alias/*"),
-                        Sub("arn:aws:kms:${AWS::Region}:${AWS::AccountId}:key/*"),
+                        Sub("arn:aws:kms::${AWS::AccountId}:alias/*"),
+                        Sub("arn:aws:kms::${AWS::AccountId}:key/*"),
                     ],
                 ),
                 Statement(
@@ -730,7 +698,10 @@ def create_terraform_policy(role_type):
                 Statement(
                     Effect=Allow,
                     Action=[
-                        Action("s3", "*"),
+						Action("s3", "ListBucket"),
+						Action("s3", "GetObject"),
+						Action("s3", "PutObject"),
+						Action("s3", "DeleteObject"),
                     ],
                     Resource=["arn:aws:s3:::opta-*", "arn:aws:s3:::union-cloud-*"],
                 ),
@@ -757,11 +728,20 @@ def create_terraform_policy(role_type):
                         Action("ec2", "GetEbsEncryptionByDefault"),
                     ],
                     Resource=["*"],
+					Condition=Condition(
+						StringEqualsIfExists(
+							"ec2:Region",
+							Sub("${AWS::Region}")
+						)
+					)
                 ),
                 Statement(
                     Effect=Allow,
                     Action=[
-                        Action("dynamodb", "*"),
+						Action("dynamodb", "DescribeTable"),
+						Action("dynamodb", "GetItem"),
+						Action("dynamodb", "PutItem"),
+						Action("dynamodb", "DeleteItem"),
                     ],
                     Resource=[
                         Sub(
