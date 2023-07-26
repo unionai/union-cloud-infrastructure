@@ -1,3 +1,6 @@
+> **Warning**
+> This set of CloudFormation templates is currently under active development, and frequent changes are being made. Please be aware that the code, features, and documentation might not be fully completed or entirely functional at this stage.
+
 # Union.ai role Stack for AWS
 
 The Union.ai role Stack for AWS gives you a iam role and few policies. Union ai will use these roles for provisioning, management and debugging purpose.
