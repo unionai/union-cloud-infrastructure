@@ -45,6 +45,16 @@ Resources:
               - s3:PutObject
               - s3:DeleteObject
               - s3:PutObjectAcl
+              - s3:PutBucketLogging
+              - s3:PutBucketVersioning
+              - s3:PutBucketCORS
+              - s3:PutBucketLocation
+              - s3:PutReplicationConfiguration
+              - s3:PutBucketTagging
+              - s3:PutBucketOwnershipControls
+              - s3:PutBucketRequestPayment
+              - s3:PutLifecycleConfiguration
+              - s3:PutBucketObjectLockConfiguration
             Effect: Allow
             Resource:
               - arn:aws:s3:::union-cloud-*
