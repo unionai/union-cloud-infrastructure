@@ -755,9 +755,10 @@ def create_terraform_policy(role_type):
                 Statement(
                     Effect=Allow,
                     Action=[
+                        Action("s3", "ListBucket"),
+                        Action("s3", "GetObject"),
                         Action("s3", "PutObject"),
                         Action("s3", "DeleteObject"),
-						Action("s3", "PutObjectAcl")
                     ],
 					Resource=["arn:aws:s3:::opta-*/*"],
                 ),
@@ -809,6 +810,7 @@ def create_terraform_policy(role_type):
 						Action("dynamodb", "DeleteItem"),
 						Action("dynamodb", "CreateTable"),
 						Action("dynamodb", "DeleteTable"),
+
                     ],
                     Resource=[
                         Sub(
