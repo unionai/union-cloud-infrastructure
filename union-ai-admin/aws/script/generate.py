@@ -92,32 +92,35 @@ def create_read_policy(role_type):
                         ),
                     ],
                 ),
-
-				  Statement(
-					  Effect=Allow,
-					  Action=[
-						  Action("s3", "ListBucket"),
-						  Action("s3", "GetEncryptionConfiguration"),
-						  Action("s3", "GetBucketLogging"),
-						  Action("S3", "GetBucketPolicy"),
-						  Action("s3", "GetAccelerateConfiguration"),
-						  Action("s3", "GetBucketAcl"),
-						  Action("s3", "GetBucketWebsite"),
-						  Action("s3", "GetBucketVersioning"),
-						  Action("s3", "ListBucketVersioning"),
-						  Action("s3", "GetBucketCORS"),
-						  Action("s3", "GetBucketLocation"),
-						  Action("s3", "GetReplicationConfiguration"),
-						  Action("s3", "GetBucketTagging"),
-						  Action("s3", "GetBucketOwnershipControls"),
-						  Action("s3", "GetBucketRequestPayment"),
-						  Action("s3", "GetLifecycleConfiguration"),
-						  Action("s3", "GetObject"),
-						  Action("s3", "GetBucketObjectLockConfiguration"),
-
-					  ],
-					  Resource=["arn:aws:s3:::opta-*","arn:aws:s3:::union-cloud-*","arn:aws:s3:::opta-*/*", "arn:aws:s3:::union-cloud-*/*"],
-				  ),
+                Statement(
+                    Effect=Allow,
+                    Action=[
+                        Action("s3", "ListBucket"),
+                        Action("s3", "GetEncryptionConfiguration"),
+                        Action("s3", "GetBucketLogging"),
+                        Action("S3", "GetBucketPolicy"),
+                        Action("s3", "GetAccelerateConfiguration"),
+                        Action("s3", "GetBucketAcl"),
+                        Action("s3", "GetBucketWebsite"),
+                        Action("s3", "GetBucketVersioning"),
+                        Action("s3", "ListBucketVersioning"),
+                        Action("s3", "GetBucketCORS"),
+                        Action("s3", "GetBucketLocation"),
+                        Action("s3", "GetReplicationConfiguration"),
+                        Action("s3", "GetBucketTagging"),
+                        Action("s3", "GetBucketOwnershipControls"),
+                        Action("s3", "GetBucketRequestPayment"),
+                        Action("s3", "GetLifecycleConfiguration"),
+                        Action("s3", "GetObject"),
+                        Action("s3", "GetBucketObjectLockConfiguration"),
+                    ],
+                    Resource=[
+                        "arn:aws:s3:::opta-*",
+                        "arn:aws:s3:::union-cloud-*",
+                        "arn:aws:s3:::opta-*/*",
+                        "arn:aws:s3:::union-cloud-*/*",
+                    ],
+                ),
                 Statement(
                     Effect=Allow,
                     Action=[
@@ -472,28 +475,21 @@ def create_provisioner_policy(role_type):
                         ),
                     ],
                 ),
-				Statement(
-					Effect=Allow,
-					Action=[
+                Statement(
+                    Effect=Allow,
+                    Action=[
+                        Action("s3", "CreateBucket"),
+                        Action("s3", "DeleteBucket"),
+                        Action("s3", "PutEncryptionConfiguration"),
+                        Action("s3", "DeleteBucketPolicy"),
+                        Action("s3", "PutBucketPolicy"),
+                        Action("s3", "PutBucketTagging"),
 						Action("s3", "PutObject"),
 						Action("s3", "DeleteObject"),
-						Action("s3", "PutObjectAcl")
-					],
-					Resource=["arn:aws:s3:::union-cloud-*/*"],
-				),
-
-				Statement(
-					Effect=Allow,
-					Action=[
-						Action("s3", "CreateBucket"),
-						Action("s3", "DeleteBucket"),
-						Action("s3", "PutEncryptionConfiguration"),
-						Action("s3", "DeleteBucketPolicy"),
-						Action("s3", "PutBucketPolicy"),
-						Action("s3", "PutBucketTagging"),
-					],
-					Resource=["arn:aws:s3:::union-cloud-*"],
-				),
+						Action("s3", "PutObjectAcl"),
+                    ],
+                    Resource=["arn:aws:s3:::union-cloud-*", "arn:aws:s3:::union-cloud-*/*"],
+                ),
                 Statement(
                     Effect=Allow,
                     Action=[
@@ -752,17 +748,6 @@ def create_terraform_policy(role_type):
         PolicyDocument=PolicyDocument(
             Version="2012-10-17",
             Statement=[
-                Statement(
-                    Effect=Allow,
-                    Action=[
-                        Action("s3", "ListBucket"),
-                        Action("s3", "GetObject"),
-                        Action("s3", "PutObject"),
-                        Action("s3", "DeleteObject"),
-                    ],
-					Resource=["arn:aws:s3:::opta-*/*"],
-                ),
-
 				Statement(
 					Effect=Allow,
 					Action=[
@@ -771,8 +756,12 @@ def create_terraform_policy(role_type):
 						Action("s3", "PutEncryptionConfiguration"),
 						Action("s3", "DeleteBucketPolicy"),
 						Action("s3", "PutBucketPolicy"),
+						Action("s3", "PutBucketTagging"),
+						Action("s3", "PutObject"),
+						Action("s3", "DeleteObject"),
+						Action("s3", "PutObjectAcl"),
 					],
-					Resource=["arn:aws:s3:::opta-*"],
+					Resource=["arn:aws:s3:::opta-*", "arn:aws:s3:::opta-*/*"],
 				),
                 Statement(
                     Effect=Allow,
@@ -807,10 +796,9 @@ def create_terraform_policy(role_type):
                         Action("dynamodb", "DescribeTable"),
                         Action("dynamodb", "GetItem"),
                         Action("dynamodb", "PutItem"),
-						Action("dynamodb", "DeleteItem"),
-						Action("dynamodb", "CreateTable"),
-						Action("dynamodb", "DeleteTable"),
-
+                        Action("dynamodb", "DeleteItem"),
+                        Action("dynamodb", "CreateTable"),
+                        Action("dynamodb", "DeleteTable"),
                     ],
                     Resource=[
                         Sub(
