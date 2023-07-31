@@ -15,10 +15,10 @@ from troposphere.iam import Role, ManagedPolicy, PolicyType
 import os
 
 UNIONAI_CONDITION = Condition(
-	StringEqualsIfExists(
-		"aws:RequestTag/ManagedByUnion",
-		"true",
-	)
+    StringEqualsIfExists(
+        "aws:RequestTag/ManagedByUnion",
+        "true",
+    )
 )
 
 # Description for the reader IAM role CloudFormation template
@@ -120,7 +120,7 @@ def create_read_policy(role_type):
                         Action("s3", "GetLifecycleConfiguration"),
                         Action("s3", "GetObject"),
                         Action("s3", "GetBucketObjectLockConfiguration"),
-						Action("s3", "GetBucketPublicAccessBlock")
+                        Action("s3", "GetBucketPublicAccessBlock"),
                     ],
                     Resource=[
                         "arn:aws:s3:::opta-*",
@@ -490,7 +490,7 @@ def create_provisioner_policy(role_type):
                         Action("s3", "PutBucketRequestPayment"),
                         Action("s3", "PutLifecycleConfiguration"),
                         Action("s3", "PutBucketObjectLockConfiguration"),
-						Action("s3", "PutBucketPublicAccessBlock")
+                        Action("s3", "PutBucketPublicAccessBlock"),
                     ],
                     Resource=[
                         "arn:aws:s3:::union-cloud-*",
