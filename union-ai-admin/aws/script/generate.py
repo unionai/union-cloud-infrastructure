@@ -14,6 +14,13 @@ from troposphere.iam import Role, ManagedPolicy, PolicyType
 
 import os
 
+UNIONAI_CONDITION = Condition(
+	StringEqualsIfExists(
+		"aws:RequestTag/ManagedByUnion",
+		"true",
+	)
+)
+
 # Description for the reader IAM role CloudFormation template
 READER_CF_DESCRIPTION = (
     "UnionAI Reader CloudFormation Template: "
@@ -113,6 +120,7 @@ def create_read_policy(role_type):
                         Action("s3", "GetLifecycleConfiguration"),
                         Action("s3", "GetObject"),
                         Action("s3", "GetBucketObjectLockConfiguration"),
+						Action("s3", "GetBucketPublicAccessBlock")
                     ],
                     Resource=[
                         "arn:aws:s3:::opta-*",
@@ -264,12 +272,7 @@ def create_read_policy(role_type):
                         Action("ec2", "DescribeVpcAttribute"),
                     ],
                     Resource=["*"],
-                    Condition=Condition(
-                        StringEqualsIfExists(
-                            "aws:RequestTag/ManagedByUnion",
-                            "true",
-                        )
-                    ),
+                    Condition=UNIONAI_CONDITION,
                 ),
                 Statement(
                     Effect=Allow,
@@ -352,12 +355,7 @@ def create_updater_policy(role_type):
                         ),
                         Sub("arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:vpc/*"),
                     ],
-                    Condition=Condition(
-                        StringEqualsIfExists(
-                            "aws:RequestTag/ManagedByUnion",
-                            "true",
-                        )
-                    ),
+                    Condition=UNIONAI_CONDITION,
                 ),
                 Statement(
                     Effect=Allow,
@@ -387,12 +385,7 @@ def create_updater_policy(role_type):
                         Action("autoscaling", "DeleteTags"),
                     ],
                     Resource=["*"],
-                    Condition=Condition(
-                        StringEqualsIfExists(
-                            "aws:RequestTag/ManagedByUnion",
-                            "true",
-                        )
-                    ),
+                    Condition=UNIONAI_CONDITION,
                 ),
                 Statement(
                     Effect=Allow,
@@ -497,6 +490,7 @@ def create_provisioner_policy(role_type):
                         Action("s3", "PutBucketRequestPayment"),
                         Action("s3", "PutLifecycleConfiguration"),
                         Action("s3", "PutBucketObjectLockConfiguration"),
+						Action("s3", "PutBucketPublicAccessBlock")
                     ],
                     Resource=[
                         "arn:aws:s3:::union-cloud-*",
@@ -583,12 +577,7 @@ def create_provisioner_policy(role_type):
                         ),
                         Sub("arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:vpc/*"),
                     ],
-                    Condition=Condition(
-                        StringEqualsIfExists(
-                            "aws:RequestTag/ManagedByUnion",
-                            "true",
-                        )
-                    ),
+                    Condition=UNIONAI_CONDITION,
                 ),
                 Statement(
                     Effect=Allow,
@@ -738,12 +727,7 @@ def create_provisioner_policy(role_type):
                         Action("autoscaling", "SetInstanceProtection"),
                     ],
                     Resource=["*"],
-                    Condition=Condition(
-                        StringEqualsIfExists(
-                            "aws:RequestTag/ManagedByUnion",
-                            "true",
-                        )
-                    ),
+                    Condition=UNIONAI_CONDITION,
                 ),
             ],
         ),

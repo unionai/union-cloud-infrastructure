@@ -55,6 +55,7 @@ Resources:
               - s3:PutBucketRequestPayment
               - s3:PutLifecycleConfiguration
               - s3:PutBucketObjectLockConfiguration
+              - s3:PutBucketPublicAccessBlock
             Effect: Allow
             Resource:
               - arn:aws:s3:::union-cloud-*
@@ -258,6 +259,7 @@ Resources:
               - s3:GetLifecycleConfiguration
               - s3:GetObject
               - s3:GetBucketObjectLockConfiguration
+              - s3:GetBucketPublicAccessBlock
             Effect: Allow
             Resource:
               - arn:aws:s3:::opta-*
