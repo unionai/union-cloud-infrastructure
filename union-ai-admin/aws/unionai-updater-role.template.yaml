@@ -1,5 +1,6 @@
-Description: "UnionAI Reader CloudFormation Template: This CloudFormation template is used to create a reader IAM role for UnionAI. The role's primary purpose is to grant read-only access to UnionAI resources.\
-  \ By using this role, users will have the ability to view and retrieve information from UnionAI resources while maintaining strict restrictions on modifying or altering them. "
+Description: >-
+  UnionAI Management CloudFormation Template: This CloudFormation template is responsible for creating a management IAM role that UnionAI will utilize. This role is intended for management purposes and
+  does not grant permissions for creating, deleting, tagging, or untagging resources. Its purpose is to provide necessary access for efficiently managing UnionAI resources.
 Resources:
   CrossAccountRoleForAWSTrustedAdvisorUnion:
     Properties:
@@ -13,11 +14,13 @@ Resources:
         Version: '2012-10-17'
       ManagedPolicyArns:
         - !Ref 'UnionaiReaderPermission'
-      RoleName: unionai-reader
+        - !Ref 'UnionaiUpdaterPermission'
+        - !Ref 'UnionaiTerraformPermission'
+      RoleName: unionai-updater
     Type: AWS::IAM::Role
   UnionaiReaderPermission:
     Properties:
-      ManagedPolicyName: reader-policy-for-reader-role
+      ManagedPolicyName: reader-policy-for-updater-role
       PolicyDocument:
         Statement:
           - Action:
@@ -183,5 +186,124 @@ Resources:
             Effect: Allow
             Resource:
               - '*'
+        Version: '2012-10-17'
+    Type: AWS::IAM::ManagedPolicy
+  UnionaiTerraformPermission:
+    Properties:
+      ManagedPolicyName: terraform-policy-for-updater-role
+      PolicyDocument:
+        Statement:
+          - Action:
+              - s3:CreateBucket
+              - s3:DeleteBucket
+              - s3:PutEncryptionConfiguration
+              - s3:DeleteBucketPolicy
+              - s3:PutBucketPolicy
+              - s3:PutBucketTagging
+              - s3:PutObject
+              - s3:DeleteObject
+              - s3:PutObjectAcl
+            Effect: Allow
+            Resource:
+              - arn:aws:s3:::opta-*
+              - arn:aws:s3:::opta-*/*
+          - Action:
+              - iam:CreateServiceLinkedRole
+              - iam:PassRole
+            Effect: Allow
+            Resource:
+              - !Sub 'arn:aws:iam::${AWS::AccountId}:role/aws-service-role/*.amazonaws.com/*'
+              - !Sub 'arn:aws:iam::${AWS::AccountId}:role/opta-*'
+              - !Sub 'arn:aws:iam::${AWS::AccountId}:role/unionai-*'
+          - Action:
+              - ec2:EnableEbsEncryptionByDefault
+              - ec2:ModifyEbsDefaultKmsKeyId
+              - ec2:DisableEbsEncryptionByDefault
+              - ec2:GetEbsEncryptionByDefault
+            Condition:
+              StringEqualsIfExists:
+                ec2:Region: !Sub '${AWS::Region}'
+            Effect: Allow
+            Resource:
+              - '*'
+          - Action:
+              - dynamodb:DescribeTable
+              - dynamodb:GetItem
+              - dynamodb:PutItem
+              - dynamodb:DeleteItem
+              - dynamodb:CreateTable
+              - dynamodb:DeleteTable
+            Effect: Allow
+            Resource:
+              - !Sub 'arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/opta-*'
+        Version: '2012-10-17'
+    Type: AWS::IAM::ManagedPolicy
+  UnionaiUpdaterPermission:
+    Properties:
+      ManagedPolicyName: updater-policy-for-updater-role
+      PolicyDocument:
+        Statement:
+          - Action:
+              - ec2:ModifyVpcAttribute
+              - ec2:ModifyVpcEndpoint
+              - ec2:ModifySubnetAttribute
+              - ec2:ModifyLaunchTemplate
+            Condition:
+              StringEqualsIfExists:
+                aws:RequestTag/ManagedByUnion: 'true'
+            Effect: Allow
+            Resource:
+              - !Sub 'arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:internet-gateway/*'
+              - !Sub 'arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:elastic-ip/*'
+              - !Sub 'arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:natgateway/*'
+              - !Sub 'arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:route-table/*'
+              - !Sub 'arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:subnet/subnet-*'
+              - !Sub 'arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:security-group-rule/*'
+              - !Sub 'arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:security-group/*'
+              - !Sub 'arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:subnet/*'
+              - !Sub 'arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:vpc-flow-log/*'
+              - !Sub 'arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:vpc/*'
+          - Action:
+              - eks:UpdateNodegroupConfig
+              - eks:UpdateNodegroupVersion
+              - eks:UpdateClusterConfig
+              - eks:UpdateClusterVersion
+            Effect: Allow
+            Resource:
+              - !Sub 'arn:aws:eks:${AWS::Region}:${AWS::AccountId}:cluster/opta-*'
+              - !Sub 'arn:aws:eks:${AWS::Region}:${AWS::AccountId}:nodegroup/opta-*/opta-*/*'
+              - !Sub 'arn:aws:eks:${AWS::Region}:${AWS::AccountId}:nodegroup/opta-*'
+          - Action:
+              - autoscaling:UpdateAutoScalingGroup
+              - autoscaling:CreateOrUpdateTags
+              - autoscaling:DeleteTags
+            Condition:
+              StringEqualsIfExists:
+                aws:RequestTag/ManagedByUnion: 'true'
+            Effect: Allow
+            Resource:
+              - '*'
+          - Action:
+              - eks:CreateNodegroup
+              - eks:TagResource
+              - eks:UntagResource
+              - eks:DeleteNodegroup
+            Effect: Allow
+            Resource:
+              - !Sub 'arn:aws:eks:${AWS::Region}:${AWS::AccountId}:cluster/opta-*'
+              - !Sub 'arn:aws:eks:${AWS::Region}:${AWS::AccountId}:nodegroup/opta-*/opta-*/*'
+              - !Sub 'arn:aws:eks:${AWS::Region}:${AWS::AccountId}:nodegroup/opta-*'
+              - !Sub 'arn:aws:eks:${AWS::Region}:${AWS::AccountId}:addon/opta-*/*/*'
+          - Action:
+              - eks:CreateAddon
+              - eks:UpdateAddon
+              - eks:DeleteAddon
+              - eks:DescribeAddonVersions
+              - eks:DescribeAddon
+              - eks:ListAddons
+            Effect: Allow
+            Resource:
+              - !Sub 'arn:aws:eks:${AWS::Region}:${AWS::AccountId}:cluster/opta-*'
+              - !Sub 'arn:aws:eks:${AWS::Region}:${AWS::AccountId}:addon/opta-*/*/*'
         Version: '2012-10-17'
     Type: AWS::IAM::ManagedPolicy

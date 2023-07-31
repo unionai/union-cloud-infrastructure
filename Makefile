@@ -23,8 +23,8 @@ create-stack: requirements lint generate cf-lint
 	  --capabilities CAPABILITY_IAM CAPABILITY_NAMED_IAM CAPABILITY_AUTO_EXPAND
 	aws cloudformation create-stack \
 	  --output text \
-	  --stack-name unionai-manager-stack \
-	  --template-body file://./union-ai-admin/aws/unionai-manager-role.template.yaml \
+	  --stack-name unionai-updater-stack \
+	  --template-body file://./union-ai-admin/aws/unionai-updater-role.template.yaml \
 	  --capabilities CAPABILITY_IAM CAPABILITY_NAMED_IAM CAPABILITY_AUTO_EXPAND
 	aws cloudformation create-stack \
 	  --output text \
