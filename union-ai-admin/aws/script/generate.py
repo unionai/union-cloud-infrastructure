@@ -300,6 +300,7 @@ def create_read_policy(role_type):
                         Action("ec2", "DescribeLaunchTemplateVersions"),
                         Action("ec2", "GetEbsEncryptionByDefault"),
                         Action("iam", "ListRoles"),
+                        Action("iam", "ListPolicies"),
                     ],
                     Resource=["*"],
                 ),
