@@ -120,7 +120,6 @@ Resources:
               - iam:ListPolicyVersions
               - iam:ListPolicyTags
               - iam:ListRoleTags
-              - iam:ListRoles
               - iam:ListInstanceProfilesForRole
               - iam:ListRolePolicies
               - iam:ListAttachedRolePolicies
@@ -180,6 +179,8 @@ Resources:
               - ec2:DescribeLaunchTemplates
               - ec2:DescribeLaunchTemplateVersions
               - ec2:GetEbsEncryptionByDefault
+              - iam:ListRoles
+              - iam:ListPolicies
             Effect: Allow
             Resource:
               - '*'

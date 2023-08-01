@@ -260,6 +260,7 @@ Resources:
               - 'ec2:DescribeInstanceTypeOfferings'
               - 'logs:DescribeLogStreams'
               - 'iam:ListRoles'
+              - 'iam:ListPolicies'
             Resource: '*'
           - Sid: VisualEditor13
             Effect: Allow
