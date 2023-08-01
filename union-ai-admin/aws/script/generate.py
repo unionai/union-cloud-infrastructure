@@ -132,17 +132,6 @@ def create_read_policy(role_type):
                 Statement(
                     Effect=Allow,
                     Action=[
-                        Action("cloudfront", "GetCloudFrontOriginAccessIdentity"),
-                    ],
-                    Resource=[
-                        Sub(
-                            "arn:aws:cloudfront::${AWS::AccountId}:origin-access-identity/*"
-                        )
-                    ],
-                ),
-                Statement(
-                    Effect=Allow,
-                    Action=[
                         Action("autoscaling", "DescribeAutoScalingGroups"),
                         Action("autoscaling", "DescribeScalingActivities"),
                         Action("autoscaling", "DescribeTags"),
@@ -380,17 +369,6 @@ def create_updater_policy(role_type):
                 Statement(
                     Effect=Allow,
                     Action=[
-                        Action("cloudfront", "UpdateCloudFrontOriginAccessIdentity"),
-                    ],
-                    Resource=[
-                        Sub(
-                            "arn:aws:cloudfront::${AWS::AccountId}:origin-access-identity/*"
-                        )
-                    ],
-                ),
-                Statement(
-                    Effect=Allow,
-                    Action=[
                         Action("autoscaling", "UpdateAutoScalingGroup"),
                         Action("autoscaling", "CreateOrUpdateTags"),
                         Action("autoscaling", "DeleteTags"),
@@ -506,18 +484,6 @@ def create_provisioner_policy(role_type):
                     Resource=[
                         "arn:aws:s3:::union-cloud-*",
                         "arn:aws:s3:::union-cloud-*/*",
-                    ],
-                ),
-                Statement(
-                    Effect=Allow,
-                    Action=[
-                        Action("cloudfront", "CreateCloudFrontOriginAccessIdentity"),
-                        Action("cloudfront", "DeleteCloudFrontOriginAccessIdentity"),
-                    ],
-                    Resource=[
-                        Sub(
-                            "arn:aws:cloudfront::${AWS::AccountId}:origin-access-identity/*"
-                        )
                     ],
                 ),
                 Statement(
