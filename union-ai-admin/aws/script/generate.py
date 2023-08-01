@@ -377,6 +377,17 @@ def create_updater_policy(role_type):
                         ),
                     ],
                 ),
+				Statement(
+					Effect=Allow,
+					Action=[
+						Action("cloudfront", "UpdateCloudFrontOriginAccessIdentity"),
+					],
+					Resource=[
+						Sub(
+							"arn:aws:cloudfront::${AWS::AccountId}:origin-access-identity/*"
+						)
+					],
+				),
                 Statement(
                     Effect=Allow,
                     Action=[
@@ -667,7 +678,8 @@ def create_provisioner_policy(role_type):
                         Action("iam", "TagInstanceProfile"),
                         Action("iam", "UntagInstanceProfile"),
                         Action("iam", "AddRoleToInstanceProfile"),
-                        Action("iam", "UpdateAssumeRolePolicy"),
+						Action("iam", "UpdateAssumeRolePolicy"),
+						Action("iam", "CreatePolicyVersion"),
                     ],
                     Resource=[
                         Sub("arn:aws:iam::${AWS::AccountId}:oidc-provider/*"),
@@ -833,7 +845,7 @@ def create_role(name, policy_arn):
 
 
 def main():
-    for role in ["reader", "updater", "provisioner"]:
+    for role in ["support", "updater", "provisioner"]:
         template = Template()
         description = READER_CF_DESCRIPTION
         ref = [Ref(template.add_resource(create_read_policy(role)))]

@@ -12,7 +12,7 @@ CloudFormation template allows customers to create an initial provisioner role f
 
 #### Resources
 - It will create 3 policies:
-   - `read-policy`: This policy only provides permissions to list, get, and describe permissions.
+   - `support-policy`: This policy only provides permissions to list, get, and describe permissions.
    - `updater-policy`: This policy will only provide permissions to modify a few resources, such as node groups, EKS versions, and some EC2 permissions.
    - `provisioner-policy`: This policy only provides full administration permissions, including creating, deleting, tagging, and untagging resources.
 - It will create an AWS IAM role `unionai-provisioner-role` and attach all 3 policies to it.
@@ -35,7 +35,7 @@ CloudFormation template allows customers to create a updater role for managing t
 
 #### Resources
 - It will create 2 policies:
-   - `read-policy`: This policy provides permissions to list, get, and describe resources.
+   - `support-policy`: This policy provides permissions to list, get, and describe resources.
    - `updater-policy`: This policy provides permissions to modify specific resources such as node groups, EKS versions, and certain EC2 permissions.
 - It will create an AWS IAM role `unionai-updater-role` and attach all policies to it.
 
@@ -50,14 +50,14 @@ aws cloudformation create-stack \
   --capabilities CAPABILITY_IAM CAPABILITY_NAMED_IAM CAPABILITY_AUTO_EXPAND
 ```
 
-### unionai-reader-stack:
-CloudFormation template allows customers to create a reader role for accessing and viewing resources within the UnionAI infrastructure. The reader role provides read-only permissions, allowing users to list, get, and describe resources without the ability to modify or make changes.
+### unionai-support-stack:
+CloudFormation template allows customers to create a support role for accessing and viewing resources within the UnionAI infrastructure. The support role provides read-only permissions, allowing users to list, get, and describe resources without the ability to modify or make changes.
 
-[![Launch Stack](https://s3.amazonaws.com/cloudformation-examples/cloudformation-launch-stack.png)](https://console.aws.amazon.com/cloudformation/home?region=region#/stacks/new?stackName=unionai-provisioner-stack&templateURL=https://union-public.s3.amazonaws.com/templates/beta/unionai-reader-role.template.yaml)
+[![Launch Stack](https://s3.amazonaws.com/cloudformation-examples/cloudformation-launch-stack.png)](https://console.aws.amazon.com/cloudformation/home?region=region#/stacks/new?stackName=unionai-provisioner-stack&templateURL=https://union-public.s3.amazonaws.com/templates/beta/unionai-support-role.template.yaml)
 
 #### Resources
-- It will create a policy named `read-policy` that provides permissions to list, get, and describe resources.
-- It will create an AWS IAM role `unionai-reader-role` and attach the `read-policy` to it.
+- It will create a policy named `support-policy` that provides permissions to list, get, and describe resources.
+- It will create an AWS IAM role `unionai-support-role` and attach the `support-policy` to it.
 
 #### AWS CLI Command
 To create the stack, use the following AWS CLI command:
@@ -65,8 +65,8 @@ To create the stack, use the following AWS CLI command:
 ```bash
 aws cloudformation create-stack \
   --output text \
-  --stack-name unionai-reader-stack \
-  --template-url "https://union-public.s3.amazonaws.com/templates/beta/unionai-reader-role.template.yaml" \
+  --stack-name unionai-support-stack \
+  --template-url "https://union-public.s3.amazonaws.com/templates/beta/unionai-support-role.template.yaml" \
   --capabilities CAPABILITY_IAM CAPABILITY_NAMED_IAM CAPABILITY_AUTO_EXPAND
 ```
 

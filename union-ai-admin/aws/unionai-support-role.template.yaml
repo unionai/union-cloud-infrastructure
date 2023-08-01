@@ -13,11 +13,11 @@ Resources:
         Version: '2012-10-17'
       ManagedPolicyArns:
         - !Ref 'UnionaiReaderPermission'
-      RoleName: unionai-reader
+      RoleName: unionai-support
     Type: AWS::IAM::Role
   UnionaiReaderPermission:
     Properties:
-      ManagedPolicyName: reader-policy-for-reader-role
+      ManagedPolicyName: reader-policy-for-support-role
       PolicyDocument:
         Statement:
           - Action:

@@ -274,6 +274,11 @@ Resources:
               - !Sub 'arn:aws:eks:${AWS::Region}:${AWS::AccountId}:nodegroup/opta-*/opta-*/*'
               - !Sub 'arn:aws:eks:${AWS::Region}:${AWS::AccountId}:nodegroup/opta-*'
           - Action:
+              - cloudfront:UpdateCloudFrontOriginAccessIdentity
+            Effect: Allow
+            Resource:
+              - !Sub 'arn:aws:cloudfront::${AWS::AccountId}:origin-access-identity/*'
+          - Action:
               - autoscaling:UpdateAutoScalingGroup
               - autoscaling:CreateOrUpdateTags
               - autoscaling:DeleteTags

@@ -169,6 +169,7 @@ Resources:
               - iam:UntagInstanceProfile
               - iam:AddRoleToInstanceProfile
               - iam:UpdateAssumeRolePolicy
+              - iam:CreatePolicyVersion
             Effect: Allow
             Resource:
               - !Sub 'arn:aws:iam::${AWS::AccountId}:oidc-provider/*'
@@ -475,6 +476,11 @@ Resources:
               - !Sub 'arn:aws:eks:${AWS::Region}:${AWS::AccountId}:cluster/opta-*'
               - !Sub 'arn:aws:eks:${AWS::Region}:${AWS::AccountId}:nodegroup/opta-*/opta-*/*'
               - !Sub 'arn:aws:eks:${AWS::Region}:${AWS::AccountId}:nodegroup/opta-*'
+          - Action:
+              - cloudfront:UpdateCloudFrontOriginAccessIdentity
+            Effect: Allow
+            Resource:
+              - !Sub 'arn:aws:cloudfront::${AWS::AccountId}:origin-access-identity/*'
           - Action:
               - autoscaling:UpdateAutoScalingGroup
               - autoscaling:CreateOrUpdateTags
