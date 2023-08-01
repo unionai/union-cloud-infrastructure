@@ -169,7 +169,6 @@ Resources:
               - iam:UntagInstanceProfile
               - iam:AddRoleToInstanceProfile
               - iam:UpdateAssumeRolePolicy
-              - iam:CreatePolicyVersion
             Effect: Allow
             Resource:
               - !Sub 'arn:aws:iam::${AWS::AccountId}:oidc-provider/*'
@@ -187,6 +186,7 @@ Resources:
               - iam:PutRolePolicy
               - iam:DetachRolePolicy
               - iam:DeleteRolePolicy
+              - iam:CreatePolicyVersion
             Effect: Allow
             Resource:
               - !Sub 'arn:aws:iam::${AWS::AccountId}:policy/opta-*'

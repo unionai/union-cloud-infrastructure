@@ -679,7 +679,6 @@ def create_provisioner_policy(role_type):
                         Action("iam", "UntagInstanceProfile"),
                         Action("iam", "AddRoleToInstanceProfile"),
 						Action("iam", "UpdateAssumeRolePolicy"),
-						Action("iam", "CreatePolicyVersion"),
                     ],
                     Resource=[
                         Sub("arn:aws:iam::${AWS::AccountId}:oidc-provider/*"),
@@ -701,6 +700,7 @@ def create_provisioner_policy(role_type):
                         Action("iam", "PutRolePolicy"),
                         Action("iam", "DetachRolePolicy"),
                         Action("iam", "DeleteRolePolicy"),
+						Action("iam", "CreatePolicyVersion"),
                     ],
                     Resource=[
                         Sub("arn:aws:iam::${AWS::AccountId}:policy/opta-*"),
