@@ -13,11 +13,11 @@ Resources:
         Version: '2012-10-17'
       ManagedPolicyArns:
         - !Ref 'UnionaiReaderPermission'
-      RoleName: unionai-reader
+      RoleName: unionai-support
     Type: AWS::IAM::Role
   UnionaiReaderPermission:
     Properties:
-      ManagedPolicyName: reader-policy-for-reader-role
+      ManagedPolicyName: reader-policy-for-support-role
       PolicyDocument:
         Statement:
           - Action:
@@ -35,6 +35,11 @@ Resources:
               - !Sub 'arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:opta-*'
               - !Sub 'arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group::log-stream*'
               - !Sub 'arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/eks/opta-*:*'
+          - Action:
+              - cloudfront:GetCloudFrontOriginAccessIdentity
+            Effect: Allow
+            Resource:
+              - !Sub 'arn:aws:cloudfront::${AWS::AccountId}:origin-access-identity/*'
           - Action:
               - s3:ListBucket
               - s3:GetEncryptionConfiguration
@@ -61,11 +66,6 @@ Resources:
               - arn:aws:s3:::union-cloud-*
               - arn:aws:s3:::opta-*/*
               - arn:aws:s3:::union-cloud-*/*
-          - Action:
-              - cloudfront:GetCloudFrontOriginAccessIdentity
-            Effect: Allow
-            Resource:
-              - !Sub 'arn:aws:cloudfront::${AWS::AccountId}:origin-access-identity/*'
           - Action:
               - autoscaling:DescribeAutoScalingGroups
               - autoscaling:DescribeScalingActivities

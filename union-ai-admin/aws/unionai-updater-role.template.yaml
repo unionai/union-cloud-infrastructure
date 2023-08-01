@@ -39,6 +39,11 @@ Resources:
               - !Sub 'arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group::log-stream*'
               - !Sub 'arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/eks/opta-*:*'
           - Action:
+              - cloudfront:GetCloudFrontOriginAccessIdentity
+            Effect: Allow
+            Resource:
+              - !Sub 'arn:aws:cloudfront::${AWS::AccountId}:origin-access-identity/*'
+          - Action:
               - s3:ListBucket
               - s3:GetEncryptionConfiguration
               - s3:GetBucketLogging
@@ -64,11 +69,6 @@ Resources:
               - arn:aws:s3:::union-cloud-*
               - arn:aws:s3:::opta-*/*
               - arn:aws:s3:::union-cloud-*/*
-          - Action:
-              - cloudfront:GetCloudFrontOriginAccessIdentity
-            Effect: Allow
-            Resource:
-              - !Sub 'arn:aws:cloudfront::${AWS::AccountId}:origin-access-identity/*'
           - Action:
               - autoscaling:DescribeAutoScalingGroups
               - autoscaling:DescribeScalingActivities

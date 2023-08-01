@@ -102,6 +102,17 @@ def create_read_policy(role_type):
                 Statement(
                     Effect=Allow,
                     Action=[
+                        Action("cloudfront", "GetCloudFrontOriginAccessIdentity"),
+                    ],
+                    Resource=[
+                        Sub(
+                            "arn:aws:cloudfront::${AWS::AccountId}:origin-access-identity/*"
+                        )
+                    ],
+                ),
+                Statement(
+                    Effect=Allow,
+                    Action=[
                         Action("s3", "ListBucket"),
                         Action("s3", "GetEncryptionConfiguration"),
                         Action("s3", "GetBucketLogging"),
@@ -127,17 +138,6 @@ def create_read_policy(role_type):
                         "arn:aws:s3:::union-cloud-*",
                         "arn:aws:s3:::opta-*/*",
                         "arn:aws:s3:::union-cloud-*/*",
-                    ],
-                ),
-                Statement(
-                    Effect=Allow,
-                    Action=[
-                        Action("cloudfront", "GetCloudFrontOriginAccessIdentity"),
-                    ],
-                    Resource=[
-                        Sub(
-                            "arn:aws:cloudfront::${AWS::AccountId}:origin-access-identity/*"
-                        )
                     ],
                 ),
                 Statement(
@@ -472,6 +472,18 @@ def create_provisioner_policy(role_type):
                 Statement(
                     Effect=Allow,
                     Action=[
+                        Action("cloudfront", "CreateCloudFrontOriginAccessIdentity"),
+                        Action("cloudfront", "DeleteCloudFrontOriginAccessIdentity"),
+                    ],
+                    Resource=[
+                        Sub(
+                            "arn:aws:cloudfront::${AWS::AccountId}:origin-access-identity/*"
+                        )
+                    ],
+                ),
+                Statement(
+                    Effect=Allow,
+                    Action=[
                         Action("s3", "CreateBucket"),
                         Action("s3", "DeleteBucket"),
                         Action("s3", "PutEncryptionConfiguration"),
@@ -496,18 +508,6 @@ def create_provisioner_policy(role_type):
                     Resource=[
                         "arn:aws:s3:::union-cloud-*",
                         "arn:aws:s3:::union-cloud-*/*",
-                    ],
-                ),
-                Statement(
-                    Effect=Allow,
-                    Action=[
-                        Action("cloudfront", "CreateCloudFrontOriginAccessIdentity"),
-                        Action("cloudfront", "DeleteCloudFrontOriginAccessIdentity"),
-                    ],
-                    Resource=[
-                        Sub(
-                            "arn:aws:cloudfront::${AWS::AccountId}:origin-access-identity/*"
-                        )
                     ],
                 ),
                 Statement(
@@ -690,6 +690,7 @@ def create_provisioner_policy(role_type):
                         Action("iam", "PutRolePolicy"),
                         Action("iam", "DetachRolePolicy"),
                         Action("iam", "DeleteRolePolicy"),
+                        Action("iam", "CreatePolicyVersion"),
                     ],
                     Resource=[
                         Sub("arn:aws:iam::${AWS::AccountId}:policy/opta-*"),
@@ -834,7 +835,7 @@ def create_role(name, policy_arn):
 
 
 def main():
-    for role in ["reader", "updater", "provisioner"]:
+    for role in ["support", "updater", "provisioner"]:
         template = Template()
         description = READER_CF_DESCRIPTION
         ref = [Ref(template.add_resource(create_read_policy(role)))]
