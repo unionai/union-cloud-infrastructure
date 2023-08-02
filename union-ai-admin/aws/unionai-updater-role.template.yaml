@@ -204,6 +204,17 @@ Resources:
               - s3:PutObject
               - s3:DeleteObject
               - s3:PutObjectAcl
+              - s3:PutBucketLogging
+              - s3:PutBucketVersioning
+              - s3:PutBucketCORS
+              - s3:PutBucketLocation
+              - s3:PutReplicationConfiguration
+              - s3:PutBucketTagging
+              - s3:PutBucketOwnershipControls
+              - s3:PutBucketRequestPayment
+              - s3:PutLifecycleConfiguration
+              - s3:PutBucketObjectLockConfiguration
+              - s3:PutBucketPublicAccessBlock
             Effect: Allow
             Resource:
               - arn:aws:s3:::opta-*
@@ -254,6 +265,7 @@ Resources:
                 aws:RequestTag/ManagedByUnion: 'true'
             Effect: Allow
             Resource:
+              - !Sub 'arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:vpc-endpoint/*'
               - !Sub 'arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:internet-gateway/*'
               - !Sub 'arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:elastic-ip/*'
               - !Sub 'arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:natgateway/*'

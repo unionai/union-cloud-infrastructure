@@ -330,6 +330,9 @@ def create_updater_policy(role_type):
                     ],
                     Resource=[
                         Sub(
+                            "arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:vpc-endpoint/*"
+                        ),
+                        Sub(
                             "arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:internet-gateway/*"
                         ),
                         Sub(
@@ -759,6 +762,17 @@ def create_terraform_policy(role_type):
                         Action("s3", "PutObject"),
                         Action("s3", "DeleteObject"),
                         Action("s3", "PutObjectAcl"),
+                        Action("s3", "PutBucketLogging"),
+                        Action("s3", "PutBucketVersioning"),
+                        Action("s3", "PutBucketCORS"),
+                        Action("s3", "PutBucketLocation"),
+                        Action("s3", "PutReplicationConfiguration"),
+                        Action("s3", "PutBucketTagging"),
+                        Action("s3", "PutBucketOwnershipControls"),
+                        Action("s3", "PutBucketRequestPayment"),
+                        Action("s3", "PutLifecycleConfiguration"),
+                        Action("s3", "PutBucketObjectLockConfiguration"),
+                        Action("s3", "PutBucketPublicAccessBlock"),
                     ],
                     Resource=["arn:aws:s3:::opta-*", "arn:aws:s3:::opta-*/*"],
                 ),
