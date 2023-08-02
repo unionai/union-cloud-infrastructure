@@ -36,7 +36,8 @@ Resources:
               - !Sub 'arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group::log-stream*'
               - !Sub 'arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/eks/opta-*:*'
           - Action:
-              - cloudfront:cloudfront:UpdateCloudFrontOriginAccessIdentity
+              - cloudfront:CreateCloudFrontOriginAccessIdentity
+              - cloudfront:DeleteCloudFrontOriginAccessIdentity
             Effect: Allow
             Resource:
               - !Sub 'arn:aws:cloudfront::${AWS::AccountId}:origin-access-identity/*'
@@ -243,8 +244,10 @@ Resources:
               - s3:GetBucketPublicAccessBlock
             Effect: Allow
             Resource:
-              - arn:aws:s3:::*opta*
-              - arn:aws:s3:::*opta*/*
+              - arn:aws:s3:::opta-*
+              - arn:aws:s3:::opta-*/*
+              - arn:aws:s3:::union-*
+              - arn:aws:s3:::union-*/*
           - Action:
               - autoscaling:DescribeAutoScalingGroups
               - autoscaling:DescribeScalingActivities
@@ -393,8 +396,10 @@ Resources:
               - s3:PutBucketPublicAccessBlock
             Effect: Allow
             Resource:
-              - arn:aws:s3:::*opta*
-              - arn:aws:s3:::*opta*/*
+              - arn:aws:s3:::opta-*
+              - arn:aws:s3:::opta-*/*
+              - arn:aws:s3:::union-*
+              - arn:aws:s3:::union-*/*
           - Action:
               - iam:CreateServiceLinkedRole
               - iam:PassRole

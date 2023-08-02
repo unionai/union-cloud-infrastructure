@@ -134,8 +134,10 @@ def create_read_policy(role_type):
                         Action("s3", "GetBucketPublicAccessBlock"),
                     ],
                     Resource=[
-                        "arn:aws:s3:::*opta*",
-                        "arn:aws:s3:::*opta*/*",
+                        "arn:aws:s3:::opta-*",
+                        "arn:aws:s3:::opta-*/*",
+                        "arn:aws:s3:::union-*",
+                        "arn:aws:s3:::union-*/*",
                     ],
                 ),
                 Statement(
@@ -473,10 +475,8 @@ def create_provisioner_policy(role_type):
                 Statement(
                     Effect=Allow,
                     Action=[
-                        Action(
-                            "cloudfront",
-                            "cloudfront:UpdateCloudFrontOriginAccessIdentity",
-                        ),
+                        Action("cloudfront", "CreateCloudFrontOriginAccessIdentity"),
+                        Action("cloudfront", "DeleteCloudFrontOriginAccessIdentity"),
                     ],
                     Resource=[
                         Sub(
@@ -746,7 +746,12 @@ def create_terraform_policy(role_type):
                         Action("s3", "PutBucketObjectLockConfiguration"),
                         Action("s3", "PutBucketPublicAccessBlock"),
                     ],
-                    Resource=["arn:aws:s3:::*opta*", "arn:aws:s3:::*opta*/*"],
+                    Resource=[
+                        "arn:aws:s3:::opta-*",
+                        "arn:aws:s3:::opta-*/*",
+                        "arn:aws:s3:::union-*",
+                        "arn:aws:s3:::union-*/*",
+                    ],
                 ),
                 Statement(
                     Effect=Allow,
