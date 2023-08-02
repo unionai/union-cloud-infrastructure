@@ -63,9 +63,9 @@ Resources:
             Effect: Allow
             Resource:
               - arn:aws:s3:::opta-*
-              - arn:aws:s3:::union-cloud-*
               - arn:aws:s3:::opta-*/*
-              - arn:aws:s3:::union-cloud-*/*
+              - arn:aws:s3:::union-*
+              - arn:aws:s3:::union-*/*
           - Action:
               - autoscaling:DescribeAutoScalingGroups
               - autoscaling:DescribeScalingActivities
