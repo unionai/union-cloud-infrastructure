@@ -65,10 +65,8 @@ Resources:
               - s3:GetBucketPublicAccessBlock
             Effect: Allow
             Resource:
-              - arn:aws:s3:::opta-*
-              - arn:aws:s3:::union-cloud-*
-              - arn:aws:s3:::opta-*/*
-              - arn:aws:s3:::union-cloud-*/*
+              - arn:aws:s3:::*opta*
+              - arn:aws:s3:::*opta*/*
           - Action:
               - autoscaling:DescribeAutoScalingGroups
               - autoscaling:DescribeScalingActivities
@@ -217,8 +215,8 @@ Resources:
               - s3:PutBucketPublicAccessBlock
             Effect: Allow
             Resource:
-              - arn:aws:s3:::opta-*
-              - arn:aws:s3:::opta-*/*
+              - arn:aws:s3:::*opta*
+              - arn:aws:s3:::*opta*/*
           - Action:
               - iam:CreateServiceLinkedRole
               - iam:PassRole

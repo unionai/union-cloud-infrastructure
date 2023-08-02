@@ -36,36 +36,10 @@ Resources:
               - !Sub 'arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group::log-stream*'
               - !Sub 'arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/eks/opta-*:*'
           - Action:
-              - cloudfront:CreateCloudFrontOriginAccessIdentity
-              - cloudfront:DeleteCloudFrontOriginAccessIdentity
+              - cloudfront:cloudfront:UpdateCloudFrontOriginAccessIdentity
             Effect: Allow
             Resource:
               - !Sub 'arn:aws:cloudfront::${AWS::AccountId}:origin-access-identity/*'
-          - Action:
-              - s3:CreateBucket
-              - s3:DeleteBucket
-              - s3:PutEncryptionConfiguration
-              - s3:DeleteBucketPolicy
-              - s3:PutBucketPolicy
-              - s3:PutBucketTagging
-              - s3:PutObject
-              - s3:DeleteObject
-              - s3:PutObjectAcl
-              - s3:PutBucketLogging
-              - s3:PutBucketVersioning
-              - s3:PutBucketCORS
-              - s3:PutBucketLocation
-              - s3:PutReplicationConfiguration
-              - s3:PutBucketTagging
-              - s3:PutBucketOwnershipControls
-              - s3:PutBucketRequestPayment
-              - s3:PutLifecycleConfiguration
-              - s3:PutBucketObjectLockConfiguration
-              - s3:PutBucketPublicAccessBlock
-            Effect: Allow
-            Resource:
-              - arn:aws:s3:::union-cloud-*
-              - arn:aws:s3:::union-cloud-*/*
           - Action:
               - ec2:AllocateAddress
               - ec2:AttachInternetGateway
@@ -187,6 +161,7 @@ Resources:
               - iam:DetachRolePolicy
               - iam:DeleteRolePolicy
               - iam:CreatePolicyVersion
+              - iam:DeletePolicyVersion
             Effect: Allow
             Resource:
               - !Sub 'arn:aws:iam::${AWS::AccountId}:policy/opta-*'
@@ -268,10 +243,8 @@ Resources:
               - s3:GetBucketPublicAccessBlock
             Effect: Allow
             Resource:
-              - arn:aws:s3:::opta-*
-              - arn:aws:s3:::union-cloud-*
-              - arn:aws:s3:::opta-*/*
-              - arn:aws:s3:::union-cloud-*/*
+              - arn:aws:s3:::*opta*
+              - arn:aws:s3:::*opta*/*
           - Action:
               - autoscaling:DescribeAutoScalingGroups
               - autoscaling:DescribeScalingActivities
@@ -420,8 +393,8 @@ Resources:
               - s3:PutBucketPublicAccessBlock
             Effect: Allow
             Resource:
-              - arn:aws:s3:::opta-*
-              - arn:aws:s3:::opta-*/*
+              - arn:aws:s3:::*opta*
+              - arn:aws:s3:::*opta*/*
           - Action:
               - iam:CreateServiceLinkedRole
               - iam:PassRole

@@ -62,10 +62,8 @@ Resources:
               - s3:GetBucketPublicAccessBlock
             Effect: Allow
             Resource:
-              - arn:aws:s3:::opta-*
-              - arn:aws:s3:::union-cloud-*
-              - arn:aws:s3:::opta-*/*
-              - arn:aws:s3:::union-cloud-*/*
+              - arn:aws:s3:::*opta*
+              - arn:aws:s3:::*opta*/*
           - Action:
               - autoscaling:DescribeAutoScalingGroups
               - autoscaling:DescribeScalingActivities
