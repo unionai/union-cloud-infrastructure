@@ -734,6 +734,7 @@ def create_terraform_policy(role_type):
                         Action("s3", "PutObject"),
                         Action("s3", "DeleteObject"),
                         Action("s3", "PutObjectAcl"),
+                        Action("s3", "PutBucketAcl"),
                         Action("s3", "PutBucketLogging"),
                         Action("s3", "PutBucketVersioning"),
                         Action("s3", "PutBucketCORS"),
