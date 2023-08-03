@@ -20,15 +20,15 @@ create-stack: requirements lint generate cf-lint
 	aws cloudformation create-stack \
 	  --output text \
 	  --stack-name unionai-provisioner-stack \
-	  --template-body file://./union-ai-admin/aws/gen/unionai-provisioner-role.template.yaml \
+	  --template-body file://./union-ai-admin/aws/unionai-provisioner-role.template.yaml \
 	  --capabilities CAPABILITY_IAM CAPABILITY_NAMED_IAM CAPABILITY_AUTO_EXPAND
 	aws cloudformation create-stack \
 	  --output text \
 	  --stack-name unionai-updater-stack \
-	  --template-body file://./union-ai-admin/aws/gen/unionai-updater-role.template.yaml \
+	  --template-body file://./union-ai-admin/aws/unionai-updater-role.template.yaml \
 	  --capabilities CAPABILITY_IAM CAPABILITY_NAMED_IAM CAPABILITY_AUTO_EXPAND
 	aws cloudformation create-stack \
 	  --output text \
-	  --stack-name unionai-reader-stack \
-	  --template-body file://./union-ai-admin/aws/gen/unionai-reader-role.template.yaml \
+	  --stack-name unionai-support-stack \
+	  --template-body file://./union-ai-admin/aws/unionai-support-role.template.yaml \
 	  --capabilities CAPABILITY_IAM CAPABILITY_NAMED_IAM CAPABILITY_AUTO_EXPAND

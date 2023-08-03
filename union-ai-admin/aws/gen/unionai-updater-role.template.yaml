@@ -39,6 +39,11 @@ Resources:
               - !Sub 'arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group::log-stream*'
               - !Sub 'arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/eks/opta-*:*'
           - Action:
+              - cloudfront:GetCloudFrontOriginAccessIdentity
+            Effect: Allow
+            Resource:
+              - !Sub 'arn:aws:cloudfront::${AWS::AccountId}:origin-access-identity/*'
+          - Action:
               - s3:ListBucket
               - s3:GetEncryptionConfiguration
               - s3:GetBucketLogging
@@ -47,7 +52,7 @@ Resources:
               - s3:GetBucketAcl
               - s3:GetBucketWebsite
               - s3:GetBucketVersioning
-              - s3:ListBucketVersioning
+              - s3:ListBucketVersions
               - s3:GetBucketCORS
               - s3:GetBucketLocation
               - s3:GetReplicationConfiguration
@@ -61,14 +66,9 @@ Resources:
             Effect: Allow
             Resource:
               - arn:aws:s3:::opta-*
-              - arn:aws:s3:::union-cloud-*
               - arn:aws:s3:::opta-*/*
-              - arn:aws:s3:::union-cloud-*/*
-          - Action:
-              - cloudfront:GetCloudFrontOriginAccessIdentity
-            Effect: Allow
-            Resource:
-              - !Sub 'arn:aws:cloudfront::${AWS::AccountId}:origin-access-identity/*'
+              - arn:aws:s3:::union-*
+              - arn:aws:s3:::union-*/*
           - Action:
               - autoscaling:DescribeAutoScalingGroups
               - autoscaling:DescribeScalingActivities
@@ -123,7 +123,6 @@ Resources:
               - iam:ListPolicyVersions
               - iam:ListPolicyTags
               - iam:ListRoleTags
-              - iam:ListRoles
               - iam:ListInstanceProfilesForRole
               - iam:ListRolePolicies
               - iam:ListAttachedRolePolicies
@@ -183,6 +182,8 @@ Resources:
               - ec2:DescribeLaunchTemplates
               - ec2:DescribeLaunchTemplateVersions
               - ec2:GetEbsEncryptionByDefault
+              - iam:ListRoles
+              - iam:ListPolicies
             Effect: Allow
             Resource:
               - '*'
@@ -202,11 +203,28 @@ Resources:
               - s3:PutBucketTagging
               - s3:PutObject
               - s3:DeleteObject
+              - s3:PutBucketAcl
               - s3:PutObjectAcl
+              - s3:PutBucketAcl
+              - s3:PutBucketLogging
+              - s3:PutBucketVersioning
+              - s3:PutBucketCORS
+              - s3:PutBucketLocation
+              - s3:PutReplicationConfiguration
+              - s3:PutBucketTagging
+              - s3:PutBucketOwnershipControls
+              - s3:PutBucketRequestPayment
+              - s3:PutLifecycleConfiguration
+              - s3:PutBucketObjectLockConfiguration
+              - s3:PutBucketPublicAccessBlock
+              - s3:DeleteObject
+              - s3:DeleteObjectVersion
             Effect: Allow
             Resource:
               - arn:aws:s3:::opta-*
               - arn:aws:s3:::opta-*/*
+              - arn:aws:s3:::union-*
+              - arn:aws:s3:::union-*/*
           - Action:
               - iam:CreateServiceLinkedRole
               - iam:PassRole
@@ -253,6 +271,7 @@ Resources:
                 aws:RequestTag/ManagedByUnion: 'true'
             Effect: Allow
             Resource:
+              - !Sub 'arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:vpc-endpoint/*'
               - !Sub 'arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:internet-gateway/*'
               - !Sub 'arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:elastic-ip/*'
               - !Sub 'arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:natgateway/*'

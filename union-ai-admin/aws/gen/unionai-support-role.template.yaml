@@ -13,11 +13,11 @@ Resources:
         Version: '2012-10-17'
       ManagedPolicyArns:
         - !Ref 'UnionaiReaderPermission'
-      RoleName: unionai-reader
+      RoleName: unionai-support
     Type: AWS::IAM::Role
   UnionaiReaderPermission:
     Properties:
-      ManagedPolicyName: reader-policy-for-reader-role
+      ManagedPolicyName: reader-policy-for-support-role
       PolicyDocument:
         Statement:
           - Action:
@@ -36,6 +36,11 @@ Resources:
               - !Sub 'arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group::log-stream*'
               - !Sub 'arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/eks/opta-*:*'
           - Action:
+              - cloudfront:GetCloudFrontOriginAccessIdentity
+            Effect: Allow
+            Resource:
+              - !Sub 'arn:aws:cloudfront::${AWS::AccountId}:origin-access-identity/*'
+          - Action:
               - s3:ListBucket
               - s3:GetEncryptionConfiguration
               - s3:GetBucketLogging
@@ -44,7 +49,7 @@ Resources:
               - s3:GetBucketAcl
               - s3:GetBucketWebsite
               - s3:GetBucketVersioning
-              - s3:ListBucketVersioning
+              - s3:ListBucketVersions
               - s3:GetBucketCORS
               - s3:GetBucketLocation
               - s3:GetReplicationConfiguration
@@ -58,14 +63,9 @@ Resources:
             Effect: Allow
             Resource:
               - arn:aws:s3:::opta-*
-              - arn:aws:s3:::union-cloud-*
               - arn:aws:s3:::opta-*/*
-              - arn:aws:s3:::union-cloud-*/*
-          - Action:
-              - cloudfront:GetCloudFrontOriginAccessIdentity
-            Effect: Allow
-            Resource:
-              - !Sub 'arn:aws:cloudfront::${AWS::AccountId}:origin-access-identity/*'
+              - arn:aws:s3:::union-*
+              - arn:aws:s3:::union-*/*
           - Action:
               - autoscaling:DescribeAutoScalingGroups
               - autoscaling:DescribeScalingActivities
@@ -120,7 +120,6 @@ Resources:
               - iam:ListPolicyVersions
               - iam:ListPolicyTags
               - iam:ListRoleTags
-              - iam:ListRoles
               - iam:ListInstanceProfilesForRole
               - iam:ListRolePolicies
               - iam:ListAttachedRolePolicies
@@ -180,6 +179,8 @@ Resources:
               - ec2:DescribeLaunchTemplates
               - ec2:DescribeLaunchTemplateVersions
               - ec2:GetEbsEncryptionByDefault
+              - iam:ListRoles
+              - iam:ListPolicies
             Effect: Allow
             Resource:
               - '*'

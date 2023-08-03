@@ -102,6 +102,17 @@ def create_read_policy(role_type):
                 Statement(
                     Effect=Allow,
                     Action=[
+                        Action("cloudfront", "GetCloudFrontOriginAccessIdentity"),
+                    ],
+                    Resource=[
+                        Sub(
+                            "arn:aws:cloudfront::${AWS::AccountId}:origin-access-identity/*"
+                        )
+                    ],
+                ),
+                Statement(
+                    Effect=Allow,
+                    Action=[
                         Action("s3", "ListBucket"),
                         Action("s3", "GetEncryptionConfiguration"),
                         Action("s3", "GetBucketLogging"),
@@ -110,7 +121,7 @@ def create_read_policy(role_type):
                         Action("s3", "GetBucketAcl"),
                         Action("s3", "GetBucketWebsite"),
                         Action("s3", "GetBucketVersioning"),
-                        Action("s3", "ListBucketVersioning"),
+                        Action("s3", "ListBucketVersions"),
                         Action("s3", "GetBucketCORS"),
                         Action("s3", "GetBucketLocation"),
                         Action("s3", "GetReplicationConfiguration"),
@@ -124,20 +135,9 @@ def create_read_policy(role_type):
                     ],
                     Resource=[
                         "arn:aws:s3:::opta-*",
-                        "arn:aws:s3:::union-cloud-*",
                         "arn:aws:s3:::opta-*/*",
-                        "arn:aws:s3:::union-cloud-*/*",
-                    ],
-                ),
-                Statement(
-                    Effect=Allow,
-                    Action=[
-                        Action("cloudfront", "GetCloudFrontOriginAccessIdentity"),
-                    ],
-                    Resource=[
-                        Sub(
-                            "arn:aws:cloudfront::${AWS::AccountId}:origin-access-identity/*"
-                        )
+                        "arn:aws:s3:::union-*",
+                        "arn:aws:s3:::union-*/*",
                     ],
                 ),
                 Statement(
@@ -330,6 +330,9 @@ def create_updater_policy(role_type):
                     ],
                     Resource=[
                         Sub(
+                            "arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:vpc-endpoint/*"
+                        ),
+                        Sub(
                             "arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:internet-gateway/*"
                         ),
                         Sub(
@@ -472,35 +475,6 @@ def create_provisioner_policy(role_type):
                 Statement(
                     Effect=Allow,
                     Action=[
-                        Action("s3", "CreateBucket"),
-                        Action("s3", "DeleteBucket"),
-                        Action("s3", "PutEncryptionConfiguration"),
-                        Action("s3", "DeleteBucketPolicy"),
-                        Action("s3", "PutBucketPolicy"),
-                        Action("s3", "PutBucketTagging"),
-                        Action("s3", "PutObject"),
-                        Action("s3", "DeleteObject"),
-                        Action("s3", "PutObjectAcl"),
-                        Action("s3", "PutBucketLogging"),
-                        Action("s3", "PutBucketVersioning"),
-                        Action("s3", "PutBucketCORS"),
-                        Action("s3", "PutBucketLocation"),
-                        Action("s3", "PutReplicationConfiguration"),
-                        Action("s3", "PutBucketTagging"),
-                        Action("s3", "PutBucketOwnershipControls"),
-                        Action("s3", "PutBucketRequestPayment"),
-                        Action("s3", "PutLifecycleConfiguration"),
-                        Action("s3", "PutBucketObjectLockConfiguration"),
-                        Action("s3", "PutBucketPublicAccessBlock"),
-                    ],
-                    Resource=[
-                        "arn:aws:s3:::union-cloud-*",
-                        "arn:aws:s3:::union-cloud-*/*",
-                    ],
-                ),
-                Statement(
-                    Effect=Allow,
-                    Action=[
                         Action("cloudfront", "CreateCloudFrontOriginAccessIdentity"),
                         Action("cloudfront", "DeleteCloudFrontOriginAccessIdentity"),
                     ],
@@ -545,7 +519,7 @@ def create_provisioner_policy(role_type):
                         Action("ec2", "CreateLaunchTemplateVersion"),
                         Action("ec2", "CreateVpcEndpoint"),
                         Action("ec2", "AssociateAddress"),
-                        Action("ec2", "DisassociateAddress"),
+                        Action("ec2", "DeleteVpc"),
                     ],
                     Resource=[
                         Sub(
@@ -586,6 +560,7 @@ def create_provisioner_policy(role_type):
                         Action("ec2", "AssociateRouteTable"),
                         Action("ec2", "DeleteSecurityGroup"),
                         Action("ec2", "DeleteVpcEndpoints"),
+                        Action("ec2", "DisassociateAddress"),
                     ],
                     Resource=[
                         Sub(
@@ -690,6 +665,8 @@ def create_provisioner_policy(role_type):
                         Action("iam", "PutRolePolicy"),
                         Action("iam", "DetachRolePolicy"),
                         Action("iam", "DeleteRolePolicy"),
+                        Action("iam", "CreatePolicyVersion"),
+                        Action("iam", "DeletePolicyVersion"),
                     ],
                     Resource=[
                         Sub("arn:aws:iam::${AWS::AccountId}:policy/opta-*"),
@@ -757,9 +734,29 @@ def create_terraform_policy(role_type):
                         Action("s3", "PutBucketTagging"),
                         Action("s3", "PutObject"),
                         Action("s3", "DeleteObject"),
+                        Action("s3", "PutBucketAcl"),
                         Action("s3", "PutObjectAcl"),
+                        Action("s3", "PutBucketAcl"),
+                        Action("s3", "PutBucketLogging"),
+                        Action("s3", "PutBucketVersioning"),
+                        Action("s3", "PutBucketCORS"),
+                        Action("s3", "PutBucketLocation"),
+                        Action("s3", "PutReplicationConfiguration"),
+                        Action("s3", "PutBucketTagging"),
+                        Action("s3", "PutBucketOwnershipControls"),
+                        Action("s3", "PutBucketRequestPayment"),
+                        Action("s3", "PutLifecycleConfiguration"),
+                        Action("s3", "PutBucketObjectLockConfiguration"),
+                        Action("s3", "PutBucketPublicAccessBlock"),
+                        Action("s3", "DeleteObject"),
+                        Action("s3", "DeleteObjectVersion"),
                     ],
-                    Resource=["arn:aws:s3:::opta-*", "arn:aws:s3:::opta-*/*"],
+                    Resource=[
+                        "arn:aws:s3:::opta-*",
+                        "arn:aws:s3:::opta-*/*",
+                        "arn:aws:s3:::union-*",
+                        "arn:aws:s3:::union-*/*",
+                    ],
                 ),
                 Statement(
                     Effect=Allow,
@@ -834,7 +831,7 @@ def create_role(name, policy_arn):
 
 
 def main():
-    for role in ["reader", "updater", "provisioner"]:
+    for role in ["support", "updater", "provisioner"]:
         template = Template()
         description = READER_CF_DESCRIPTION
         ref = [Ref(template.add_resource(create_read_policy(role)))]
