@@ -49,7 +49,7 @@ Resources:
               - s3:GetBucketAcl
               - s3:GetBucketWebsite
               - s3:GetBucketVersioning
-              - s3:ListBucketVersioning
+              - s3:ListBucketVersions
               - s3:GetBucketCORS
               - s3:GetBucketLocation
               - s3:GetReplicationConfiguration

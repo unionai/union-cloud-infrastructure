@@ -121,7 +121,7 @@ def create_read_policy(role_type):
                         Action("s3", "GetBucketAcl"),
                         Action("s3", "GetBucketWebsite"),
                         Action("s3", "GetBucketVersioning"),
-                        Action("s3", "ListBucketVersioning"),
+                        Action("s3", "ListBucketVersions"),
                         Action("s3", "GetBucketCORS"),
                         Action("s3", "GetBucketLocation"),
                         Action("s3", "GetReplicationConfiguration"),
@@ -519,7 +519,7 @@ def create_provisioner_policy(role_type):
                         Action("ec2", "CreateLaunchTemplateVersion"),
                         Action("ec2", "CreateVpcEndpoint"),
                         Action("ec2", "AssociateAddress"),
-                        Action("ec2", "DisassociateAddress"),
+                        Action("ec2", "DeleteVpc"),
                     ],
                     Resource=[
                         Sub(
@@ -560,6 +560,7 @@ def create_provisioner_policy(role_type):
                         Action("ec2", "AssociateRouteTable"),
                         Action("ec2", "DeleteSecurityGroup"),
                         Action("ec2", "DeleteVpcEndpoints"),
+                        Action("ec2", "DisassociateAddress"),
                     ],
                     Resource=[
                         Sub(
@@ -733,6 +734,7 @@ def create_terraform_policy(role_type):
                         Action("s3", "PutBucketTagging"),
                         Action("s3", "PutObject"),
                         Action("s3", "DeleteObject"),
+                        Action("s3", "PutBucketAcl"),
                         Action("s3", "PutObjectAcl"),
                         Action("s3", "PutBucketAcl"),
                         Action("s3", "PutBucketLogging"),
@@ -746,6 +748,8 @@ def create_terraform_policy(role_type):
                         Action("s3", "PutLifecycleConfiguration"),
                         Action("s3", "PutBucketObjectLockConfiguration"),
                         Action("s3", "PutBucketPublicAccessBlock"),
+                        Action("s3", "DeleteObject"),
+                        Action("s3", "DeleteObjectVersion"),
                     ],
                     Resource=[
                         "arn:aws:s3:::opta-*",

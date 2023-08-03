@@ -52,7 +52,7 @@ Resources:
               - s3:GetBucketAcl
               - s3:GetBucketWebsite
               - s3:GetBucketVersioning
-              - s3:ListBucketVersioning
+              - s3:ListBucketVersions
               - s3:GetBucketCORS
               - s3:GetBucketLocation
               - s3:GetReplicationConfiguration
@@ -203,6 +203,7 @@ Resources:
               - s3:PutBucketTagging
               - s3:PutObject
               - s3:DeleteObject
+              - s3:PutBucketAcl
               - s3:PutObjectAcl
               - s3:PutBucketAcl
               - s3:PutBucketLogging
@@ -216,6 +217,8 @@ Resources:
               - s3:PutLifecycleConfiguration
               - s3:PutBucketObjectLockConfiguration
               - s3:PutBucketPublicAccessBlock
+              - s3:DeleteObject
+              - s3:DeleteObjectVersion
             Effect: Allow
             Resource:
               - arn:aws:s3:::opta-*
