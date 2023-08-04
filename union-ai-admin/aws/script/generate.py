@@ -564,6 +564,7 @@ def create_provisioner_policy(role_type):
                         Action("ec2", "AssociateRouteTable"),
                         Action("ec2", "DeleteSecurityGroup"),
                         Action("ec2", "DeleteVpcEndpoints"),
+                        Action("ec2", "DisassociateAddress"),
                     ],
                     Resource=[
                         Sub(
@@ -737,7 +738,9 @@ def create_terraform_policy(role_type):
                         Action("s3", "PutBucketTagging"),
                         Action("s3", "PutObject"),
                         Action("s3", "DeleteObject"),
+                        Action("s3", "PutBucketAcl"),
                         Action("s3", "PutObjectAcl"),
+                        Action("s3", "PutBucketAcl"),
                         Action("s3", "PutBucketLogging"),
                         Action("s3", "PutBucketVersioning"),
                         Action("s3", "PutBucketCORS"),
@@ -855,7 +858,7 @@ def main():
         template.add_resource(create_role(file, ref))
 
         parent_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-        path = os.path.join(parent_dir, f"unionai-{role}-role.template.yaml")
+        path = os.path.join(parent_dir, "gen", f"unionai-{role}-role.template.yaml")
 
         with open(path, "w") as file:
             file.write(template.to_yaml())
