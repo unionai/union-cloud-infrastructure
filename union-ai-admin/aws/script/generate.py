@@ -487,6 +487,14 @@ def create_provisioner_policy(role_type):
                 Statement(
                     Effect=Allow,
                     Action=[
+                        Action("ec2", "DisassociateAddress"),
+                    ],
+                    Resource=["*"],
+                    Condition=UNIONAI_CONDITION,
+                ),
+                Statement(
+                    Effect=Allow,
+                    Action=[
                         Action("ec2", "AllocateAddress"),
                         Action("ec2", "AttachInternetGateway"),
                         Action("ec2", "DetachInternetGateway"),
@@ -520,15 +528,14 @@ def create_provisioner_policy(role_type):
                         Action("ec2", "CreateVpcEndpoint"),
                         Action("ec2", "AssociateAddress"),
                         Action("ec2", "DeleteVpc"),
-						Action("ec2", "DisassociateAddress"),
                     ],
                     Resource=[
                         Sub(
                             "arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:network-interface/*"
                         ),
-						Sub(
-							"arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:vpc-endpoint/*"
-						),
+                        Sub(
+                            "arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:vpc-endpoint/*"
+                        ),
                         Sub(
                             "arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:internet-gateway/*"
                         ),
@@ -564,7 +571,6 @@ def create_provisioner_policy(role_type):
                         Action("ec2", "AssociateRouteTable"),
                         Action("ec2", "DeleteSecurityGroup"),
                         Action("ec2", "DeleteVpcEndpoints"),
-                        Action("ec2", "DisassociateAddress"),
                     ],
                     Resource=[
                         Sub(
