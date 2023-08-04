@@ -531,9 +531,6 @@ def create_provisioner_policy(role_type):
                     ],
                     Resource=[
                         Sub(
-                            "arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:network-interface/*"
-                        ),
-                        Sub(
                             "arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:vpc-endpoint/*"
                         ),
                         Sub(
