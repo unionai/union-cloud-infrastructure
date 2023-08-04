@@ -83,3 +83,10 @@ make lint
 # Create new stack
 AWS_PROFILE="some-profile" make create-stack
 ```
+
+## Release
+```bash
+# Setup aws credential for unionai
+# The make release_cloudformation command will create and push the specified tag in the Git repository. Additionally, it will publish the generated CloudFormation template to the designated S3 bucket.
+RELEASE_TAG=v5.1.1 make release_cloudformation
+```
