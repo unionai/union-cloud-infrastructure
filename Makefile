@@ -35,7 +35,7 @@ create-stack: requirements lint generate cf-lint
 	  --template-body file://./union-ai-admin/aws/unionai-support-role.template.yaml \
 	  --capabilities CAPABILITY_IAM CAPABILITY_NAMED_IAM CAPABILITY_AUTO_EXPAND
 
-# BUCKET_NAME=union-public,RELEASE_TAG=v5.1.1 make release_cloudformation
+# RELEASE_TAG=v5.1.1 make release_cloudformation
 .PHONY: release_cloudformation
 release_cloudformation:
 	# Create Git Release
