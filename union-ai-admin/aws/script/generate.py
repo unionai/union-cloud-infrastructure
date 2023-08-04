@@ -102,17 +102,6 @@ def create_read_policy(role_type):
                 Statement(
                     Effect=Allow,
                     Action=[
-                        Action("cloudfront", "GetCloudFrontOriginAccessIdentity"),
-                    ],
-                    Resource=[
-                        Sub(
-                            "arn:aws:cloudfront::${AWS::AccountId}:origin-access-identity/*"
-                        )
-                    ],
-                ),
-                Statement(
-                    Effect=Allow,
-                    Action=[
                         Action("s3", "ListBucket"),
                         Action("s3", "GetEncryptionConfiguration"),
                         Action("s3", "GetBucketLogging"),
@@ -470,18 +459,6 @@ def create_provisioner_policy(role_type):
                         Sub(
                             "arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/eks/opta-*:*"
                         ),
-                    ],
-                ),
-                Statement(
-                    Effect=Allow,
-                    Action=[
-                        Action("cloudfront", "CreateCloudFrontOriginAccessIdentity"),
-                        Action("cloudfront", "DeleteCloudFrontOriginAccessIdentity"),
-                    ],
-                    Resource=[
-                        Sub(
-                            "arn:aws:cloudfront::${AWS::AccountId}:origin-access-identity/*"
-                        )
                     ],
                 ),
                 Statement(
