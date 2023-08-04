@@ -520,11 +520,15 @@ def create_provisioner_policy(role_type):
                         Action("ec2", "CreateVpcEndpoint"),
                         Action("ec2", "AssociateAddress"),
                         Action("ec2", "DeleteVpc"),
+						Action("ec2", "DisassociateAddress"),
                     ],
                     Resource=[
                         Sub(
-                            "arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:vpc-endpoint/*"
+                            "arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:network-interface/*"
                         ),
+						Sub(
+							"arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:vpc-endpoint/*"
+						),
                         Sub(
                             "arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:internet-gateway/*"
                         ),
@@ -560,7 +564,6 @@ def create_provisioner_policy(role_type):
                         Action("ec2", "AssociateRouteTable"),
                         Action("ec2", "DeleteSecurityGroup"),
                         Action("ec2", "DeleteVpcEndpoints"),
-                        Action("ec2", "DisassociateAddress"),
                     ],
                     Resource=[
                         Sub(
@@ -734,7 +737,6 @@ def create_terraform_policy(role_type):
                         Action("s3", "PutBucketTagging"),
                         Action("s3", "PutObject"),
                         Action("s3", "DeleteObject"),
-                        Action("s3", "PutBucketAcl"),
                         Action("s3", "PutObjectAcl"),
                         Action("s3", "PutBucketLogging"),
                         Action("s3", "PutBucketVersioning"),
