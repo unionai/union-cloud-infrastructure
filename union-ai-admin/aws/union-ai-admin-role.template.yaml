@@ -286,14 +286,6 @@ Resources:
               - 'elasticache:DeleteCacheSubnetGroup'
             Resource:
               - !Sub 'arn:aws:elasticache:${AWS::Region}:${AWS::AccountId}:subnetgroup:opta-*'
-          - Sid: Cloudfront
-            Effect: Allow
-            Action:
-              - 'cloudfront:CreateCloudFrontOriginAccessIdentity'
-              - 'cloudfront:GetCloudFrontOriginAccessIdentity'
-              - 'cloudfront:DeleteCloudFrontOriginAccessIdentity'
-            Resource:
-              - !Sub 'arn:aws:cloudfront::${AWS::AccountId}:origin-access-identity/*'
           - Sid: 'self0'
             Effect: Allow
             Action:
