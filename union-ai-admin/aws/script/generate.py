@@ -490,7 +490,6 @@ def create_provisioner_policy(role_type):
                         Action("ec2", "DisassociateAddress"),
                     ],
                     Resource=["*"],
-                    Condition=UNIONAI_CONDITION,
                 ),
                 Statement(
                     Effect=Allow,

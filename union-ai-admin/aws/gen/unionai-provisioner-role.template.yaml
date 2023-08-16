@@ -43,9 +43,6 @@ Resources:
               - !Sub 'arn:aws:cloudfront::${AWS::AccountId}:origin-access-identity/*'
           - Action:
               - ec2:DisassociateAddress
-            Condition:
-              StringEqualsIfExists:
-                aws:RequestTag/ManagedByUnion: 'true'
             Effect: Allow
             Resource:
               - '*'
