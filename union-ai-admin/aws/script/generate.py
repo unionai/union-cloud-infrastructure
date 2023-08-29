@@ -671,6 +671,10 @@ def create_provisioner_policy(role_type):
                     Effect=Allow,
                     Action=[
                         Action("autoscaling", "CreateLaunchConfiguration"),
+                        # Permissions necessary for Service Quota Checks (INFRA-3)
+                        Action("ec2", "DescribeInstanceTypes"),
+                        Action("servicequotas", "GetServiceQuota"),
+                        Action("cloudwatch", "GetMetricStatistics"),
                     ],
                     Resource=["*"],
                 ),
