@@ -41,6 +41,8 @@ includedPermissions:
 - compute.globalAddresses.get
 - compute.globalOperations.get
 - compute.instanceGroupManagers.get
+- compute.machineTypes.get
+- compute.machineTypes.list
 - compute.networks.create
 - compute.networks.delete
 - compute.networks.get
@@ -49,6 +51,7 @@ includedPermissions:
 - compute.networks.updatePolicy
 - compute.networks.use
 - compute.regionOperations.get
+- compute.regions.get
 - compute.routers.create
 - compute.routers.delete
 - compute.routers.get
