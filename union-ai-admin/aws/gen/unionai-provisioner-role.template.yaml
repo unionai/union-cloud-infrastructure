@@ -36,12 +36,6 @@ Resources:
               - !Sub 'arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group::log-stream*'
               - !Sub 'arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/eks/opta-*:*'
           - Action:
-              - cloudfront:CreateCloudFrontOriginAccessIdentity
-              - cloudfront:DeleteCloudFrontOriginAccessIdentity
-            Effect: Allow
-            Resource:
-              - !Sub 'arn:aws:cloudfront::${AWS::AccountId}:origin-access-identity/*'
-          - Action:
               - ec2:AllocateAddress
               - ec2:AttachInternetGateway
               - ec2:DetachInternetGateway
@@ -183,6 +177,9 @@ Resources:
               - !Sub 'arn:aws:iam::${AWS::AccountId}:role/*fluentbitrole*'
           - Action:
               - autoscaling:CreateLaunchConfiguration
+              - ec2:DescribeInstanceTypes
+              - servicequotas:GetServiceQuota
+              - cloudwatch:GetMetricStatistics
             Effect: Allow
             Resource:
               - '*'
@@ -218,11 +215,6 @@ Resources:
               - !Sub 'arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:opta-*'
               - !Sub 'arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group::log-stream*'
               - !Sub 'arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/eks/opta-*:*'
-          - Action:
-              - cloudfront:GetCloudFrontOriginAccessIdentity
-            Effect: Allow
-            Resource:
-              - !Sub 'arn:aws:cloudfront::${AWS::AccountId}:origin-access-identity/*'
           - Action:
               - s3:ListBucket
               - s3:GetEncryptionConfiguration
