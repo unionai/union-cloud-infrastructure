@@ -36,12 +36,6 @@ Resources:
               - !Sub 'arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group::log-stream*'
               - !Sub 'arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/eks/opta-*:*'
           - Action:
-              - cloudfront:CreateCloudFrontOriginAccessIdentity
-              - cloudfront:DeleteCloudFrontOriginAccessIdentity
-            Effect: Allow
-            Resource:
-              - !Sub 'arn:aws:cloudfront::${AWS::AccountId}:origin-access-identity/*'
-          - Action:
               - ec2:AllocateAddress
               - ec2:AttachInternetGateway
               - ec2:DetachInternetGateway
@@ -218,11 +212,6 @@ Resources:
               - !Sub 'arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:opta-*'
               - !Sub 'arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group::log-stream*'
               - !Sub 'arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/eks/opta-*:*'
-          - Action:
-              - cloudfront:GetCloudFrontOriginAccessIdentity
-            Effect: Allow
-            Resource:
-              - !Sub 'arn:aws:cloudfront::${AWS::AccountId}:origin-access-identity/*'
           - Action:
               - s3:ListBucket
               - s3:GetEncryptionConfiguration
@@ -504,5 +493,12 @@ Resources:
             Resource:
               - !Sub 'arn:aws:eks:${AWS::Region}:${AWS::AccountId}:cluster/opta-*'
               - !Sub 'arn:aws:eks:${AWS::Region}:${AWS::AccountId}:addon/opta-*/*/*'
+          - Action:
+              - ec2:CreateLaunchTemplate
+              - ec2:CreateLaunchTemplateVersion
+              - ec2:DeleteLaunchTemplate
+            Effect: Allow
+            Resource:
+              - '*'
         Version: '2012-10-17'
     Type: AWS::IAM::ManagedPolicy

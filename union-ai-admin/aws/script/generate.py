@@ -422,6 +422,15 @@ def create_updater_policy(role_type):
                         ),
                     ],
                 ),
+                Statement(
+                    Effect=Allow,
+                    Action=[
+                        Action("ec2", "CreateLaunchTemplate"),
+                        Action("ec2", "CreateLaunchTemplateVersion"),
+                        Action("ec2", "DeleteLaunchTemplate"),
+                    ],
+                    Resource=["*"],
+                ),
             ],
         ),
     )
