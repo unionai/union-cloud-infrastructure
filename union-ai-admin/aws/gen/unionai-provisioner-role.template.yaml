@@ -177,6 +177,9 @@ Resources:
               - !Sub 'arn:aws:iam::${AWS::AccountId}:role/*fluentbitrole*'
           - Action:
               - autoscaling:CreateLaunchConfiguration
+              - ec2:DescribeInstanceTypes
+              - servicequotas:GetServiceQuota
+              - cloudwatch:GetMetricStatistics
             Effect: Allow
             Resource:
               - '*'
