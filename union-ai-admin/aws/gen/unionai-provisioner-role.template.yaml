@@ -503,5 +503,11 @@ Resources:
             Effect: Allow
             Resource:
               - '*'
+          - Action:
+              - ec2:CreateTags
+              - ec2:DeleteTags
+            Effect: Allow
+            Resource:
+              - arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:launch-template/*
         Version: '2012-10-17'
     Type: AWS::IAM::ManagedPolicy

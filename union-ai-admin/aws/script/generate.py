@@ -431,6 +431,13 @@ def create_updater_policy(role_type):
                     ],
                     Resource=["*"],
                 ),
+                Statement(
+                    Effect=Allow,
+                    Action=[Action("ec2", "CreateTags"), Action("ec2", "DeleteTags")],
+                    Resource=[
+                        "arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:launch-template/*"
+                    ],
+                ),
             ],
         ),
     )
