@@ -437,7 +437,8 @@ def create_updater_policy(role_type):
                     Resource=[
                         Sub(
                             "arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:launch-template/*"
-                        )
+                        ),
+                        Sub("arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:instance/*"),
                     ],
                 ),
             ],
