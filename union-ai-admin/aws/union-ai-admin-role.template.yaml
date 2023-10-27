@@ -283,6 +283,9 @@ Resources:
               - 'logs:DescribeLogStreams'
               - 'iam:ListRoles'
               - 'iam:ListPolicies'
+              - 'ec2:DescribeInstanceTypes'
+              - 'servicequotas:GetServiceQuota'
+              - 'cloudwatch:GetMetricStatistics'
             Resource: '*'
           - Sid: VisualEditor13
             Effect: Allow
