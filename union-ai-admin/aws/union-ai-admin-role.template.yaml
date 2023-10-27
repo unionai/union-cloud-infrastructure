@@ -67,6 +67,26 @@ Resources:
               - !Sub 'arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:opta-*'
               - !Sub 'arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group::log-stream*'
               - !Sub 'arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/eks/opta-*:*'
+          - Action:
+              - sqs:CreateQueue
+              - sqs:DeleteQueue
+              - sqs:SetQueueAttributes
+              - sqs:TagQueue
+              - sqs:UntagQueue
+            Effect: Allow
+            Resource:
+              - !Sub 'arn:aws:sqs:${AWS::Region}:${AWS::AccountId}:Karpenter*'
+          - Action:
+              - events:DescribeRule
+              - events:DeleteRule
+              - events:ListTargetsByRule
+              - events:PutRule
+              - events:PutTargets
+              - events:RemoveTargets
+              - events:TagResource
+            Effect: Allow
+            Resource:
+              - !Sub 'arn:aws:events:${AWS::Region}:${AWS::AccountId}:rule/Karpenter*'
           - Sid: '112'
             Effect: Allow
             Action:
@@ -188,6 +208,8 @@ Resources:
             Effect: Allow
             Action:
               - 'iam:CreatePolicy'
+              - 'iam:CreatePolicyVersion'
+              - 'iam:DeletePolicyVersion'
               - 'iam:GetPolicyVersion'
               - 'iam:GetPolicy'
               - 'iam:ListPolicyVersions'
@@ -275,6 +297,19 @@ Resources:
               - 'arn:aws:s3:::opta-*/'
               - 'arn:aws:s3:::union-*'
               - 'arn:aws:s3:::union-*/'
+          - Action:
+              - events:DescribeRule
+              - events:ListTargetsByRule
+              - events:ListTagsForResource
+            Effect: Allow
+            Resource:
+              - !Sub 'arn:aws:events:${AWS::Region}:${AWS::AccountId}:rule/Karpenter*'
+          - Action:
+              - sqs:GetQueueAttributes
+              - sqs:ListQueueTags
+            Effect: Allow
+            Resource:
+              - !Sub 'arn:aws:sqs:${AWS::Region}:${AWS::AccountId}:Karpenter*'
           - Sid: ElastiCache
             Effect: Allow
             Action:
@@ -297,6 +332,7 @@ Resources:
               - 'iam:UntagInstanceProfile'
               - 'iam:ListInstanceProfileTags'
               - 'iam:GetInstanceProfile'
+              - 'iam:UpdateAssumeRolePolicy'
             Resource:
               - !Sub 'arn:aws:iam::${AWS::AccountId}:instance-profile/*'
           - Sid: 'self1'
