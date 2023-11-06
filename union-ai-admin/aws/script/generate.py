@@ -1,18 +1,17 @@
+import os
+
 from awacs.aws import (
+    Action,
     Allow,
-    PolicyDocument,
     Condition,
+    PolicyDocument,
     Principal,
     Statement,
-    Action,
     StringEqualsIfExists,
 )
 from awacs.sts import AssumeRole
-
 from troposphere import Ref, Sub, Template
-from troposphere.iam import Role, ManagedPolicy, PolicyType
-
-import os
+from troposphere.iam import ManagedPolicy, PolicyType, Role
 
 UNIONAI_CONDITION = Condition(
     StringEqualsIfExists(
@@ -132,6 +131,29 @@ def create_read_policy(role_type):
                 Statement(
                     Effect=Allow,
                     Action=[
+                        Action("events", "DescribeRule"),
+                        Action("events", "ListTargetsByRule"),
+                        Action("events", "ListTagsForResource"),
+                    ],
+                    Resource=[
+                        Sub(
+                            "arn:aws:events:${AWS::Region}:${AWS::AccountId}:rule/Karpenter*"
+                        )
+                    ],
+                ),
+                Statement(
+                    Effect=Allow,
+                    Action=[
+                        Action("sqs", "GetQueueAttributes"),
+                        Action("sqs", "ListQueueTags"),
+                    ],
+                    Resource=[
+                        Sub("arn:aws:sqs:${AWS::Region}:${AWS::AccountId}:Karpenter*")
+                    ],
+                ),
+                Statement(
+                    Effect=Allow,
+                    Action=[
                         Action("autoscaling", "DescribeAutoScalingGroups"),
                         Action("autoscaling", "DescribeScalingActivities"),
                         Action("autoscaling", "DescribeTags"),
@@ -162,7 +184,6 @@ def create_read_policy(role_type):
                     Action=[
                         Action("eks", "ListTagsForResource"),
                         Action("eks", "ListNodegroups"),
-                        Action("eks", "ListTagsForResource"),
                     ],
                     Resource=[
                         Sub(
@@ -468,6 +489,34 @@ def create_provisioner_policy(role_type):
                         Sub(
                             "arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/eks/opta-*:*"
                         ),
+                    ],
+                ),
+                Statement(
+                    Effect=Allow,
+                    Action=[
+                        Action("sqs", "CreateQueue"),
+                        Action("sqs", "DeleteQueue"),
+                        Action("sqs", "SetQueueAttributes"),
+                        Action("sqs", "TagQueue"),
+                        Action("sqs", "UntagQueue"),
+                    ],
+                    Resource=[
+                        Sub("arn:aws:sqs:${AWS::Region}:${AWS::AccountId}:Karpenter*")
+                    ],
+                ),
+                Statement(
+                    Effect=Allow,
+                    Action=[
+                        Action("events", "DeleteRule"),
+                        Action("events", "PutRule"),
+                        Action("events", "PutTargets"),
+                        Action("events", "RemoveTargets"),
+                        Action("events", "TagResource"),
+                    ],
+                    Resource=[
+                        Sub(
+                            "arn:aws:events:${AWS::Region}:${AWS::AccountId}:rule/Karpenter*"
+                        )
                     ],
                 ),
                 Statement(
