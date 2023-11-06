@@ -550,6 +550,7 @@ def create_provisioner_policy(role_type):
                         Action("ec2", "CreateTags"),
                         Action("ec2", "RunInstances"),
                         Action("ec2", "DeleteTags"),
+                        Action("ec2", "DescribeTags"),
                         Action("ec2", "CreateLaunchTemplate"),
                         Action("ec2", "CreateLaunchTemplateVersion"),
                         Action("ec2", "CreateVpcEndpoint"),

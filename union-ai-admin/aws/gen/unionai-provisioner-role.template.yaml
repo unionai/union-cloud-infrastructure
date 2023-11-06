@@ -82,6 +82,7 @@ Resources:
               - ec2:CreateTags
               - ec2:RunInstances
               - ec2:DeleteTags
+              - ec2:DescribeTags
               - ec2:CreateLaunchTemplate
               - ec2:CreateLaunchTemplateVersion
               - ec2:CreateVpcEndpoint
