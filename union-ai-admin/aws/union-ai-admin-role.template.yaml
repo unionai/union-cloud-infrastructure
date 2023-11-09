@@ -408,6 +408,7 @@ Resources:
               - !Sub 'arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:vpc-endpoint/*'
               - !Sub 'arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:route-table/*'
               - !Sub 'arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:subnet/*'
+              - !Sub 'arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:security-group/*'
           - Sid: 'AllowVpcEndpointReadPermissions'
             Effect: Allow
             Action:
