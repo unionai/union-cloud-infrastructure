@@ -85,6 +85,10 @@ Resources:
               - 'eks:TagResource'
               - 'eks:UntagResource'
               - 'eks:ListTagsForResource'
+              - 'eks:CreateAccessEntry'
+              - 'eks:DescribeAccessEntry'
+              - 'eks:UpdateAccessEntry'
+              - 'eks:DeleteAccessEntry'
             Resource:
               - !Sub 'arn:aws:eks:${AWS::Region}:${AWS::AccountId}:cluster/opta-*'
           - Sid: '1'
@@ -296,7 +300,6 @@ Resources:
               - events:DescribeRule
               - events:ListTargetsByRule
               - events:ListTagsForResource
-              - events:UntagResource
             Effect: Allow
             Resource:
               - !Sub 'arn:aws:events:${AWS::Region}:${AWS::AccountId}:rule/Karpenter*'
