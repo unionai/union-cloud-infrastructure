@@ -546,6 +546,7 @@ def create_provisioner_policy(role_type):
                         Action("ec2", "DeleteFlowLogs"),
                         Action("ec2", "CreateFlowLogs"),
                         Action("ec2", "CreateVpc"),
+                        Action("ec2", "AssociateVpcCidrBlock"),
                         Action("ec2", "ReleaseAddress"),
                         Action("ec2", "CreateTags"),
                         Action("ec2", "RunInstances"),
