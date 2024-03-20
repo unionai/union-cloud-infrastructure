@@ -13,7 +13,7 @@ awacs==2.3.0
     # via -r requirements.in
 aws-sam-translator==1.71.0
     # via cfn-lint
-black==23.3.0
+black==24.3.0
     # via -r requirements.in
 boto3==1.28.3
     # via aws-sam-translator
@@ -96,11 +96,14 @@ six==1.16.0
     #   python-dateutil
 sympy==1.12
     # via cfn-lint
+tomli==2.0.1
+    # via black
 troposphere==4.3.2
     # via -r requirements.in
 typing-extensions==4.7.1
     # via
     #   aws-sam-translator
+    #   black
     #   pydantic
 urllib3==1.26.18
     # via botocore
