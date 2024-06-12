@@ -1,6 +1,7 @@
 title: Unionai Administrator
 stage: GA
 includedPermissions:
+- artifactregistry.repositories.createOnPush
 - artifactregistry.repositories.uploadArtifacts
 - cloudkms.cryptoKeyVersions.destroy
 - cloudkms.cryptoKeyVersions.list
