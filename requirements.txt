@@ -73,7 +73,7 @@ platformdirs==3.8.1
     # via
     #   black
     #   virtualenv
-pydantic==1.10.11
+pydantic==1.10.13
     # via aws-sam-translator
 pyrsistent==0.19.3
     # via jsonschema
@@ -96,11 +96,14 @@ six==1.16.0
     #   python-dateutil
 sympy==1.12
     # via cfn-lint
+tomli==2.0.1
+    # via black
 troposphere==4.3.2
     # via -r requirements.in
 typing-extensions==4.7.1
     # via
     #   aws-sam-translator
+    #   black
     #   pydantic
 urllib3==1.26.18
     # via botocore
