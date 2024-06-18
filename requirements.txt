@@ -96,16 +96,13 @@ six==1.16.0
     #   python-dateutil
 sympy==1.12
     # via cfn-lint
-tomli==2.0.1
-    # via black
 troposphere==4.3.2
     # via -r requirements.in
 typing-extensions==4.7.1
     # via
     #   aws-sam-translator
-    #   black
     #   pydantic
-urllib3==1.26.18
+urllib3==1.26.19
     # via botocore
 virtualenv==20.23.1
     # via pipenv
