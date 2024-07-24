@@ -188,6 +188,7 @@ Resources:
               - 'ec2:CreateSubnet'
               - 'ec2:DescribeVpcAttribute'
               - 'ec2:AssociateVpcCidrBlock'
+              - 'ec2:DisassociateVpcCidrBlock'
             Resource:
               - !Sub 'arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:vpc/*'
           - Sid: VisualEditor9
