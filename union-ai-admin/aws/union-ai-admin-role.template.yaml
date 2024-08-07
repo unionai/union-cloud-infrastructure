@@ -31,8 +31,7 @@ Resources:
       PolicyDocument:
         Version: 2012-10-17
         Statement:
-          - Sid: '0'
-            Effect: Allow
+          - Effect: Allow
             Action:
               - 'logs:ListTagsLogGroup'
               - 'logs:TagLogGroup'
@@ -41,10 +40,8 @@ Resources:
               - 'rds:DescribeDBSubnetGroups'
               - 'logs:DeleteLogGroup'
               - 'eks:CreateNodegroup'
-              - 'eks:UpdateNodegroupConfig'
               - 'rds:CreateDBSubnetGroup'
               - 'logs:CreateLogGroup'
-              - 'ec2:AllocateAddress'
               - 'eks:DeleteCluster'
               - 'rds:DeleteDBSubnetGroup'
               - 'kms:CreateAlias'
@@ -65,6 +62,8 @@ Resources:
               - sqs:SetQueueAttributes
               - sqs:TagQueue
               - sqs:UntagQueue
+              - sqs:GetQueueAttributes
+              - sqs:ListQueueTags
             Effect: Allow
             Resource:
               - !Sub 'arn:aws:sqs:${AWS::Region}:${AWS::AccountId}:Karpenter*'
@@ -72,27 +71,24 @@ Resources:
               - events:DescribeRule
               - events:DeleteRule
               - events:ListTargetsByRule
+              - events:ListTagsForResource
               - events:PutRule
               - events:PutTargets
               - events:RemoveTargets
               - events:TagResource
+              - events:UntagResource
             Effect: Allow
             Resource:
               - !Sub 'arn:aws:events:${AWS::Region}:${AWS::AccountId}:rule/Karpenter*'
-          - Sid: '112'
-            Effect: Allow
+          - Effect: Allow
             Action:
-              - 'eks:TagResource'
-              - 'eks:UntagResource'
-              - 'eks:ListTagsForResource'
               - 'eks:CreateAccessEntry'
               - 'eks:DescribeAccessEntry'
               - 'eks:UpdateAccessEntry'
               - 'eks:DeleteAccessEntry'
             Resource:
               - !Sub 'arn:aws:eks:${AWS::Region}:${AWS::AccountId}:cluster/opta-*'
-          - Sid: '1'
-            Effect: Allow
+          - Effect: Allow
             Action:
               - 'kms:EnableKeyRotation'
               - 'kms:PutKeyPolicy'
@@ -116,15 +112,7 @@ Resources:
               - !Sub 'arn:aws:eks:${AWS::Region}:${AWS::AccountId}:nodegroup/*'
               - !Sub 'arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:internet-gateway/*'
               - !Sub 'arn:aws:kms:${AWS::Region}:${AWS::AccountId}:key/*'
-          - Sid: '2'
-            Effect: Allow
-            Action:
-              - 'ec2:CreateNatGateway'
-              - 'ec2:DeleteNatGateway'
-            Resource:
-              - !Sub 'arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:natgateway/*'
-          - Sid: '3'
-            Effect: Allow
+          - Effect: Allow
             Action:
               - 'ec2:CreateRoute'
               - 'ec2:DeleteRoute'
@@ -134,15 +122,7 @@ Resources:
             Resource:
               - !Sub 'arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:route-table/*'
               - !Sub 'arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:subnet/subnet-*'
-          - Sid: '4'
-            Effect: Allow
-            Action:
-              - 'ec2:AuthorizeSecurityGroupEgress'
-              - 'ec2:AuthorizeSecurityGroupIngress'
-            Resource:
-              - !Sub 'arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:security-group-rule/*'
-          - Sid: '5'
-            Effect: Allow
+          - Effect: Allow
             Action:
               - 'ec2:RevokeSecurityGroupIngress'
               - 'ec2:AuthorizeSecurityGroupEgress'
@@ -152,32 +132,27 @@ Resources:
               - 'ec2:DeleteSecurityGroup'
             Resource:
               - !Sub 'arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:security-group/*'
+              - !Sub 'arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:security-group-rule/*'
               - !Sub 'arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:vpc/vpc-*'
-          - Sid: '6'
-            Effect: Allow
+          - Effect: Allow
             Action:
               - 'ec2:DeleteSubnet'
               - 'ec2:CreateNatGateway'
+              - 'ec2:DeleteNatGateway'
               - 'ec2:CreateSubnet'
               - 'ec2:ModifySubnetAttribute'
             Resource:
               - !Sub 'arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:subnet/*'
-          - Sid: '7'
-            Effect: Allow
-            Action:
-              - 'ec2:CreateNatGateway'
-            Resource:
+              - !Sub 'arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:natgateway/*'
               - !Sub 'arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:elastic-ip/eipalloc-*'
-          - Sid: '8'
-            Effect: Allow
+          - Effect: Allow
             Action:
               - 'ec2:DeleteFlowLogs'
               - 'ec2:CreateFlowLogs'
             Resource:
               - !Sub 'arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:vpc-flow-log/*'
               - !Sub 'arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:vpc/vpc*'
-          - Sid: VisualEditor8
-            Effect: Allow
+          - Effect: Allow
             Action:
               - 'ec2:CreateVpc'
               - 'ec2:CreateRouteTable'
@@ -191,8 +166,7 @@ Resources:
               - 'ec2:DisassociateVpcCidrBlock'
             Resource:
               - !Sub 'arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:vpc/*'
-          - Sid: VisualEditor9
-            Effect: Allow
+          - Effect: Allow
             Action:
               - 'iam:DeleteOpenIDConnectProvider'
               - 'iam:GetOpenIDConnectProvider'
@@ -202,8 +176,7 @@ Resources:
               - 'iam:ListOpenIDConnectProviderTags'
             Resource:
               - !Sub 'arn:aws:iam::${AWS::AccountId}:oidc-provider/*'
-          - Sid: VisualEditor10
-            Effect: Allow
+          - Effect: Allow
             Action:
               - 'iam:CreatePolicy'
               - 'iam:CreatePolicyVersion'
@@ -217,8 +190,7 @@ Resources:
               - 'iam:UntagPolicy'
             Resource:
               - !Sub 'arn:aws:iam::${AWS::AccountId}:policy/*'
-          - Sid: VisualEditor111
-            Effect: Allow
+          - Effect: Allow
             Action:
               - 'iam:GetRole'
               - 'iam:TagRole'
@@ -238,8 +210,7 @@ Resources:
               - 'iam:GetRolePolicy'
             Resource:
               - !Sub 'arn:aws:iam::${AWS::AccountId}:role/*'
-          - Sid: VisualEditor12
-            Effect: Allow
+          - Effect: Allow
             Action:
               - 'ec2:DescribeAddresses'
               - 'ec2:EnableEbsEncryptionByDefault'
@@ -263,7 +234,6 @@ Resources:
               - 'rds:RemoveTagsFromResource'
               - 'rds:ListTagsForResource'
               - 'ec2:DescribeVpcClassicLinkDnsSupport'
-              - 'ec2:CreateTags'
               - 'ec2:DescribeNatGateways'
               - 'ec2:DisassociateRouteTable'
               - 'ec2:DescribeSecurityGroups'
@@ -277,6 +247,7 @@ Resources:
               - 'ec2:AllocateAddress'
               - 'ec2:AssociateAddress'
               - 'ec2:DisassociateAddress'
+              - 'ec2:DescribeAddressesAttribute'
               - 'ec2:DescribeInstanceTypeOfferings'
               - 'logs:DescribeLogStreams'
               - 'iam:ListRoles'
@@ -285,35 +256,18 @@ Resources:
               - 'servicequotas:GetServiceQuota'
               - 'cloudwatch:GetMetricStatistics'
             Resource: '*'
-          - Sid: VisualEditor13
-            Effect: Allow
+          - Effect: Allow
             Action: 'dynamodb:*'
             Resource:
               - !Sub 'arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/opta-*'
-          - Sid: VisualEditor14
-            Effect: Allow
+          - Effect: Allow
             Action: 's3:*'
             Resource:
               - 'arn:aws:s3:::opta-*'
               - 'arn:aws:s3:::opta-*/'
               - 'arn:aws:s3:::union-*'
               - 'arn:aws:s3:::union-*/'
-          - Action:
-              - events:DescribeRule
-              - events:ListTargetsByRule
-              - events:ListTagsForResource
-              - events:UntagResource
-            Effect: Allow
-            Resource:
-              - !Sub 'arn:aws:events:${AWS::Region}:${AWS::AccountId}:rule/Karpenter*'
-          - Action:
-              - sqs:GetQueueAttributes
-              - sqs:ListQueueTags
-            Effect: Allow
-            Resource:
-              - !Sub 'arn:aws:sqs:${AWS::Region}:${AWS::AccountId}:Karpenter*'
-          - Sid: ElastiCache
-            Effect: Allow
+          - Effect: Allow
             Action:
               - 'elasticache:CreateCacheSubnetGroup'
               - 'elasticache:AddTagsToResource'
@@ -323,8 +277,7 @@ Resources:
               - 'elasticache:DeleteCacheSubnetGroup'
             Resource:
               - !Sub 'arn:aws:elasticache:${AWS::Region}:${AWS::AccountId}:subnetgroup:opta-*'
-          - Sid: 'self0'
-            Effect: Allow
+          - Effect: Allow
             Action:
               - 'iam:CreateInstanceProfile'
               - 'iam:AddRoleToInstanceProfile'
@@ -337,8 +290,7 @@ Resources:
               - 'iam:UpdateAssumeRolePolicy'
             Resource:
               - !Sub 'arn:aws:iam::${AWS::AccountId}:instance-profile/*'
-          - Sid: 'self1'
-            Effect: Allow
+          - Effect: Allow
             Action:
               - 'ec2:RunInstances'
               - 'ec2:CreateTags'
@@ -353,8 +305,7 @@ Resources:
               - 'ec2:DeleteLaunchTemplateVersions'
               - 'ec2:ModifyLaunchTemplate'
             Resource: '*'
-          - Sid: 'self2'
-            Effect: Allow
+          - Effect: Allow
             Action:
               - 'autoscaling:CreateAutoScalingGroup'
               - 'autoscaling:DeleteAutoScalingGroup'
@@ -414,8 +365,7 @@ Resources:
               - 'ec2:DescribeVpcEndpoints'
               - 'ec2:DescribePrefixLists'
             Resource: '*'
-          - Sid: '100'
-            Effect: Allow
+          - Effect: Allow
             Action:
               - logs:GetLogRecord
               - logs:GetLogEvents
@@ -424,6 +374,8 @@ Resources:
               - !Sub 'arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/eks/opta-*:log-stream:kube-*'
               - !Sub 'arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/containerinsights/opta-*/dataplane:log-stream:*'
               - !Sub 'arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/containerinsights/opta-*/host:log-stream:*'
+              - !Sub 'arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/containerinsights/opta-*/application:log-stream:fluentbit-kube.var.log.containers.union-operator-*'
+              - !Sub 'arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/containerinsights/opta-*/application:log-stream:fluentbit-kube.var.log.containers.flytepropeller-*'
 Metadata:
   'AWS::CloudFormation::Designer': {}
 Outputs:
