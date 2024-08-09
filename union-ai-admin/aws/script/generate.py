@@ -314,6 +314,25 @@ def create_read_policy(role_type):
                     ],
                     Resource=["*"],
                 ),
+                Statement(
+                    Effect=Allow,
+                    Action=[
+                        Action("logs", "GetLogRecord"),
+                        Action("logs", "GetLogEvents"),
+                        Action("logs", "FilterLogEvents"),
+                    ],
+                    Resource=[
+                        Sub(
+                            "arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/eks/opta-*:log-stream:kube-*"
+                        ),
+                        Sub(
+                            "arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/containerinsights/opta-*/dataplane:log-stream:*"
+                        ),
+                        Sub(
+                            "arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/containerinsights/opta-*/host:log-stream:*"
+                        ),
+                    ],
+                ),
             ],
         ),
     )

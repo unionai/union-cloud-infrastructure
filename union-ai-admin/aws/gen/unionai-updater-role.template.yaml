@@ -194,6 +194,15 @@ Resources:
             Effect: Allow
             Resource:
               - '*'
+          - Action:
+              - logs:GetLogRecord
+              - logs:GetLogEvents
+              - logs:FilterLogEvents
+            Effect: Allow
+            Resource:
+              - !Sub 'arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/eks/opta-*:log-stream:kube-*'
+              - !Sub 'arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/containerinsights/opta-*/dataplane:log-stream:*'
+              - !Sub 'arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/containerinsights/opta-*/host:log-stream:*'
         Version: '2012-10-17'
     Type: AWS::IAM::ManagedPolicy
   UnionaiTerraformPermission:
