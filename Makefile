@@ -6,7 +6,6 @@ requirements:
 
 .PHONY: cf-lint
 cf-lint: requirements
-	cfn-lint ./union-ai-admin/aws/gen/*.yaml
 	cfn-lint ./union-ai-admin/aws/*.yaml
 
 .PHONY: create-stack
