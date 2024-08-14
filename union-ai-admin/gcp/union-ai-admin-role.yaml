@@ -512,6 +512,7 @@ includedPermissions:
 - servicenetworking.operations.get
 - servicenetworking.services.addPeering
 - servicenetworking.services.get
+- servicenetworking.services.deleteConnection
 - storage.buckets.create
 - storage.buckets.delete
 - storage.buckets.get
