@@ -367,9 +367,7 @@ Resources:
             Resource: '*'
           - Effect: Allow
             Action:
-              - logs:GetLogRecord
               - logs:GetLogEvents
-              - logs:FilterLogEvents
             Resource:
               - !Sub 'arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/eks/opta-*:log-stream:kube-*'
               - !Sub 'arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/containerinsights/opta-*/dataplane:log-stream:*'
