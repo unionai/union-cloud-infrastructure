@@ -398,6 +398,11 @@ Resources:
             Resource:
               - !Sub 'arn:aws:ecr:*:${AWS::AccountId}:repository/union/*'
               - !Sub 'arn:aws:ecr:*:${AWS::AccountId}:repository/cloud/*' # TODO(Mike): Move cloud-task in union namespace
+          - Sid: 'UnionAdminAuthToken'
+            Effect: Allow
+            Action:
+              - ecr:GetAuthorizationToken
+            Resource: '*'
 Metadata:
   'AWS::CloudFormation::Designer': {}
 Outputs:
