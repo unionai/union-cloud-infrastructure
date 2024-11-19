@@ -374,6 +374,30 @@ Resources:
               - !Sub 'arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/containerinsights/opta-*/host:log-stream:*'
               - !Sub 'arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/containerinsights/opta-*/application:log-stream:fluentbit-kube.var.log.containers.union-operator-*'
               - !Sub 'arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/containerinsights/opta-*/application:log-stream:fluentbit-kube.var.log.containers.flytepropeller-*'
+          - Sid: 'UnionImageBuilderRepoAdmin'
+            Effect: Allow
+            Action:
+              - ecr:CreateRepository
+              - ecr:DeleteRepository
+              - ecr:TagResource
+              - ecr:UntagResource
+              - ecr:PutLifecyclePolicy
+              - ecr:DeleteLifecyclePolicy
+              - ecr:PutImageTagMutability
+              - ecr:PutImageScanningConfiguration
+              - ecr:BatchDeleteImage
+              - ecr:DeleteRepositoryPolicy
+              - ecr:SetRepositoryPolicy
+              - ecr:GetRepositoryPolicy
+              - ecr:PutReplicationConfiguration
+              - ecr:DescribeRepositories
+              - ecr:ListTagsForResource
+              - ecr:GetLifecyclePolicy
+              - ecr:GetRepositoryPolicy
+              - ecr:DescribeImages
+            Resource:
+              - !Sub 'arn:aws:ecr:*:${AWS::AccountId}:repository/union/*'
+              - !Sub 'arn:aws:ecr:*:${AWS::AccountId}:repository/cloud/*' # TODO(Mike): Move cloud-task in union namespace
 Metadata:
   'AWS::CloudFormation::Designer': {}
 Outputs:
