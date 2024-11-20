@@ -397,7 +397,6 @@ Resources:
               - ecr:DescribeImages
             Resource:
               - !Sub 'arn:aws:ecr:*:${AWS::AccountId}:repository/union/*'
-              - !Sub 'arn:aws:ecr:*:${AWS::AccountId}:repository/cloud/*' # TODO(Mike): Move cloud-task in union namespace
           - Sid: 'UnionAdminAuthToken'
             Effect: Allow
             Action:
