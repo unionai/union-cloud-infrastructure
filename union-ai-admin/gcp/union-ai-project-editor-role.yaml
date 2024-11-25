@@ -450,4 +450,5 @@ includedPermissions:
 - resourcemanager.projects.setIamPolicy
 - servicenetworking.operations.get
 - servicenetworking.services.addPeering
+- servicenetworking.services.deleteConnection
 - servicenetworking.services.get
