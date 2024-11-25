@@ -339,8 +339,10 @@ Resources:
               - 'eks:DescribeAddon'
               - 'eks:ListAddons'
             Resource:
+              - !Sub 'arn:aws:eks:${AWS::Region}:${AWS::AccountId}:addon/opta-*'
               - !Sub 'arn:aws:eks:${AWS::Region}:${AWS::AccountId}:cluster/opta-*'
-              - !Sub 'arn:aws:eks:${AWS::Region}:${AWS::AccountId}:addon/opta-*/*/*'
+              - !Sub 'arn:aws:eks:${AWS::Region}:${AWS::AccountId}:addon/union-*'
+              - !Sub 'arn:aws:eks:${AWS::Region}:${AWS::AccountId}:cluster/union-*'
           - Sid: 'AllowVpcEndpoints'
             Effect: Allow
             Action:
