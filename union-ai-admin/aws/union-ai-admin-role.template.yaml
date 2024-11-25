@@ -323,11 +323,12 @@ Resources:
               - 'eks:DescribeUpdate'
               - 'eks:DeleteNodegroup'
             Resource:
-              - !Sub 'arn:aws:eks:${AWS::Region}:${AWS::AccountId}:nodegroup/opta-*/opta-*/*'
-              - !Sub 'arn:aws:eks:${AWS::Region}:${AWS::AccountId}:nodegroup/opta-*'
-              - !Sub 'arn:aws:eks:${AWS::Region}:${AWS::AccountId}:nodegroup/*'
+              - !Sub 'arn:aws:eks:${AWS::Region}:${AWS::AccountId}:addon/opta-*'
               - !Sub 'arn:aws:eks:${AWS::Region}:${AWS::AccountId}:cluster/opta-*'
-              - !Sub 'arn:aws:eks:${AWS::Region}:${AWS::AccountId}:addon/opta-*/*/*'
+              - !Sub 'arn:aws:eks:${AWS::Region}:${AWS::AccountId}:nodegroup/opta-*'
+              - !Sub 'arn:aws:eks:${AWS::Region}:${AWS::AccountId}:addon/union-*'
+              - !Sub 'arn:aws:eks:${AWS::Region}:${AWS::AccountId}:cluster/union-*'
+              - !Sub 'arn:aws:eks:${AWS::Region}:${AWS::AccountId}:nodegroup/union-*'
           - Sid: 'AllowUpdateEKSAddonConfig'
             Effect: Allow
             Action:
