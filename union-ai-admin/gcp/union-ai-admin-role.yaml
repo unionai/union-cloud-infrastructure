@@ -526,6 +526,7 @@ includedPermissions:
 - secretmanager.versions.list
 - servicenetworking.operations.get
 - servicenetworking.services.addPeering
+- servicenetworking.services.deleteConnection
 - servicenetworking.services.get
 - storage.buckets.create
 - storage.buckets.delete
