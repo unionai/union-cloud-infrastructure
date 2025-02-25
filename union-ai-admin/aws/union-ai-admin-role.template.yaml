@@ -170,6 +170,7 @@ Resources:
               - 'iam:TagOpenIDConnectProvider'
               - 'iam:UntagOpenIDConnectProvider'
               - 'iam:ListOpenIDConnectProviderTags'
+              - 'iam:UpdateOpenIDConnectProviderThumbprint'
             Resource:
               - !Sub 'arn:aws:iam::${AWS::AccountId}:oidc-provider/*'
           - Effect: Allow
