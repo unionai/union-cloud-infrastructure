@@ -365,10 +365,12 @@ Resources:
           - Effect: Allow
             Action:
               - logs:GetLogEvents
+              - logs:FilterLogEvents
             Resource:
               - !Sub 'arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/eks/opta-*:log-stream:kube-*'
-              - !Sub 'arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/containerinsights/opta-*/dataplane:log-stream:*'
-              - !Sub 'arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/containerinsights/opta-*/host:log-stream:*'
+              - !Sub 'arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/union/cluster-*/dataplane:log-stream:*'
+              - !Sub 'arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/union/cluster-*/host:log-stream:*'
+              - !Sub 'arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/union/cluster-*/task:log-stream:*'
               - !Sub 'arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/containerinsights/opta-*/application:log-stream:fluentbit-kube.var.log.containers.union-operator-*'
               - !Sub 'arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/containerinsights/opta-*/application:log-stream:fluentbit-kube.var.log.containers.flytepropeller-*'
           - Sid: 'UnionImageBuilderRepoAdmin'
