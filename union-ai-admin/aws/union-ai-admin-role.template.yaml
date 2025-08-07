@@ -6,6 +6,18 @@ Parameters:
       the same across all of the Member Accounts
     Type: String
     Default: union-ai-admin
+  ExternalId:
+    Description: >-
+      External ID for additional security when assuming the cross-account role.
+      This should be a unique identifier shared between Union AI and your account.
+    Type: String
+    NoEcho: true
+    MinLength: 8
+    MaxLength: 24
+    AllowedPattern: '[\w+=,.@:\/-]*'
+    ConstraintDescription: >-
+      External ID must be between 8 and 24 characters and contain only
+      alphanumeric characters and the following special characters: +=,.@:/-
 Resources:
   CrossAccountRoleForAWSTrustedAdvisorUnion:
     Type: 'AWS::IAM::Role'
@@ -23,6 +35,9 @@ Resources:
             AWS: arn:aws:iam::479331373192:root
           Action:
           - sts:AssumeRole
+          Condition:
+            StringEquals:
+              'sts:ExternalId': !Ref ExternalId
   CrossAccountPolicyForAWSTrustedAdvisorUnion:
     Type: 'AWS::IAM::Policy'
     Properties:
@@ -413,3 +428,6 @@ Outputs:
   PolicyId:
     Description: The logical ID of the IAM policy
     Value: !Ref CrossAccountPolicyForAWSTrustedAdvisorUnion
+  ExternalId:
+    Description: The External ID used for additional security
+    Value: !Ref ExternalId
