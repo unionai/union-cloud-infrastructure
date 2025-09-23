@@ -596,6 +596,10 @@ includedPermissions:
 - storage.buckets.list
 - storage.buckets.setIamPolicy
 - storage.buckets.update
+- storage.hmacKeys.create
+- storage.hmacKeys.delete
+- storage.hmacKeys.get
+- storage.hmacKeys.update
 - storage.objects.create
 - storage.objects.delete
 - storage.objects.get
