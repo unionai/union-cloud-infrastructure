@@ -65,6 +65,7 @@ includedPermissions:
 - compute.globalAddresses.createInternal
 - compute.globalAddresses.deleteInternal
 - compute.globalAddresses.get
+- compute.globalAddresses.setLabels
 - compute.globalOperations.get
 - compute.healthChecks.create
 - compute.healthChecks.delete
