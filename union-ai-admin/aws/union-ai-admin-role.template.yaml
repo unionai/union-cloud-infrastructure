@@ -264,6 +264,31 @@ Resources:
               - 'ec2:DescribeInstanceTypes'
               - 'servicequotas:GetServiceQuota'
               - 'cloudwatch:GetMetricStatistics'
+              - 'ec2:RunInstances'
+              - 'ec2:CreateTags'
+              - 'ec2:DescribeTags'
+              - 'ec2:DeleteTags'
+              - 'ec2:DescribeImages'
+              - 'ec2:CreateLaunchTemplate'
+              - 'ec2:CreateLaunchTemplateVersion'
+              - 'ec2:DescribeLaunchTemplates'
+              - 'ec2:DescribeLaunchTemplateVersions'
+              - 'ec2:DeleteLaunchTemplate'
+              - 'ec2:DeleteLaunchTemplateVersions'
+              - 'ec2:ModifyLaunchTemplate'
+              - 'autoscaling:CreateAutoScalingGroup'
+              - 'autoscaling:DeleteAutoScalingGroup'
+              - 'autoscaling:DescribeAutoScalingGroups'
+              - 'autoscaling:UpdateAutoScalingGroup'
+              - 'autoscaling:CreateLaunchConfiguration'
+              - 'autoscaling:SetInstanceProtection'
+              - 'autoscaling:DescribeScalingActivities'
+              - 'autoscaling:CreateOrUpdateTags'
+              - 'autoscaling:DescribeTags'
+              - 'autoscaling:DeleteTags'
+              - 'ec2:DescribeVpcEndpoints'
+              - 'ec2:DescribePrefixLists'
+              - 'ecr:GetAuthorizationToken'
             Resource: '*'
           - Effect: Allow
             Action: 'dynamodb:*'
@@ -301,35 +326,6 @@ Resources:
               - !Sub 'arn:aws:iam::${AWS::AccountId}:instance-profile/*'
           - Effect: Allow
             Action:
-              - 'ec2:RunInstances'
-              - 'ec2:CreateTags'
-              - 'ec2:DescribeTags'
-              - 'ec2:DeleteTags'
-              - 'ec2:DescribeImages'
-              - 'ec2:CreateLaunchTemplate'
-              - 'ec2:CreateLaunchTemplateVersion'
-              - 'ec2:DescribeLaunchTemplates'
-              - 'ec2:DescribeLaunchTemplateVersions'
-              - 'ec2:DeleteLaunchTemplate'
-              - 'ec2:DeleteLaunchTemplateVersions'
-              - 'ec2:ModifyLaunchTemplate'
-            Resource: '*'
-          - Effect: Allow
-            Action:
-              - 'autoscaling:CreateAutoScalingGroup'
-              - 'autoscaling:DeleteAutoScalingGroup'
-              - 'autoscaling:DescribeAutoScalingGroups'
-              - 'autoscaling:UpdateAutoScalingGroup'
-              - 'autoscaling:CreateLaunchConfiguration'
-              - 'autoscaling:SetInstanceProtection'
-              - 'autoscaling:DescribeScalingActivities'
-              - 'autoscaling:CreateOrUpdateTags'
-              - 'autoscaling:DescribeTags'
-              - 'autoscaling:DeleteTags'
-            Resource: '*'
-          - Sid: 'AllowUpdateNodegroupConfig'
-            Effect: Allow
-            Action:
               - 'eks:UpdateNodegroupConfig'
               - 'eks:ListNodegroups'
               - 'eks:UpdateNodegroupVersion'
@@ -345,8 +341,7 @@ Resources:
               - !Sub 'arn:aws:eks:${AWS::Region}:${AWS::AccountId}:addon/union-*'
               - !Sub 'arn:aws:eks:${AWS::Region}:${AWS::AccountId}:cluster/union-*'
               - !Sub 'arn:aws:eks:${AWS::Region}:${AWS::AccountId}:nodegroup/union-*'
-          - Sid: 'AllowUpdateEKSAddonConfig'
-            Effect: Allow
+          - Effect: Allow
             Action:
               - 'eks:CreateAddon'
               - 'eks:UpdateAddon'
@@ -359,8 +354,7 @@ Resources:
               - !Sub 'arn:aws:eks:${AWS::Region}:${AWS::AccountId}:cluster/opta-*'
               - !Sub 'arn:aws:eks:${AWS::Region}:${AWS::AccountId}:addon/union-*'
               - !Sub 'arn:aws:eks:${AWS::Region}:${AWS::AccountId}:cluster/union-*'
-          - Sid: 'AllowVpcEndpoints'
-            Effect: Allow
+          - Effect: Allow
             Action:
               - 'ec2:CreateVpcEndpoint'
               - 'ec2:ModifyVpcEndpoint'
@@ -371,25 +365,15 @@ Resources:
               - !Sub 'arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:route-table/*'
               - !Sub 'arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:subnet/*'
               - !Sub 'arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:security-group/*'
-          - Sid: 'AllowVpcEndpointReadPermissions'
-            Effect: Allow
-            Action:
-              - 'ec2:DescribeVpcEndpoints'
-              - 'ec2:DescribePrefixLists'
-            Resource: '*'
           - Effect: Allow
             Action:
               - logs:GetLogEvents
               - logs:FilterLogEvents
             Resource:
               - !Sub 'arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/eks/opta-*:log-stream:kube-*'
-              - !Sub 'arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/union/cluster-*/dataplane:log-stream:*'
-              - !Sub 'arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/union/cluster-*/host:log-stream:*'
-              - !Sub 'arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/union/cluster-*/task:log-stream:*'
-              - !Sub 'arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/containerinsights/opta-*/application:log-stream:fluentbit-kube.var.log.containers.union-operator-*'
-              - !Sub 'arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/containerinsights/opta-*/application:log-stream:fluentbit-kube.var.log.containers.flytepropeller-*'
-          - Sid: 'UnionImageBuilderRepoAdmin'
-            Effect: Allow
+              - !Sub 'arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/union/cluster-*/*:log-stream:*'
+              - !Sub 'arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/containerinsights/opta-*/application:log-stream:fluentbit-kube.var.log.containers.*'
+          - Effect: Allow
             Action:
               - ecr:CreateRepository
               - ecr:DeleteRepository
@@ -407,15 +391,9 @@ Resources:
               - ecr:DescribeRepositories
               - ecr:ListTagsForResource
               - ecr:GetLifecyclePolicy
-              - ecr:GetRepositoryPolicy
               - ecr:DescribeImages
             Resource:
               - !Sub 'arn:aws:ecr:*:${AWS::AccountId}:repository/union/*'
-          - Sid: 'UnionAdminAuthToken'
-            Effect: Allow
-            Action:
-              - ecr:GetAuthorizationToken
-            Resource: '*'
 Metadata:
   'AWS::CloudFormation::Designer': {}
 Outputs:
