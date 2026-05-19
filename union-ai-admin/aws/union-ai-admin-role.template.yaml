@@ -283,7 +283,7 @@ Resources:
               - 'ec2:CreateTags'
               - 'ec2:DeleteTags'
             Resource:
-              - 'arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:subnet/*'
+              - !Sub 'arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:subnet/*'
             Resource: '*'
           - Effect: Allow
             Action: 'dynamodb:*'
