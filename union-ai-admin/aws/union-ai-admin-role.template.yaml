@@ -112,7 +112,6 @@ Resources:
               - 'eks:DescribeNodegroup'
               - 'kms:GetKeyRotationStatus'
               - 'eks:DeleteNodegroup'
-              - 'ec2:CreateInternetGateway'
               - 'kms:ScheduleKeyDeletion'
               - 'kms:CreateAlias'
               - 'kms:DescribeKey'
@@ -148,7 +147,6 @@ Resources:
           - Effect: Allow
             Action:
               - 'ec2:DeleteSubnet'
-              - 'ec2:CreateNatGateway'
               - 'ec2:DeleteNatGateway'
               - 'ec2:CreateSubnet'
               - 'ec2:ModifySubnetAttribute'
@@ -158,19 +156,10 @@ Resources:
               - !Sub 'arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:elastic-ip/eipalloc-*'
           - Effect: Allow
             Action:
-              - 'ec2:DeleteFlowLogs'
-              - 'ec2:CreateFlowLogs'
-            Resource:
-              - !Sub 'arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:vpc-flow-log/*'
-              - !Sub 'arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:vpc/vpc*'
-          - Effect: Allow
-            Action:
-              - 'ec2:CreateVpc'
               - 'ec2:CreateRouteTable'
               - 'ec2:AttachInternetGateway'
               - 'ec2:ModifyVpcAttribute'
               - 'ec2:DetachInternetGateway'
-              - 'ec2:DeleteVpc'
               - 'ec2:CreateSubnet'
               - 'ec2:DescribeVpcAttribute'
               - 'ec2:AssociateVpcCidrBlock'
@@ -289,6 +278,12 @@ Resources:
               - 'ec2:DescribeVpcEndpoints'
               - 'ec2:DescribePrefixLists'
               - 'ecr:GetAuthorizationToken'
+          - Effect: Deny
+            Action:
+              - 'ec2:CreateTags'
+              - 'ec2:DeleteTags'
+            Resource:
+              - 'arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:subnet/*'
             Resource: '*'
           - Effect: Allow
             Action: 'dynamodb:*'
