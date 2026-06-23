@@ -49,6 +49,7 @@ Resources:
           - Effect: Allow
             Action:
               - 'logs:ListTagsLogGroup'
+              - 'logs:ListTagsForResource'
               - 'logs:TagLogGroup'
               - 'logs:UntagLogGroup'
               - 'logs:DescribeLogGroups'
