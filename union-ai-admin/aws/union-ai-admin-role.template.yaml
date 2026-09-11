@@ -394,6 +394,14 @@ Resources:
               - ecr:DescribeImages
             Resource:
               - !Sub 'arn:aws:ecr:*:${AWS::AccountId}:repository/union/*'
+          # ECR pull-through cache rules. These actions have no resource type.
+          - Effect: Allow
+            Action:
+              - ecr:CreatePullThroughCacheRule
+              - ecr:DescribePullThroughCacheRules
+              - ecr:UpdatePullThroughCacheRule
+              - ecr:DeletePullThroughCacheRule
+            Resource: '*'
 Metadata:
   'AWS::CloudFormation::Designer': {}
 Outputs:
