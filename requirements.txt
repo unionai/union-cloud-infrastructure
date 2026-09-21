@@ -33,7 +33,7 @@ click==8.1.5
     #   cfn-flip
 distlib==0.3.9
     # via virtualenv
-filelock==3.12.2
+filelock==3.20.3
     # via virtualenv
 jmespath==1.0.1
     # via
