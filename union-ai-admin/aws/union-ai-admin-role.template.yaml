@@ -38,6 +38,49 @@ Resources:
           Condition:
             StringEquals:
               'sts:ExternalId': !Ref ExternalId
+  EKSUpgradeReadPolicy:
+    Type: 'AWS::IAM::ManagedPolicy'
+    Properties:
+      Description: Read EKS upgrade readiness, update history, capacity and public AMI metadata
+      Roles: [!Ref CrossAccountRoleForAWSTrustedAdvisorUnion]
+      PolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Sid: ReadEKSUpgradeInsights
+            Effect: Allow
+            Action:
+              - eks:ListInsights
+              - eks:DescribeInsight
+            Resource:
+              - !Sub 'arn:aws:eks:${AWS::Region}:${AWS::AccountId}:cluster/opta-*'
+              - !Sub 'arn:aws:eks:${AWS::Region}:${AWS::AccountId}:cluster/union-*'
+          - Sid: ReadEKSUpgradeUpdates
+            Effect: Allow
+            Action:
+              - eks:ListUpdates
+            Resource:
+              - !Sub 'arn:aws:eks:${AWS::Region}:${AWS::AccountId}:cluster/opta-*'
+              - !Sub 'arn:aws:eks:${AWS::Region}:${AWS::AccountId}:cluster/union-*'
+              - !Sub 'arn:aws:eks:${AWS::Region}:${AWS::AccountId}:nodegroup/opta-*'
+              - !Sub 'arn:aws:eks:${AWS::Region}:${AWS::AccountId}:nodegroup/union-*'
+              - !Sub 'arn:aws:eks:${AWS::Region}:${AWS::AccountId}:addon/opta-*'
+              - !Sub 'arn:aws:eks:${AWS::Region}:${AWS::AccountId}:addon/union-*'
+          - Sid: ReadEKSUpgradeCatalogAndCapacity
+            Effect: Allow
+            Action:
+              - eks:DescribeAddonVersions
+              - ec2:DescribeInstances
+              - ec2:DescribeCapacityReservations
+            Resource: '*'
+            Condition:
+              StringEquals:
+                aws:RequestedRegion: !Ref AWS::Region
+          - Sid: ReadEKSOptimizedAMIs
+            Effect: Allow
+            Action:
+              - ssm:GetParameters
+            Resource:
+              - !Sub 'arn:aws:ssm:${AWS::Region}::parameter/aws/service/eks/optimized-ami/*'
   CrossAccountPolicyForAWSTrustedAdvisorUnion:
     Type: 'AWS::IAM::Policy'
     Properties:
