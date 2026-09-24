@@ -21,5 +21,6 @@ jobs:
       - name: Lint
         run: |
           make cf-lint
+          python scripts/test_eks_upgrade_permissions.py
         env:
           PYTHONPATH: $(pwd)

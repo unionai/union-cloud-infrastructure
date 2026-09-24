@@ -1,2 +1,4 @@
 .tool-versions
 venv
+
+__pycache__/
