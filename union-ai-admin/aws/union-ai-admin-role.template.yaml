@@ -263,6 +263,7 @@ Resources:
               - 'iam:DeleteRolePolicy'
               - 'iam:ListRolePolicies'
               - 'iam:GetRolePolicy'
+              - 'iam:UpdateAssumeRolePolicy'
             Resource:
               - !Sub 'arn:aws:iam::${AWS::AccountId}:role/*'
           - Effect: Allow
@@ -364,7 +365,6 @@ Resources:
               - 'iam:UntagInstanceProfile'
               - 'iam:ListInstanceProfileTags'
               - 'iam:GetInstanceProfile'
-              - 'iam:UpdateAssumeRolePolicy'
             Resource:
               - !Sub 'arn:aws:iam::${AWS::AccountId}:instance-profile/*'
           - Effect: Allow
