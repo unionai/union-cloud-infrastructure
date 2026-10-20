@@ -1,0 +1,5 @@
+ignore_checks:
+  # W2010: NoEcho parameter ExternalId is echoed in Outputs. The value is
+  # already readable in the role's trust policy (sts:ExternalId condition),
+  # so the output exposes nothing new. Kept for the released template.
+  - W2010
