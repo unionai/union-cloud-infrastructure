@@ -40,8 +40,15 @@ class RolesAnywhereTemplate(unittest.TestCase):
             statement = RESOURCES[logical_id]["Properties"]["AssumeRolePolicyDocument"]["Statement"][0]
             self.assertEqual(statement["Principal"], {"Service": "rolesanywhere.amazonaws.com"})
             self.assertEqual(
+                statement["Action"],
+                ["sts:AssumeRole", "sts:TagSession", "sts:SetSourceIdentity"],
+            )
+            self.assertEqual(
                 statement["Condition"]["StringEquals"],
-                {"aws:SourceArn": "TrustAnchor.Arn", "x509Subject/CN": cn},
+                {
+                    "aws:SourceArn": "TrustAnchor.TrustAnchorArn",
+                    "aws:PrincipalTag/x509Subject/CN": cn,
+                },
             )
 
     def test_break_glass_has_only_cluster_describe(self):
@@ -49,7 +56,7 @@ class RolesAnywhereTemplate(unittest.TestCase):
         self.assertEqual(policy["Statement"], [{
             "Effect": "Allow",
             "Action": "eks:DescribeCluster",
-            "Resource": "arn:aws:eks:${AWS::Region}:${AWS::AccountId}:cluster/*",
+            "Resource": "arn:${AWS::Partition}:eks:${AWS::Region}:${AWS::AccountId}:cluster/*",
         }])
 
 

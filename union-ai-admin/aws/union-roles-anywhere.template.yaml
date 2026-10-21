@@ -55,11 +55,14 @@ Resources:
           - Effect: Allow
             Principal:
               Service: rolesanywhere.amazonaws.com
-            Action: sts:AssumeRole
+            Action:
+              - sts:AssumeRole
+              - sts:TagSession
+              - sts:SetSourceIdentity
             Condition:
               StringEquals:
-                aws:SourceArn: !GetAtt TrustAnchor.Arn
-                x509Subject/CN: union-deploy
+                aws:SourceArn: !GetAtt TrustAnchor.TrustAnchorArn
+                aws:PrincipalTag/x509Subject/CN: union-deploy
   UnionBreakGlassRole:
     Type: AWS::IAM::Role
     Properties:
@@ -70,11 +73,14 @@ Resources:
           - Effect: Allow
             Principal:
               Service: rolesanywhere.amazonaws.com
-            Action: sts:AssumeRole
+            Action:
+              - sts:AssumeRole
+              - sts:TagSession
+              - sts:SetSourceIdentity
             Condition:
               StringEquals:
-                aws:SourceArn: !GetAtt TrustAnchor.Arn
-                x509Subject/CN: union-break-glass
+                aws:SourceArn: !GetAtt TrustAnchor.TrustAnchorArn
+                aws:PrincipalTag/x509Subject/CN: union-break-glass
       Policies:
         - PolicyName: BreakGlassClusterDescribe
           PolicyDocument:
@@ -82,7 +88,7 @@ Resources:
             Statement:
               - Effect: Allow
                 Action: eks:DescribeCluster
-                Resource: !Sub 'arn:aws:eks:${AWS::Region}:${AWS::AccountId}:cluster/*'
+                Resource: !Sub 'arn:${AWS::Partition}:eks:${AWS::Region}:${AWS::AccountId}:cluster/*'
 
   EKSUpgradeReadPolicy:
     Type: 'AWS::IAM::ManagedPolicy'
@@ -98,19 +104,19 @@ Resources:
               - eks:ListInsights
               - eks:DescribeInsight
             Resource:
-              - !Sub 'arn:aws:eks:${AWS::Region}:${AWS::AccountId}:cluster/opta-*'
-              - !Sub 'arn:aws:eks:${AWS::Region}:${AWS::AccountId}:cluster/union-*'
+              - !Sub 'arn:${AWS::Partition}:eks:${AWS::Region}:${AWS::AccountId}:cluster/opta-*'
+              - !Sub 'arn:${AWS::Partition}:eks:${AWS::Region}:${AWS::AccountId}:cluster/union-*'
           - Sid: ReadEKSUpgradeUpdates
             Effect: Allow
             Action:
               - eks:ListUpdates
             Resource:
-              - !Sub 'arn:aws:eks:${AWS::Region}:${AWS::AccountId}:cluster/opta-*'
-              - !Sub 'arn:aws:eks:${AWS::Region}:${AWS::AccountId}:cluster/union-*'
-              - !Sub 'arn:aws:eks:${AWS::Region}:${AWS::AccountId}:nodegroup/opta-*'
-              - !Sub 'arn:aws:eks:${AWS::Region}:${AWS::AccountId}:nodegroup/union-*'
-              - !Sub 'arn:aws:eks:${AWS::Region}:${AWS::AccountId}:addon/opta-*'
-              - !Sub 'arn:aws:eks:${AWS::Region}:${AWS::AccountId}:addon/union-*'
+              - !Sub 'arn:${AWS::Partition}:eks:${AWS::Region}:${AWS::AccountId}:cluster/opta-*'
+              - !Sub 'arn:${AWS::Partition}:eks:${AWS::Region}:${AWS::AccountId}:cluster/union-*'
+              - !Sub 'arn:${AWS::Partition}:eks:${AWS::Region}:${AWS::AccountId}:nodegroup/opta-*'
+              - !Sub 'arn:${AWS::Partition}:eks:${AWS::Region}:${AWS::AccountId}:nodegroup/union-*'
+              - !Sub 'arn:${AWS::Partition}:eks:${AWS::Region}:${AWS::AccountId}:addon/opta-*'
+              - !Sub 'arn:${AWS::Partition}:eks:${AWS::Region}:${AWS::AccountId}:addon/union-*'
           - Sid: ReadEKSUpgradeCatalogAndCapacity
             Effect: Allow
             Action:
@@ -126,7 +132,7 @@ Resources:
             Action:
               - ssm:GetParameters
             Resource:
-              - !Sub 'arn:aws:ssm:${AWS::Region}::parameter/aws/service/eks/optimized-ami/*'
+              - !Sub 'arn:${AWS::Partition}:ssm:${AWS::Region}::parameter/aws/service/eks/optimized-ami/*'
   CrossAccountPolicyForAWSTrustedAdvisorUnion:
     Type: 'AWS::IAM::Policy'
     Properties:
@@ -150,12 +156,12 @@ Resources:
               - 'logs:PutRetentionPolicy'
               - 'kms:DeleteAlias'
             Resource:
-              - !Sub 'arn:aws:kms:${AWS::Region}:${AWS::AccountId}:alias/*'
-              - !Sub 'arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:elastic-ip/*'
-              - !Sub 'arn:aws:eks:${AWS::Region}:${AWS::AccountId}:cluster/opta-*'
-              - !Sub 'arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:opta-*'
-              - !Sub 'arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group::log-stream*'
-              - !Sub 'arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/eks/opta-*:*'
+              - !Sub 'arn:${AWS::Partition}:kms:${AWS::Region}:${AWS::AccountId}:alias/*'
+              - !Sub 'arn:${AWS::Partition}:ec2:${AWS::Region}:${AWS::AccountId}:elastic-ip/*'
+              - !Sub 'arn:${AWS::Partition}:eks:${AWS::Region}:${AWS::AccountId}:cluster/opta-*'
+              - !Sub 'arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:opta-*'
+              - !Sub 'arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group::log-stream*'
+              - !Sub 'arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/eks/opta-*:*'
           - Action:
               - sqs:CreateQueue
               - sqs:DeleteQueue
@@ -166,7 +172,7 @@ Resources:
               - sqs:ListQueueTags
             Effect: Allow
             Resource:
-              - !Sub 'arn:aws:sqs:${AWS::Region}:${AWS::AccountId}:Karpenter*'
+              - !Sub 'arn:${AWS::Partition}:sqs:${AWS::Region}:${AWS::AccountId}:Karpenter*'
           - Action:
               - events:DescribeRule
               - events:DeleteRule
@@ -179,7 +185,7 @@ Resources:
               - events:UntagResource
             Effect: Allow
             Resource:
-              - !Sub 'arn:aws:events:${AWS::Region}:${AWS::AccountId}:rule/Karpenter*'
+              - !Sub 'arn:${AWS::Partition}:events:${AWS::Region}:${AWS::AccountId}:rule/Karpenter*'
           - Effect: Allow
             Action:
               - 'eks:CreateAccessEntry'
@@ -187,7 +193,7 @@ Resources:
               - 'eks:UpdateAccessEntry'
               - 'eks:DeleteAccessEntry'
             Resource:
-              - !Sub 'arn:aws:eks:${AWS::Region}:${AWS::AccountId}:cluster/opta-*'
+              - !Sub 'arn:${AWS::Partition}:eks:${AWS::Region}:${AWS::AccountId}:cluster/opta-*'
           - Effect: Allow
             Action:
               - 'kms:EnableKeyRotation'
@@ -209,9 +215,9 @@ Resources:
               - 'kms:DeleteAlias'
               - 'kms:CreateGrant'
             Resource:
-              - !Sub 'arn:aws:eks:${AWS::Region}:${AWS::AccountId}:nodegroup/*'
-              - !Sub 'arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:internet-gateway/*'
-              - !Sub 'arn:aws:kms:${AWS::Region}:${AWS::AccountId}:key/*'
+              - !Sub 'arn:${AWS::Partition}:eks:${AWS::Region}:${AWS::AccountId}:nodegroup/*'
+              - !Sub 'arn:${AWS::Partition}:ec2:${AWS::Region}:${AWS::AccountId}:internet-gateway/*'
+              - !Sub 'arn:${AWS::Partition}:kms:${AWS::Region}:${AWS::AccountId}:key/*'
           - Effect: Allow
             Action:
               - 'ec2:CreateRoute'
@@ -220,8 +226,8 @@ Resources:
               - 'ec2:DeleteRouteTable'
               - 'ec2:AssociateRouteTable'
             Resource:
-              - !Sub 'arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:route-table/*'
-              - !Sub 'arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:subnet/subnet-*'
+              - !Sub 'arn:${AWS::Partition}:ec2:${AWS::Region}:${AWS::AccountId}:route-table/*'
+              - !Sub 'arn:${AWS::Partition}:ec2:${AWS::Region}:${AWS::AccountId}:subnet/subnet-*'
           - Effect: Allow
             Action:
               - 'ec2:RevokeSecurityGroupIngress'
@@ -231,9 +237,9 @@ Resources:
               - 'ec2:RevokeSecurityGroupEgress'
               - 'ec2:DeleteSecurityGroup'
             Resource:
-              - !Sub 'arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:security-group/*'
-              - !Sub 'arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:security-group-rule/*'
-              - !Sub 'arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:vpc/vpc-*'
+              - !Sub 'arn:${AWS::Partition}:ec2:${AWS::Region}:${AWS::AccountId}:security-group/*'
+              - !Sub 'arn:${AWS::Partition}:ec2:${AWS::Region}:${AWS::AccountId}:security-group-rule/*'
+              - !Sub 'arn:${AWS::Partition}:ec2:${AWS::Region}:${AWS::AccountId}:vpc/vpc-*'
           - Effect: Allow
             Action:
               - 'ec2:DeleteSubnet'
@@ -242,16 +248,16 @@ Resources:
               - 'ec2:CreateSubnet'
               - 'ec2:ModifySubnetAttribute'
             Resource:
-              - !Sub 'arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:subnet/*'
-              - !Sub 'arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:natgateway/*'
-              - !Sub 'arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:elastic-ip/eipalloc-*'
+              - !Sub 'arn:${AWS::Partition}:ec2:${AWS::Region}:${AWS::AccountId}:subnet/*'
+              - !Sub 'arn:${AWS::Partition}:ec2:${AWS::Region}:${AWS::AccountId}:natgateway/*'
+              - !Sub 'arn:${AWS::Partition}:ec2:${AWS::Region}:${AWS::AccountId}:elastic-ip/eipalloc-*'
           - Effect: Allow
             Action:
               - 'ec2:DeleteFlowLogs'
               - 'ec2:CreateFlowLogs'
             Resource:
-              - !Sub 'arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:vpc-flow-log/*'
-              - !Sub 'arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:vpc/vpc*'
+              - !Sub 'arn:${AWS::Partition}:ec2:${AWS::Region}:${AWS::AccountId}:vpc-flow-log/*'
+              - !Sub 'arn:${AWS::Partition}:ec2:${AWS::Region}:${AWS::AccountId}:vpc/vpc*'
           - Effect: Allow
             Action:
               - 'ec2:CreateVpc'
@@ -265,7 +271,7 @@ Resources:
               - 'ec2:AssociateVpcCidrBlock'
               - 'ec2:DisassociateVpcCidrBlock'
             Resource:
-              - !Sub 'arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:vpc/*'
+              - !Sub 'arn:${AWS::Partition}:ec2:${AWS::Region}:${AWS::AccountId}:vpc/*'
           - Effect: Allow
             Action:
               - 'iam:DeleteOpenIDConnectProvider'
@@ -276,7 +282,7 @@ Resources:
               - 'iam:ListOpenIDConnectProviderTags'
               - 'iam:UpdateOpenIDConnectProviderThumbprint'
             Resource:
-              - !Sub 'arn:aws:iam::${AWS::AccountId}:oidc-provider/*'
+              - !Sub 'arn:${AWS::Partition}:iam::${AWS::AccountId}:oidc-provider/*'
           - Effect: Allow
             Action:
               - 'iam:CreatePolicy'
@@ -290,7 +296,7 @@ Resources:
               - 'iam:TagPolicy'
               - 'iam:UntagPolicy'
             Resource:
-              - !Sub 'arn:aws:iam::${AWS::AccountId}:policy/*'
+              - !Sub 'arn:${AWS::Partition}:iam::${AWS::AccountId}:policy/*'
           - Effect: Allow
             Action:
               - 'iam:GetRole'
@@ -311,7 +317,7 @@ Resources:
               - 'iam:GetRolePolicy'
               - 'iam:UpdateAssumeRolePolicy'
             Resource:
-              - !Sub 'arn:aws:iam::${AWS::AccountId}:role/*'
+              - !Sub 'arn:${AWS::Partition}:iam::${AWS::AccountId}:role/*'
           - Effect: Allow
             Action:
               - 'ec2:DescribeAddresses'
@@ -383,14 +389,14 @@ Resources:
           - Effect: Allow
             Action: 'dynamodb:*'
             Resource:
-              - !Sub 'arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/opta-*'
+              - !Sub 'arn:${AWS::Partition}:dynamodb:${AWS::Region}:${AWS::AccountId}:table/opta-*'
           - Effect: Allow
             Action: 's3:*'
             Resource:
-              - 'arn:aws:s3:::opta-*'
-              - 'arn:aws:s3:::opta-*/'
-              - 'arn:aws:s3:::union-*'
-              - 'arn:aws:s3:::union-*/'
+              - !Sub 'arn:${AWS::Partition}:s3:::opta-*'
+              - !Sub 'arn:${AWS::Partition}:s3:::opta-*/'
+              - !Sub 'arn:${AWS::Partition}:s3:::union-*'
+              - !Sub 'arn:${AWS::Partition}:s3:::union-*/'
           - Effect: Allow
             Action:
               - 'elasticache:CreateCacheSubnetGroup'
@@ -400,7 +406,7 @@ Resources:
               - 'elasticache:DescribeCacheSubnetGroups'
               - 'elasticache:DeleteCacheSubnetGroup'
             Resource:
-              - !Sub 'arn:aws:elasticache:${AWS::Region}:${AWS::AccountId}:subnetgroup:opta-*'
+              - !Sub 'arn:${AWS::Partition}:elasticache:${AWS::Region}:${AWS::AccountId}:subnetgroup:opta-*'
           - Effect: Allow
             Action:
               - 'iam:CreateInstanceProfile'
@@ -412,7 +418,7 @@ Resources:
               - 'iam:ListInstanceProfileTags'
               - 'iam:GetInstanceProfile'
             Resource:
-              - !Sub 'arn:aws:iam::${AWS::AccountId}:instance-profile/*'
+              - !Sub 'arn:${AWS::Partition}:iam::${AWS::AccountId}:instance-profile/*'
           - Effect: Allow
             Action:
               - 'eks:UpdateNodegroupConfig'
@@ -424,12 +430,12 @@ Resources:
               - 'eks:DescribeUpdate'
               - 'eks:DeleteNodegroup'
             Resource:
-              - !Sub 'arn:aws:eks:${AWS::Region}:${AWS::AccountId}:addon/opta-*'
-              - !Sub 'arn:aws:eks:${AWS::Region}:${AWS::AccountId}:cluster/opta-*'
-              - !Sub 'arn:aws:eks:${AWS::Region}:${AWS::AccountId}:nodegroup/opta-*'
-              - !Sub 'arn:aws:eks:${AWS::Region}:${AWS::AccountId}:addon/union-*'
-              - !Sub 'arn:aws:eks:${AWS::Region}:${AWS::AccountId}:cluster/union-*'
-              - !Sub 'arn:aws:eks:${AWS::Region}:${AWS::AccountId}:nodegroup/union-*'
+              - !Sub 'arn:${AWS::Partition}:eks:${AWS::Region}:${AWS::AccountId}:addon/opta-*'
+              - !Sub 'arn:${AWS::Partition}:eks:${AWS::Region}:${AWS::AccountId}:cluster/opta-*'
+              - !Sub 'arn:${AWS::Partition}:eks:${AWS::Region}:${AWS::AccountId}:nodegroup/opta-*'
+              - !Sub 'arn:${AWS::Partition}:eks:${AWS::Region}:${AWS::AccountId}:addon/union-*'
+              - !Sub 'arn:${AWS::Partition}:eks:${AWS::Region}:${AWS::AccountId}:cluster/union-*'
+              - !Sub 'arn:${AWS::Partition}:eks:${AWS::Region}:${AWS::AccountId}:nodegroup/union-*'
           - Effect: Allow
             Action:
               - 'eks:CreateAddon'
@@ -439,29 +445,29 @@ Resources:
               - 'eks:DescribeAddon'
               - 'eks:ListAddons'
             Resource:
-              - !Sub 'arn:aws:eks:${AWS::Region}:${AWS::AccountId}:addon/opta-*'
-              - !Sub 'arn:aws:eks:${AWS::Region}:${AWS::AccountId}:cluster/opta-*'
-              - !Sub 'arn:aws:eks:${AWS::Region}:${AWS::AccountId}:addon/union-*'
-              - !Sub 'arn:aws:eks:${AWS::Region}:${AWS::AccountId}:cluster/union-*'
+              - !Sub 'arn:${AWS::Partition}:eks:${AWS::Region}:${AWS::AccountId}:addon/opta-*'
+              - !Sub 'arn:${AWS::Partition}:eks:${AWS::Region}:${AWS::AccountId}:cluster/opta-*'
+              - !Sub 'arn:${AWS::Partition}:eks:${AWS::Region}:${AWS::AccountId}:addon/union-*'
+              - !Sub 'arn:${AWS::Partition}:eks:${AWS::Region}:${AWS::AccountId}:cluster/union-*'
           - Effect: Allow
             Action:
               - 'ec2:CreateVpcEndpoint'
               - 'ec2:ModifyVpcEndpoint'
               - 'ec2:DeleteVpcEndpoints'
             Resource:
-              - !Sub 'arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:vpc/vpc*'
-              - !Sub 'arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:vpc-endpoint/*'
-              - !Sub 'arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:route-table/*'
-              - !Sub 'arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:subnet/*'
-              - !Sub 'arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:security-group/*'
+              - !Sub 'arn:${AWS::Partition}:ec2:${AWS::Region}:${AWS::AccountId}:vpc/vpc*'
+              - !Sub 'arn:${AWS::Partition}:ec2:${AWS::Region}:${AWS::AccountId}:vpc-endpoint/*'
+              - !Sub 'arn:${AWS::Partition}:ec2:${AWS::Region}:${AWS::AccountId}:route-table/*'
+              - !Sub 'arn:${AWS::Partition}:ec2:${AWS::Region}:${AWS::AccountId}:subnet/*'
+              - !Sub 'arn:${AWS::Partition}:ec2:${AWS::Region}:${AWS::AccountId}:security-group/*'
           - Effect: Allow
             Action:
               - logs:GetLogEvents
               - logs:FilterLogEvents
             Resource:
-              - !Sub 'arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/eks/opta-*:log-stream:kube-*'
-              - !Sub 'arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/union/cluster-*/*:log-stream:*'
-              - !Sub 'arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/containerinsights/opta-*/application:log-stream:fluentbit-kube.var.log.containers.*'
+              - !Sub 'arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/eks/opta-*:log-stream:kube-*'
+              - !Sub 'arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/union/cluster-*/*:log-stream:*'
+              - !Sub 'arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/containerinsights/opta-*/application:log-stream:fluentbit-kube.var.log.containers.*'
           - Effect: Allow
             Action:
               - ecr:CreateRepository
@@ -482,7 +488,7 @@ Resources:
               - ecr:GetLifecyclePolicy
               - ecr:DescribeImages
             Resource:
-              - !Sub 'arn:aws:ecr:*:${AWS::AccountId}:repository/union/*'
+              - !Sub 'arn:${AWS::Partition}:ecr:*:${AWS::AccountId}:repository/union/*'
           # ECR pull-through cache rules. These actions have no resource type.
           - Effect: Allow
             Action:
