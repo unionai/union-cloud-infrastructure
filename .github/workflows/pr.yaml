@@ -25,5 +25,6 @@ jobs:
         run: |
           make cf-lint
           python scripts/test_eks_upgrade_permissions.py
+          python scripts/test_roles_anywhere_template.py
         env:
           PYTHONPATH: $(pwd)
