@@ -43,21 +43,27 @@ class RolesAnywhereTemplate(unittest.TestCase):
         self.assertEqual(deploy_role["MaxSessionDuration"], "DeploySessionDurationSeconds")
         self.assertNotIn("MaxSessionDuration", RESOURCES["UnionBreakGlassRole"]["Properties"])
 
-    def test_application_deploy_role_is_optional_in_deploy_profile(self):
-        parameter = DOCUMENT["Parameters"]["ApplicationDeployRoleArn"]
-        self.assertEqual(parameter["Default"], "")
+    def test_deploy_profile_holds_both_deployment_roles(self):
         self.assertEqual(
             RESOURCES["DeployProfile"]["Properties"]["RoleArns"],
-            [
-                "HasApplicationDeployRole",
-                ["UnionDeployRole.Arn", "ApplicationDeployRoleArn"],
-                ["UnionDeployRole.Arn"],
-            ],
+            ["UnionDeployRole.Arn", "UnionCloudDeployerRole.Arn"],
         )
         self.assertEqual(
             RESOURCES["BreakGlassProfile"]["Properties"]["RoleArns"],
             ["UnionBreakGlassRole.Arn"],
         )
+
+    def test_cloud_deployer_trusts_apps_cert_and_reaches_union_clusters_only(self):
+        role = RESOURCES["UnionCloudDeployerRole"]["Properties"]
+        self.assertEqual(role["MaxSessionDuration"], 3600)
+        condition = role["AssumeRolePolicyDocument"]["Statement"][0]["Condition"]["StringEquals"]
+        self.assertEqual(condition["aws:PrincipalTag/x509Subject/CN"], "union-deploy-apps")
+        statement = role["Policies"][0]["PolicyDocument"]["Statement"]
+        self.assertEqual(statement, [{
+            "Effect": "Allow",
+            "Action": ["eks:DescribeCluster", "eks:AccessKubernetesApi"],
+            "Resource": "arn:${AWS::Partition}:eks:${AWS::Region}:${AWS::AccountId}:cluster/opta-*",
+        }])
 
     def test_outputs_cover_customer_handoff(self):
         self.assertEqual(
@@ -65,7 +71,7 @@ class RolesAnywhereTemplate(unittest.TestCase):
             {
                 "TrustAnchorArn", "DeployProfileArn", "DeployProfileId",
                 "BreakGlassProfileArn", "BreakGlassProfileId",
-                "DeployRoleArn", "BreakGlassRoleArn",
+                "DeployRoleArn", "CloudDeployerRoleArn", "BreakGlassRoleArn",
             },
         )
 
