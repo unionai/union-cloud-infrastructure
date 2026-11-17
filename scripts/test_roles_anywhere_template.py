@@ -28,9 +28,27 @@ class RolesAnywhereTemplate(unittest.TestCase):
         break_glass = RESOURCES["BreakGlassProfile"]["Properties"]
         self.assertTrue(deploy["Enabled"])
         self.assertTrue(deploy["AcceptRoleSessionName"])
-        self.assertEqual(deploy["DurationSeconds"], 3600)
+        self.assertEqual(deploy["DurationSeconds"], "DeploySessionDurationSeconds")
         self.assertFalse(break_glass["Enabled"])
         self.assertEqual(break_glass["DurationSeconds"], 3600)
+
+    def test_deploy_session_duration_defaults_to_three_hours(self):
+        parameter = DOCUMENT["Parameters"]["DeploySessionDurationSeconds"]
+        self.assertEqual(parameter["Default"], 10800)
+        self.assertEqual((parameter["MinValue"], parameter["MaxValue"]), (3600, 43200))
+        deploy_role = RESOURCES["UnionDeployRole"]["Properties"]
+        self.assertEqual(deploy_role["MaxSessionDuration"], "DeploySessionDurationSeconds")
+        self.assertNotIn("MaxSessionDuration", RESOURCES["UnionBreakGlassRole"]["Properties"])
+
+    def test_outputs_cover_customer_handoff(self):
+        self.assertEqual(
+            set(DOCUMENT["Outputs"]),
+            {
+                "TrustAnchorArn", "DeployProfileArn", "DeployProfileId",
+                "BreakGlassProfileArn", "BreakGlassProfileId",
+                "DeployRoleArn", "BreakGlassRoleArn",
+            },
+        )
 
     def test_role_trusts_are_limited_to_anchor_and_expected_cn(self):
         for logical_id, cn in (

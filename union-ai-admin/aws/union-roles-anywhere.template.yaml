@@ -18,6 +18,12 @@ Parameters:
   RoleBreakGlassName:
     Type: String
     Default: union-break-glass
+  DeploySessionDurationSeconds:
+    Description: Maximum session length for the deploy role, in seconds. Infrastructure changes can run longer than an hour.
+    Type: Number
+    Default: 10800
+    MinValue: 3600
+    MaxValue: 43200
 Resources:
   TrustAnchor:
     Type: AWS::RolesAnywhere::TrustAnchor
@@ -34,7 +40,7 @@ Resources:
       Name: !Ref ProfileDeployName
       Enabled: true
       AcceptRoleSessionName: true
-      DurationSeconds: 3600
+      DurationSeconds: !Ref DeploySessionDurationSeconds
       RoleArns:
         - !GetAtt UnionDeployRole.Arn
   BreakGlassProfile:
@@ -49,6 +55,7 @@ Resources:
     Type: AWS::IAM::Role
     Properties:
       RoleName: !Ref RoleDeployName
+      MaxSessionDuration: !Ref DeploySessionDurationSeconds
       AssumeRolePolicyDocument:
         Version: 2012-10-17
         Statement:
@@ -497,3 +504,25 @@ Resources:
               - ecr:UpdatePullThroughCacheRule
               - ecr:DeletePullThroughCacheRule
             Resource: '*'
+Outputs:
+  TrustAnchorArn:
+    Description: Send to Union.
+    Value: !GetAtt TrustAnchor.TrustAnchorArn
+  DeployProfileArn:
+    Description: Send to Union.
+    Value: !GetAtt DeployProfile.ProfileArn
+  DeployProfileId:
+    Description: Use with aws rolesanywhere disable-profile and enable-profile to pause and restore Union deployment access.
+    Value: !GetAtt DeployProfile.ProfileId
+  BreakGlassProfileArn:
+    Description: Send to Union.
+    Value: !GetAtt BreakGlassProfile.ProfileArn
+  BreakGlassProfileId:
+    Description: Use with aws rolesanywhere enable-profile and disable-profile to open and close break-glass access.
+    Value: !GetAtt BreakGlassProfile.ProfileId
+  DeployRoleArn:
+    Description: Send to Union.
+    Value: !GetAtt UnionDeployRole.Arn
+  BreakGlassRoleArn:
+    Description: Send to Union.
+    Value: !GetAtt UnionBreakGlassRole.Arn
