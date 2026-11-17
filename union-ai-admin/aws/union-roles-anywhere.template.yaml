@@ -24,6 +24,14 @@ Parameters:
     Default: 10800
     MinValue: 3600
     MaxValue: 43200
+  ApplicationDeployRoleArn:
+    Description: >-
+      Optional. ARN of the application-deployment role that Union's provisioning creates for the cluster.
+      Set it with a stack update after the first provisioning run to add the role to the deploy profile.
+    Type: String
+    Default: ''
+Conditions:
+  HasApplicationDeployRole: !Not [!Equals [!Ref ApplicationDeployRoleArn, '']]
 Resources:
   TrustAnchor:
     Type: AWS::RolesAnywhere::TrustAnchor
@@ -41,8 +49,10 @@ Resources:
       Enabled: true
       AcceptRoleSessionName: true
       DurationSeconds: !Ref DeploySessionDurationSeconds
-      RoleArns:
-        - !GetAtt UnionDeployRole.Arn
+      RoleArns: !If
+        - HasApplicationDeployRole
+        - [!GetAtt UnionDeployRole.Arn, !Ref ApplicationDeployRoleArn]
+        - [!GetAtt UnionDeployRole.Arn]
   BreakGlassProfile:
     Type: AWS::RolesAnywhere::Profile
     Properties:

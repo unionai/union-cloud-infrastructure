@@ -14,6 +14,9 @@ class Loader(yaml.SafeLoader):
 Loader.add_constructor("!Ref", lambda loader, node: loader.construct_scalar(node))
 Loader.add_constructor("!Sub", lambda loader, node: loader.construct_scalar(node))
 Loader.add_constructor("!GetAtt", lambda loader, node: loader.construct_scalar(node))
+Loader.add_constructor("!If", lambda loader, node: loader.construct_sequence(node, deep=True))
+Loader.add_constructor("!Not", lambda loader, node: loader.construct_sequence(node, deep=True))
+Loader.add_constructor("!Equals", lambda loader, node: loader.construct_sequence(node, deep=True))
 TEMPLATE = (
     Path(__file__).resolve().parents[1]
     / "union-ai-admin/aws/union-roles-anywhere.template.yaml"
@@ -39,6 +42,22 @@ class RolesAnywhereTemplate(unittest.TestCase):
         deploy_role = RESOURCES["UnionDeployRole"]["Properties"]
         self.assertEqual(deploy_role["MaxSessionDuration"], "DeploySessionDurationSeconds")
         self.assertNotIn("MaxSessionDuration", RESOURCES["UnionBreakGlassRole"]["Properties"])
+
+    def test_application_deploy_role_is_optional_in_deploy_profile(self):
+        parameter = DOCUMENT["Parameters"]["ApplicationDeployRoleArn"]
+        self.assertEqual(parameter["Default"], "")
+        self.assertEqual(
+            RESOURCES["DeployProfile"]["Properties"]["RoleArns"],
+            [
+                "HasApplicationDeployRole",
+                ["UnionDeployRole.Arn", "ApplicationDeployRoleArn"],
+                ["UnionDeployRole.Arn"],
+            ],
+        )
+        self.assertEqual(
+            RESOURCES["BreakGlassProfile"]["Properties"]["RoleArns"],
+            ["UnionBreakGlassRole.Arn"],
+        )
 
     def test_outputs_cover_customer_handoff(self):
         self.assertEqual(
